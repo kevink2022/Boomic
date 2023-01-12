@@ -20,7 +20,7 @@ struct SongListItem: View
         self.namespace = namespace
     }
     
-    // TODO: Clean this
+    // TODO: Clean this, code is duplicated apart from namespace stuff
     var body: some View
     {
         ZStack

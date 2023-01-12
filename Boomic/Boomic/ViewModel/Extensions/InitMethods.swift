@@ -140,6 +140,7 @@ extension BoomicManager
                   
             if let _ = currentSong
             {
+                // This always returns NaN
                 guard let event = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
                 
                 print(event.positionTime)

@@ -14,7 +14,6 @@ struct StaticAlbumCover: View
     
     var body: some View
     {
-        //TODO: ADD DEFAULT
         Image(image ?? .asset(C.defaultAlbumCover))
             .resizable()
             .aspectRatio(1, contentMode: .fit)

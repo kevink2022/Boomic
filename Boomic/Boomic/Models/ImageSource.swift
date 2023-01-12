@@ -38,7 +38,8 @@ extension Image
             {
                 self.init(systemName: "exclamationmark.triangle.fill")
             }
-            
+        
+        // TODO: I really don't like this
         // TODO: Add remote URL support
         case .url(let source):
             
