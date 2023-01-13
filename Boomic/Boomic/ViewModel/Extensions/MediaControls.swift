@@ -214,6 +214,8 @@ extension BoomicManager
     }
     
     /// Source: https://developer.apple.com/documentation/avfoundation/media_playback/observing_the_playback_time
+    /// The only thing that really need constant updates are the time slider (and eventhually an audio visuslizer,
+    /// so timers will be added to those specific objects
     func addPeriodicTimeObserver()
     {
         // Notify every half second

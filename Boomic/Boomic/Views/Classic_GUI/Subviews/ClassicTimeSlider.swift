@@ -38,6 +38,7 @@ struct ClassicTimeSlider: View
         {
             VStack(spacing: 0)
             {
+                // TODO: I don't like this direct access to the player in the GUI, but it will work with the buffer
                 HStack
                 {
                     Text("\(manager.player.currentTime().seconds.readable)")
