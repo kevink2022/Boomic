@@ -1,5 +1,16 @@
 #  TODO
 
+Only three things in todo now
+## TODO NOW
+- long press
+- playlists
+- stealthmode
+
+Move things up when ready
+## Todo later
+- persistence
+- search
+
 
 
 

@@ -1,5 +1,5 @@
 //
-//  CategoryView.swift
+//  CategoryEntry.swift
 //  Boomic
 //
 //  Created by Kevin Kelly on 11/14/22.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CategoryView: View
+struct CategoryEntry: View
 {
     let category : Category
     
@@ -41,7 +41,7 @@ struct CategoryView_Previews: PreviewProvider {
     static var previews: some View {
 //        CategoryView(image: .systemName("music.note"), label: "Songs")
 //        CategoryView(image: .systemName("music.note.list"), label: "Playlists")
-        CategoryView(category: Category.songs)
+        CategoryEntry(category: Category.songs)
     }
 }
 
