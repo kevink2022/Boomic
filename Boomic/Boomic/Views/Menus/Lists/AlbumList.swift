@@ -1,5 +1,5 @@
 //
-//  ArtistListView.swift
+//  AlbumList.swift
 //  Boomic
 //
 //  Created by Kevin Kelly on 11/14/22.
@@ -7,9 +7,10 @@
 
 import SwiftUI
 
-struct ArtistListView: View
+struct AlbumList: View
 {
     @EnvironmentObject var manager : BoomicManager
+    let albums : [Album]
     
     var body: some View
     {
@@ -17,17 +18,17 @@ struct ArtistListView: View
         {
             GridMenu
             {
-                ForEach(manager.library.artists)
+                ForEach(albums)
                 {
-                    artist in
+                    album in
                     
                     NavigationLink
                     {
-                        SongListView(songs: artist.songs)
+                        SongList(songs: album.songs)
                     }
                     label:
                     {
-                        ArtistListItem(artist: artist)
+                        AlbumEntry(album: album)
                     }
                 }
             }
@@ -35,8 +36,9 @@ struct ArtistListView: View
     }
 }
 
-struct ArtistListView_Previews: PreviewProvider {
-    static var previews: some View {
-        ArtistListView()
-    }
-}
+//struct AlbumList_Previews: PreviewProvider {
+//    static var previews: some View {
+//        AlbumList()
+//            .environmentObject(BoomicManager())
+//    }
+//}

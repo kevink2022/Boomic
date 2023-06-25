@@ -23,7 +23,7 @@ struct ClassicSongView: View
             {
                 if manager.showQueueSheet
                 {
-                    QueueListView()
+                    QueueList()
                     
                     Button
                     {
@@ -31,7 +31,7 @@ struct ClassicSongView: View
                     }
                     label:
                     {
-                        SongListItem(song: song, namespace: currentSong)
+                        SongEntry(song: song, namespace: currentSong)
                     }
                     .padding(.horizontal)
                 }
@@ -69,10 +69,6 @@ struct ClassicSongView: View
                     .padding(.top)
             }
         }
-//        .sheet(isPresented: $manager.showQueueSheet)
-//        {
-//            SongListView(songs: manager.queue)
-//        }
     }
 }
 

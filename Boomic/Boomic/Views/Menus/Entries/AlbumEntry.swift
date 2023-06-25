@@ -1,5 +1,5 @@
 //
-//  AlbumListItem.swift
+//  AlbumEntry.swift
 //  Boomic
 //
 //  Created by Kevin Kelly on 11/14/22.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AlbumListItem: View
+struct AlbumEntry: View
 {
     let album: Album
     
@@ -31,8 +31,8 @@ struct AlbumListItem: View
     typealias C = ViewConstants.Menus.AlbumListItem
 }
 
-struct AlbumListItem_Previews: PreviewProvider {
+struct AlbumEntry_Previews: PreviewProvider {
     static var previews: some View {
-        AlbumListItem(album: Album.magnifique)
+        AlbumEntry(album: Album.magnifique)
     }
 }

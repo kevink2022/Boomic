@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SongListView: View
+struct SongList: View
 {
     @EnvironmentObject var manager : BoomicManager
     let songs : [Song]
@@ -31,7 +31,7 @@ struct SongListView: View
                     }
                     label:
                     {
-                        SongListItem(song: song)
+                        SongEntry(song: song)
                     }
                 }
             }
@@ -40,11 +40,11 @@ struct SongListView: View
     }
 }
 
-//struct SongListView_Previews: PreviewProvider
+//struct SongList_Previews: PreviewProvider
 //{
 //    static var previews: some View
 //    {
-//        SongListView(queue: manager.songs)
+//        SongList(queue: manager.songs)
 //            .environmentObject(BoomicManager())
 //        SongListView(songs: manager.songs)
 //            .environmentObject(BoomicManager())
