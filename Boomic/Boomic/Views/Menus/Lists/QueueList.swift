@@ -1,5 +1,5 @@
 //
-//  QueueListView.swift
+//  QueueList.swift
 //  Boomic
 //
 //  Created by Kevin Kelly on 11/20/22.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct QueueListView: View
+struct QueueList: View
 {
     @EnvironmentObject var manager : BoomicManager
     
@@ -29,7 +29,7 @@ struct QueueListView: View
                     {
                         ZStack
                         {
-                            SongListItem(song: song, selected: manager.currentSongIndex! == index ? true : false)
+                            SongEntry(song: song, selected: manager.currentSongIndex! == index ? true : false)
                         }
                     }
                 }
@@ -39,9 +39,9 @@ struct QueueListView: View
     }
 }
 
-//struct QueueListView_Previews: PreviewProvider {
+//struct QueueList_Previews: PreviewProvider {
 //    static var previews: some View {
-//        QueueListView()
+//        QueueList()
 //
 //    }
 //}

@@ -1,5 +1,5 @@
 //
-//  ArtistListItem.swift
+//  ArtistEntry.swift
 //  Boomic
 //
 //  Created by Kevin Kelly on 11/14/22.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ArtistListItem: View
+struct ArtistEntry: View
 {
     let artist: Artist
     
@@ -32,6 +32,6 @@ struct ArtistListItem: View
 
 struct ArtistListItem_Previews: PreviewProvider {
     static var previews: some View {
-        ArtistListItem(artist: Artist.ratatat)
+        ArtistEntry(artist: Artist.ratatat)
     }
 }

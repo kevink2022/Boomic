@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SongListItem: View
+struct SongEntry: View
 {
     let song : Song
     let selected : Bool
@@ -70,8 +70,8 @@ struct SongListItem: View
     typealias P = ViewConstants.Placeholders
 }
 
-struct SongListItem_Previews: PreviewProvider {
+struct SongEntry_Previews: PreviewProvider {
     static var previews: some View {
-        SongListItem(song: Song.standard)
+        SongEntry(song: Song.standard)
     }
 }

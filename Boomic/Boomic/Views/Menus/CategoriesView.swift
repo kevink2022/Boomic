@@ -51,7 +51,7 @@ struct CategoriesView: View
 
                     NavigationLink
                     {
-                        SongListView(songs: manager.library.songs)
+                        SongList(songs: manager.library.songs)
                     }
                     label:
                     {
@@ -60,7 +60,7 @@ struct CategoriesView: View
 
                     NavigationLink
                     {
-                        AlbumListView(albums: manager.library.albums)
+                        AlbumList(albums: manager.library.albums)
                     }
                     label:
                     {
@@ -69,7 +69,7 @@ struct CategoriesView: View
 
                     NavigationLink
                     {
-                        ArtistListView()
+                        ArtistList()
                     }
                     label:
                     {
