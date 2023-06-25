@@ -63,6 +63,9 @@ struct SongEntry: View
         }
         .frame(height: C.height)
         .clipped()
+        .contextMenu {
+            SongContextMenu(song: song)
+        }
     }
     
     typealias C = ViewConstants.Menus.SongListItem

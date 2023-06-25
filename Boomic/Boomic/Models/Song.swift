@@ -17,6 +17,7 @@ class Song : Identifiable, Codable
     var albumTitle : String?
     var trackNo : Int?
     var duration : Double?
+    var liked : Bool = false
     
     var album: Album? = nil
     var artist: Artist? = nil

@@ -46,7 +46,7 @@ struct CategoriesView: View
                     }
                     label:
                     {
-                        CategoryView(category: .playlists)
+                        CategoryEntry(category: .playlists)
                     }
 
                     NavigationLink
@@ -55,7 +55,7 @@ struct CategoriesView: View
                     }
                     label:
                     {
-                        CategoryView(category: .songs)
+                        CategoryEntry(category: .songs)
                     }
 
                     NavigationLink
@@ -64,7 +64,7 @@ struct CategoriesView: View
                     }
                     label:
                     {
-                        CategoryView(category: .albums)
+                        CategoryEntry(category: .albums)
                     }
 
                     NavigationLink
@@ -73,7 +73,7 @@ struct CategoriesView: View
                     }
                     label:
                     {
-                        CategoryView(category: .artists)
+                        CategoryEntry(category: .artists)
                     }
                 }
             }
