@@ -16,12 +16,13 @@ struct CurrentSongBar: View
     {
         ZStack
         {
-            ImageBlurBackground(image: song.albumCover)
-                .clipped()
+//            ImageBlurBackground(image: song.albumCover)
+//                .clipped()
             
             HStack
             {
                 StaticAlbumCover(image: song.albumCover)
+                    .frame(height: 55)
                 
                 VStack(alignment: .leading)
                 {
@@ -47,10 +48,13 @@ struct CurrentSongBar: View
                         .padding(.horizontal)
                 }
             }
-            .padding()
+            .padding(.bottom, 10)
         
         }
-        .frame(height: 55)
+        .background(.ultraThinMaterial)
+        .contextMenu {
+            SongContextMenu(song: song)
+        }
     }
     
     typealias C = ViewConstants.Menus.SongListItem

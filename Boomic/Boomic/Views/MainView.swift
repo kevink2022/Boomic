@@ -13,29 +13,14 @@ struct MainView: View
     
     var body: some View
     {
-        VStack
-        {
-            CategoriesView()
-            
-            if let song = manager.currentSong
+        AppTabView()
+            .sheet(isPresented: $manager.showCurrentSongSheet)
             {
-                Button
+                if let song = manager.currentSong
                 {
-                    manager.showCurrentSongSheet = true
-                }
-                label:
-                {
-                    CurrentSongBar(song: song)
+                    CurrentSongView(song: song)
                 }
             }
-        }
-        .sheet(isPresented: $manager.showCurrentSongSheet)
-        {
-            if let song = manager.currentSong
-            {
-                CurrentSongView(song: song)
-            }
-        }
     }
 }
 

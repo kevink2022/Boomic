@@ -18,7 +18,11 @@ struct SongContextMenu: View
         {
             song.liked.toggle()
         } label: {
-            Label("Like", systemImage: song.liked ? "heart.fill" : "heart")
+            if song.liked {
+                Label("Unlike", systemImage: "heart.fill")
+            } else {
+                Label("Like", systemImage:   "heart")
+            }
         }
         
         Divider()

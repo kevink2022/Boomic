@@ -24,7 +24,7 @@ struct AlbumList: View
                     
                     NavigationLink
                     {
-                        SongList(songs: album.songs)
+                        AlbumPage(album: album)
                     }
                     label:
                     {

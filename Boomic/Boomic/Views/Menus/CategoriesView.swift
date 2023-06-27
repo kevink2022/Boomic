@@ -13,69 +13,78 @@ struct CategoriesView: View
     
     var body: some View
     {
-        NavigationStack
+        VStack
         {
-            VStack(alignment: .leading)
+            
+            NavigationStack
             {
-                HStack
+                VStack(alignment: .leading)
                 {
-                    Text("Boomic Music")
-                        .font(.system(.largeTitle, design: .default, weight: .heavy))
-                        .padding()
-                    
-                    Spacer()
-                    
-                    NavigationLink
+                    HStack
                     {
-                        SettingsView()
-                    }
+                        Text("Boomic Music")
+                            .font(.system(.largeTitle, design: .default, weight: .heavy))
+                            .padding()
+                        
+                        Spacer()
+                        
+                        NavigationLink
+                        {
+                            SettingsView()
+                        }
                     label:
+                        {
+                            Image(.systemName("gearshape"))
+                                .font(.title)
+                                .foregroundColor(.primary)
+                                .padding(.horizontal)
+                        }
+                    }
+                    
+                    GridMenu
                     {
-                        Image(.systemName("gearshape"))
-                            .font(.title)
-                            .foregroundColor(.primary)
-                            .padding(.horizontal)
+                        NavigationLink
+                        {
+                            
+                        }
+                    label:
+                        {
+                            CategoryEntry(category: .playlists)
+                        }
+                        
+                        NavigationLink
+                        {
+                            SongList(songs: manager.library.songs)
+                        }
+                    label:
+                        {
+                            CategoryEntry(category: .songs)
+                        }
+                        
+                        NavigationLink
+                        {
+                            AlbumList(albums: manager.library.albums)
+                        }
+                    label:
+                        {
+                            CategoryEntry(category: .albums)
+                        }
+                        
+                        NavigationLink
+                        {
+                            ArtistList()
+                        }
+                    label:
+                        {
+                            CategoryEntry(category: .artists)
+                        }
                     }
                 }
-                
-                GridMenu
-                {
-                    NavigationLink
-                    {
-
-                    }
-                    label:
-                    {
-                        CategoryEntry(category: .playlists)
-                    }
-
-                    NavigationLink
-                    {
-                        SongList(songs: manager.library.songs)
-                    }
-                    label:
-                    {
-                        CategoryEntry(category: .songs)
-                    }
-
-                    NavigationLink
-                    {
-                        AlbumList(albums: manager.library.albums)
-                    }
-                    label:
-                    {
-                        CategoryEntry(category: .albums)
-                    }
-
-                    NavigationLink
-                    {
-                        ArtistList()
-                    }
-                    label:
-                    {
-                        CategoryEntry(category: .artists)
-                    }
-                }
+            }
+            
+            if let song = manager.currentSong {
+                Button {manager.showCurrentSongSheet = true }
+            label: { CurrentSongBar(song: song) }
             }
         }
     }

@@ -2,15 +2,20 @@
 
 Only three things in todo now
 ## TODO NOW
-- long press
+- home bar
 - playlists
 - stealthmode
+    - libraries
 
 Move things up when ready
 ## Todo later
 - persistence
 - search
+- likes and ratings
 
+
+### TODO complete
+- long press
 
 
 

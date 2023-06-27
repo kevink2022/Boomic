@@ -68,9 +68,11 @@
 		4FFCC8522A48FDD50047D5FA /* ArtistPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFCC8512A48FDD50047D5FA /* ArtistPage.swift */; };
 		4FFCC8542A48FDDD0047D5FA /* AlbumPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFCC8532A48FDDD0047D5FA /* AlbumPage.swift */; };
 		4FFCC8562A48FDE70047D5FA /* PlaylistPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFCC8552A48FDE70047D5FA /* PlaylistPage.swift */; };
+		4FFCC85A2A4A24ED0047D5FA /* AppTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFCC8592A4A24ED0047D5FA /* AppTabView.swift */; };
+		4FFCC85C2A4A834B0047D5FA /* TrackNumberText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFCC85B2A4A834B0047D5FA /* TrackNumberText.swift */; };
 		4FFDE8232945427A0046FB73 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFDE8222945427A0046FB73 /* SettingsView.swift */; };
 		4FFDE825294545740046FB73 /* BoomicSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFDE824294545740046FB73 /* BoomicSettings.swift */; };
-		4FFDE82729455FAA0046FB73 /* AlbumCover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFDE82629455FAA0046FB73 /* AlbumCover.swift */; };
+		4FFDE82729455FAA0046FB73 /* CurrentSongAlbumCover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFDE82629455FAA0046FB73 /* CurrentSongAlbumCover.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -157,9 +159,11 @@
 		4FFCC8512A48FDD50047D5FA /* ArtistPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistPage.swift; sourceTree = "<group>"; };
 		4FFCC8532A48FDDD0047D5FA /* AlbumPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumPage.swift; sourceTree = "<group>"; };
 		4FFCC8552A48FDE70047D5FA /* PlaylistPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistPage.swift; sourceTree = "<group>"; };
+		4FFCC8592A4A24ED0047D5FA /* AppTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabView.swift; sourceTree = "<group>"; };
+		4FFCC85B2A4A834B0047D5FA /* TrackNumberText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackNumberText.swift; sourceTree = "<group>"; };
 		4FFDE8222945427A0046FB73 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4FFDE824294545740046FB73 /* BoomicSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoomicSettings.swift; sourceTree = "<group>"; };
-		4FFDE82629455FAA0046FB73 /* AlbumCover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumCover.swift; sourceTree = "<group>"; };
+		4FFDE82629455FAA0046FB73 /* CurrentSongAlbumCover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSongAlbumCover.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -258,6 +262,7 @@
 		4F597D4B2911A16200BC1046 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4FFCC85D2A4A83F00047D5FA /* Builders */,
 				4F6A16FE29465FA900282EF0 /* Buttons */,
 				4F6A16F929465AEB00282EF0 /* Generics */,
 				4F9A489B29416C1800852EB5 /* Gesture_GUI */,
@@ -323,7 +328,6 @@
 				4FEC954B291995A6003EA394 /* BoomicSlider.swift */,
 				4FECA2792922D3DC003EA394 /* ContainerProtocol.swift */,
 				4FA699A82942A8F90086EEBD /* ScrollingTimeView.swift */,
-				4FFDE82629455FAA0046FB73 /* AlbumCover.swift */,
 			);
 			path = Subviews;
 			sourceTree = "<group>";
@@ -350,6 +354,8 @@
 				4FEC954F291AC65C003EA394 /* Subviews */,
 				4FEC9554291DBC42003EA394 /* CategoriesView.swift */,
 				4FFDE8222945427A0046FB73 /* SettingsView.swift */,
+				4FEC9550291AC6C1003EA394 /* CurrentSongBar.swift */,
+				4FFCC8592A4A24ED0047D5FA /* AppTabView.swift */,
 			);
 			path = Menus;
 			sourceTree = "<group>";
@@ -357,6 +363,7 @@
 		4F6A16F929465AEB00282EF0 /* Generics */ = {
 			isa = PBXGroup;
 			children = (
+				4FFDE82629455FAA0046FB73 /* CurrentSongAlbumCover.swift */,
 				4F6A16FA29465B0400282EF0 /* CurrentSongView.swift */,
 			);
 			path = Generics;
@@ -413,9 +420,8 @@
 		4FEC954F291AC65C003EA394 /* Subviews */ = {
 			isa = PBXGroup;
 			children = (
-				4FEC9550291AC6C1003EA394 /* CurrentSongBar.swift */,
-				4FECA2772922D03B003EA394 /* GridMenu.swift */,
 				4FFCC84E2A48FBC10047D5FA /* SongContextMenu.swift */,
+				4FFCC85B2A4A834B0047D5FA /* TrackNumberText.swift */,
 			);
 			path = Subviews;
 			sourceTree = "<group>";
@@ -468,6 +474,14 @@
 				4FFCC8552A48FDE70047D5FA /* PlaylistPage.swift */,
 			);
 			path = Pages;
+			sourceTree = "<group>";
+		};
+		4FFCC85D2A4A83F00047D5FA /* Builders */ = {
+			isa = PBXGroup;
+			children = (
+				4FECA2772922D03B003EA394 /* GridMenu.swift */,
+			);
+			path = Builders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -629,6 +643,7 @@
 				4FECA3E4293951CB003EA394 /* FileManagement.swift in Sources */,
 				4F6A170029465FBA00282EF0 /* PlayButton.swift in Sources */,
 				4F597E65291323E700BC1046 /* SongList.swift in Sources */,
+				4FFCC85C2A4A834B0047D5FA /* TrackNumberText.swift in Sources */,
 				4FECA27C2922D8A8003EA394 /* AlbumEntry.swift in Sources */,
 				4FCD44232915B965001E7FCC /* Metadata.swift in Sources */,
 				4FECA2782922D03B003EA394 /* GridMenu.swift in Sources */,
@@ -642,6 +657,7 @@
 				4FFCC84D2A48B2560047D5FA /* AlbumHeader.swift in Sources */,
 				4FEC9555291DBC42003EA394 /* CategoriesView.swift in Sources */,
 				4F597D662912EC6100BC1046 /* ClassicMediaControls.swift in Sources */,
+				4FFCC85A2A4A24ED0047D5FA /* AppTabView.swift in Sources */,
 				4F597D592911A65100BC1046 /* StaticAlbumCover.swift in Sources */,
 				4F597D5F2912E07900BC1046 /* BoomicLibrary.swift in Sources */,
 				4FFCC84F2A48FBC10047D5FA /* SongContextMenu.swift in Sources */,
@@ -655,7 +671,7 @@
 				4FECA2822922E09E003EA394 /* ArtistList.swift in Sources */,
 				4FECA289292AD3CA003EA394 /* QueueList.swift in Sources */,
 				4FECA26E29229CBB003EA394 /* Categories.swift in Sources */,
-				4FFDE82729455FAA0046FB73 /* AlbumCover.swift in Sources */,
+				4FFDE82729455FAA0046FB73 /* CurrentSongAlbumCover.swift in Sources */,
 				4FA699A92942A8F90086EEBD /* ScrollingTimeView.swift in Sources */,
 				4F6A17042946AC3D00282EF0 /* ShuffleButton.swift in Sources */,
 				4F6A17062946AD8A00282EF0 /* RepeatButton.swift in Sources */,
