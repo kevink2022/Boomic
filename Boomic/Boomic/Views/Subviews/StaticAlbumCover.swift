@@ -1,5 +1,5 @@
 //
-//  AlbumCover.swift
+//  CurrentSongAlbumCover.swift
 //  Boomic
 //
 //  Created by Kevin Kelly on 11/1/22.

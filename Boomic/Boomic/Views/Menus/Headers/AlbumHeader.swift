@@ -13,7 +13,30 @@ struct AlbumHeader: View
     
     var body: some View
     {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack
+        {
+            StaticAlbumCover(image: album.albumCover)
+            
+            Text(album.title)
+                .font(.title)
+            
+            if let artist = album.artist
+            {
+                Text(artist.name)
+                    .font(.subheadline)
+            }
+            else if let artistName = album.artistName
+            {
+                Text(artistName)
+                    .font(.subheadline)
+            }
+            else
+            {
+                Text("Unknown Artist")
+                    .font(.subheadline)
+            }
+            
+        }
     }
 }
 

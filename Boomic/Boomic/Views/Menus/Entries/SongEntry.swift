@@ -29,6 +29,8 @@ struct SongEntry: View
             {
                 if let namespace = namespace
                 {
+                    TrackNumberText(song: song)
+                    
                     StaticAlbumCover(image: song.albumCover)
                         .matchedGeometryEffect(id: "album_cover", in: namespace)
                     
@@ -45,6 +47,8 @@ struct SongEntry: View
                 }
                 else
                 {
+                    TrackNumberText(song: song)
+                    
                     StaticAlbumCover(image: song.albumCover)
                     
                     VStack(alignment: .leading)

@@ -37,7 +37,7 @@ struct ClassicSongView: View
                 }
                 else
                 {
-                    AlbumCover()
+                    CurrentSongAlbumCover(song: song)
                         .matchedGeometryEffect(id: "album_cover", in: currentSong)
                     
                     SongTitles(song: song)
