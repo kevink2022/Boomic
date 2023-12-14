@@ -10,15 +10,27 @@ import SwiftUI
 struct StaticAlbumCover: View
 {
     typealias C = ViewConstants.Subviews.AlbumCover
+    @EnvironmentObject var manager : BoomicManager
     let image : ImageSource?
     
     var body: some View
     {
-        Image(image ?? .asset(C.defaultAlbumCover))
-            .resizable()
-            .aspectRatio(1, contentMode: .fit)
-            .cornerRadius(C.cornerRadius)
-            .padding(.horizontal, C.padding)
+        if manager.library.settings.showArt == .show
+        {
+            Image(image ?? .asset(C.defaultAlbumCover))
+                .resizable()
+                .aspectRatio(1, contentMode: .fit)
+                .cornerRadius(C.cornerRadius)
+                .padding(.horizontal, C.padding)
+        }
+        else
+        {
+            Image(.asset(C.defaultAlbumCover))
+                .resizable()
+                .aspectRatio(1, contentMode: .fit)
+                .cornerRadius(C.cornerRadius)
+                .padding(.horizontal, C.padding)
+        }
     }
 }
 

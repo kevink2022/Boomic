@@ -28,8 +28,8 @@ struct AlbumPage: View
                     {
                         manager.selectSong(queue: album.songs, queueIndex: index)
                         
-                        if manager.showQueueSheet == true { manager.showQueueSheet = false }
-                        else { manager.showCurrentSongSheet = true }
+                        if manager.showQueueSheet == true { manager.queueSheetStatus(false) }
+                        else { manager.currentSongSheetStatus(true) }
                     }
                     label:
                     {

@@ -11,9 +11,10 @@ import Foundation
 ///  saved in the library, and then can be shared that way.
 struct BoomicSettings : Codable
 {
-    var songGUI : SongGUI
-    var classicTimeSlider : ClassicTimeSlider
-    var albumCover : AlbumCover
+    var songGUI : SongGUISetting
+    var timeSlider : TimeSliderSetting
+    var albumGesture : AlbumGestureSetting
+    var showArt : ShowAlbumArtSetting
 }
 
 // statics
@@ -21,8 +22,9 @@ extension BoomicSettings
 {
     static let defaultSettings = BoomicSettings(
         songGUI: .classic,
-        classicTimeSlider: .classic,
-        albumCover: .notGestured
+        timeSlider: .classic,
+        albumGesture: .notGestured,
+        showArt: .show
     )
 }
 
@@ -35,7 +37,7 @@ extension BoomicSettings
 // Options ENUMS
 extension BoomicSettings
 {
-    enum SongGUI : String, CaseIterable, Codable, Identifiable
+    enum SongGUISetting : String, CaseIterable, Codable, Identifiable
     {
         case classic = "Classic GUI"
         case gesture = "Gesture GUI"
@@ -43,7 +45,7 @@ extension BoomicSettings
         var id : String { self.rawValue }
     }
     
-    enum ClassicTimeSlider : String, CaseIterable, Codable, Identifiable
+    enum TimeSliderSetting : String, CaseIterable, Codable, Identifiable
     {
         case classic = "Classic Slider"
         case scrolling = "Scrolling Slider"
@@ -51,10 +53,18 @@ extension BoomicSettings
         var id : String { self.rawValue }
     }
     
-    enum AlbumCover : String, CaseIterable, Codable, Identifiable
+    enum AlbumGestureSetting : String, CaseIterable, Codable, Identifiable
     {
         case notGestured = "Static"
         case gestured = "Gestured"
+        
+        var id : String { self.rawValue }
+    }
+    
+    enum ShowAlbumArtSetting : String, CaseIterable, Codable, Identifiable
+    {
+        case show = "Show Album Art"
+        case hide = "Hide Album Art"
         
         var id : String { self.rawValue }
     }
