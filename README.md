@@ -24,14 +24,14 @@ FLAC stands for Free Lossless Audio Codec. It is similar to MP3, in that it is d
 
 There are many types of compression formats, some lossy, some lossless. Some of the most common ones are:
 
-Lossy
+#### Lossy
 - **MP3** - MPEG-1 Audio Layer III or MPEG-2 Audio Layer III
 - **AAC** - Apple Audio Codec
-Lossless
+#### Lossless
 - **FLAC** - Free Lossless Audio Codec
 - **WAV** - Waveform Audio File
 - **ALAC** - Apple Lossless Audio Codec
-Container (Can be either)
+#### Container (Can be either)
 - **M4A** (MP4) - MPEG-4 Part 14
 
 Apple Music does support ALAC files being added to your Apple Music. However, you cannot have locally stored music alongside an Apple Music subscription. If you wish to have downloaded audio files as part of your library, you have to upload lossy versions to iCloud (and likely pay for extra space). There is a workaround, where you disable iCloud Library (and lose all of your Apple Music library/playlists), upload the lossless ALAC files onto your device, then reactivate iCloud Library. In the past, my library information returned when I reactivated iCloud library, but it is still a pain to convert my FLAC library to ALAC, and I worry that the library information could be overwritten while it's disabled.
