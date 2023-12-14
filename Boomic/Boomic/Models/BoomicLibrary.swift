@@ -32,8 +32,9 @@ struct BoomicLibrary : Codable
         playlists: [],
         settings: BoomicSettings(
             songGUI: .classic,
-            classicTimeSlider: .classic,
-            albumCover: .notGestured    
+            timeSlider: .classic,
+            albumGesture: .notGestured,
+            showArt: .show
         )
     )
 }

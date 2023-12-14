@@ -21,7 +21,7 @@ struct SettingsView: View
                 {
                     Picker("Song GUI", selection: $manager.library.settings.songGUI)
                     {
-                        ForEach(S.SongGUI.allCases)
+                        ForEach(S.SongGUISetting.allCases)
                         {
                             setting in Text(setting.rawValue).tag(setting)
                         }
@@ -31,9 +31,9 @@ struct SettingsView: View
                 
                 Section("Time Slider")
                 {
-                    Picker("Time Slider", selection: $manager.library.settings.classicTimeSlider)
+                    Picker("Time Slider", selection: $manager.library.settings.timeSlider)
                     {
-                        ForEach(S.ClassicTimeSlider.allCases)
+                        ForEach(S.TimeSliderSetting.allCases)
                         {
                             setting in Text(setting.rawValue).tag(setting)
                         }
@@ -43,15 +43,28 @@ struct SettingsView: View
                 
                 Section("Album Cover Gestures")
                 {
-                    Picker("Album Cover", selection: $manager.library.settings.albumCover)
+                    Picker("Album Cover", selection: $manager.library.settings.albumGesture)
                     {
-                        ForEach(S.AlbumCover.allCases)
+                        ForEach(S.AlbumGestureSetting.allCases)
                         {
                             setting in Text(setting.rawValue).tag(setting)
                         }
                     }
                     .pickerStyle(.segmented)
                 }
+                
+                Section("Show Album Art")
+                {
+                    Picker("Album Art", selection: $manager.library.settings.showArt)
+                    {
+                        ForEach(S.ShowAlbumArtSetting.allCases)
+                        {
+                            setting in Text(setting.rawValue).tag(setting)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+
             }
             
             if let song = manager.currentSong {

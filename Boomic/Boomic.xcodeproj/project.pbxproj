@@ -42,6 +42,7 @@
 		4FCD44232915B965001E7FCC /* Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCD44222915B965001E7FCC /* Metadata.swift */; };
 		4FCD44262915BB04001E7FCC /* InitMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCD44252915BB04001E7FCC /* InitMethods.swift */; };
 		4FD5045E293AB2F000B9C76F /* GesturedAlbumCover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD5045D293AB2F000B9C76F /* GesturedAlbumCover.swift */; };
+		4FD81CD52A93F5B100B6B890 /* ViewControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD81CD42A93F5B100B6B890 /* ViewControls.swift */; };
 		4FEC954C291995A6003EA394 /* BoomicSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEC954B291995A6003EA394 /* BoomicSlider.swift */; };
 		4FEC954E291A18A7003EA394 /* ClassicQueueControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEC954D291A18A7003EA394 /* ClassicQueueControls.swift */; };
 		4FEC9551291AC6C1003EA394 /* CurrentSongBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEC9550291AC6C1003EA394 /* CurrentSongBar.swift */; };
@@ -133,6 +134,7 @@
 		4FCD44252915BB04001E7FCC /* InitMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitMethods.swift; sourceTree = "<group>"; };
 		4FD5045C293A98F900B9C76F /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = TODO.md; path = Boomic/Documentation/TODO.md; sourceTree = SOURCE_ROOT; };
 		4FD5045D293AB2F000B9C76F /* GesturedAlbumCover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GesturedAlbumCover.swift; sourceTree = "<group>"; };
+		4FD81CD42A93F5B100B6B890 /* ViewControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControls.swift; sourceTree = "<group>"; };
 		4FEC954B291995A6003EA394 /* BoomicSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoomicSlider.swift; sourceTree = "<group>"; };
 		4FEC954D291A18A7003EA394 /* ClassicQueueControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassicQueueControls.swift; sourceTree = "<group>"; };
 		4FEC9550291AC6C1003EA394 /* CurrentSongBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSongBar.swift; sourceTree = "<group>"; };
@@ -413,6 +415,7 @@
 				4FCD44252915BB04001E7FCC /* InitMethods.swift */,
 				4FECA26F2922B758003EA394 /* CategoryMethods.swift */,
 				4FECA3E3293951CB003EA394 /* FileManagement.swift */,
+				4FD81CD42A93F5B100B6B890 /* ViewControls.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -656,6 +659,7 @@
 				4F6A16FB29465B0400282EF0 /* CurrentSongView.swift in Sources */,
 				4FFCC84D2A48B2560047D5FA /* AlbumHeader.swift in Sources */,
 				4FEC9555291DBC42003EA394 /* CategoriesView.swift in Sources */,
+				4FD81CD52A93F5B100B6B890 /* ViewControls.swift in Sources */,
 				4F597D662912EC6100BC1046 /* ClassicMediaControls.swift in Sources */,
 				4FFCC85A2A4A24ED0047D5FA /* AppTabView.swift in Sources */,
 				4F597D592911A65100BC1046 /* StaticAlbumCover.swift in Sources */,

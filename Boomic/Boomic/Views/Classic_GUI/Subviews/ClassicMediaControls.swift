@@ -19,30 +19,27 @@ struct ClassicMediaControls: View
             
             Button
             {
-                withAnimation { manager.toLastSong() }
+                withAnimation(.linear(duration: C.animationDuration)) { manager.toLastSong() }
             }
-            label:
+        label:
             {
                 Image(systemName: C.lastSongSF)
             }
             
             Spacer()
             
-            Button
-            {
-                manager.togglePlayback()
-            }
-            label:
-            {
+            withAnimation(.linear(duration: C.animationDuration)) {
                 Image(systemName: manager.isPlaying ? C.pauseSF : C.playSF)
+                    .onTapGesture {
+                        manager.togglePlayback()
+                    }
             }
-            .disabled(!manager.songExists)
             
             Spacer()
             
             Button
             {
-                withAnimation { manager.toNextSong() }
+                withAnimation(.linear(duration: C.animationDuration)) { manager.toNextSong() }
             }
             label:
             {
@@ -55,8 +52,21 @@ struct ClassicMediaControls: View
         .foregroundColor(C.color)
     }
     
-    typealias C = ViewConstants.Classic_GUI.Subviews.ClassicMediaControls
+    typealias C = ViewConstants.ClassicMediaControls
     typealias F = ViewConstants.Classic_GUI.Fonts
+}
+
+extension ViewConstants
+{
+    struct ClassicMediaControls
+    {
+        static let animationDuration = 0.005
+        static let playSF = "play.fill"
+        static let pauseSF = "pause.fill"
+        static let lastSongSF = "backward.fill"
+        static let nextSongSF = "forward.fill"
+        static let color = Color.primary
+    }
 }
 
 struct ClassicMediaControls_Previews: PreviewProvider {

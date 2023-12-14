@@ -86,14 +86,7 @@ struct ViewConstants
         
         struct Subviews
         {
-            struct ClassicMediaControls
-            {
-                static let playSF = "play.fill"
-                static let pauseSF = "pause.fill"
-                static let lastSongSF = "backward.fill"
-                static let nextSongSF = "forward.fill"
-                static let color = Color.primary
-            }
+            
             
             struct ClassicTitles
             {

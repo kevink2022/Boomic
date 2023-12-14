@@ -14,7 +14,12 @@ struct CurrentSongAlbumCover: View
     
     var body: some View
     {
-        switch manager.library.settings.albumCover
+        if (manager.library.settings.showArt == .show)
+        {
+            StaticAlbumCover(image: nil)
+        }
+        
+        switch manager.library.settings.albumGesture
         {
         case .notGestured: StaticAlbumCover(image: song.albumCover)
                 .contextMenu { SongContextMenu(song: song) }

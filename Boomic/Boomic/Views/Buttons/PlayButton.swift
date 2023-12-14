@@ -26,7 +26,7 @@ struct PlayButton: View
         .disabled(!manager.songExists)
     }
     
-    typealias C = ViewConstants.Classic_GUI.Subviews.ClassicMediaControls
+    typealias C = ViewConstants.ClassicMediaControls
 }
 
 struct PlayButton_Previews: PreviewProvider {

@@ -9,6 +9,7 @@ import Foundation
 import AVFoundation
 
 // MARK: - Playback State
+@MainActor
 extension BoomicManager
 {
     /// If a song's file is moved or deleted, then promt user and don't allow playback
@@ -56,6 +57,7 @@ extension BoomicManager
 }
 
 // MARK: - Playback Controls
+@MainActor
 extension BoomicManager
 {
     func togglePlayback() { isPlaying ? pause() : play() }
@@ -64,6 +66,7 @@ extension BoomicManager
 }
 
 // MARK: - Next and Last Songs
+@MainActor
 extension BoomicManager
 {
     var nextSongIndex : Int?
@@ -207,7 +210,7 @@ extension BoomicManager
             setupNowPlaying()
             addPeriodicTimeObserver()
             songProgress = 0.0
-            audioLevelSamples = [Float](repeating: 0.0, count: Int(ceil(song.duration ?? 50.0)))
+            //audioLevelSamples = [Float](repeating: 0.0, count: Int(ceil(song.duration ?? 50.0)))
             if !paused { play() }
             Task { await setAudioLevels() }
         }
@@ -220,7 +223,7 @@ extension BoomicManager
     {
         // Notify every half second
         let timeScale = CMTimeScale(NSEC_PER_SEC)
-        let time = CMTime(seconds: 0.05, preferredTimescale: timeScale)
+        let time = CMTime(seconds: 1, preferredTimescale: timeScale)
 
         player.addPeriodicTimeObserver(forInterval: time, queue: .main)
         {

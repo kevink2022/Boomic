@@ -2,7 +2,6 @@
 
 Only three things in todo now
 ## TODO NOW
-- home bar
 - playlists
 - stealthmode
     - libraries
@@ -12,10 +11,13 @@ Move things up when ready
 - persistence
 - search
 - likes and ratings
+- picture piano
+    - tap to the beat, switch between pictures
 
 
 ### TODO complete
 - long press
+- home bar
 
 
 

@@ -9,6 +9,7 @@ import Foundation
 import AVFoundation
 import MediaPlayer
 
+@MainActor
 class BoomicManager : ObservableObject
 {
     // MARK: - Model Objects
@@ -45,8 +46,9 @@ class BoomicManager : ObservableObject
             playlists: [],
             settings: BoomicSettings(
                 songGUI: .classic,
-                classicTimeSlider: .classic,
-                albumCover: .notGestured
+                timeSlider: .classic,
+                albumGesture: .notGestured,
+                showArt: .show
             )
         )
         storage = StorageManager<BoomicLibrary>(fileName: "library")

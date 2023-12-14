@@ -13,7 +13,7 @@ struct ClassicTimeSlider: View
     
     var body: some View
     {
-        switch manager.library.settings.classicTimeSlider
+        switch manager.library.settings.timeSlider
         {
         case .classic: Classic()
         case .scrolling: Scrolling()
