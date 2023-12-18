@@ -19,6 +19,10 @@ Boomic Music currently has a few options for the current song view GUI. By defau
 - Waveform View: Replace the time slider with a swipe-able waveform, similar to playback apps like Soundcloud and Poweramp (Android only)
 - Gesture GUI: Replace the classic GUI with a gesture-based GUI, with vertical time and volume sliders for ease of use.
 Note: iOS does not expose its system volume control directly to applications, only through a premade (and outdated) UIVolumeSlider. So currently, the volume adjusts from 0-100% of the current system volume. This will likely be changed a 80-100%, allowing for fine adjustments, if not scrapped entirely. (Apple, can you please allow finer volume incrementation with the volume buttons as a system setting?) 
+
+![Boomic Gui Examples](images/boomic.png)
+Examples of the Boomic Music GUI
+
 ## What is FLAC? High Resolution Music?
 FLAC stands for Free Lossless Audio Codec. It is similar to MP3, in that it is designed to compress the raw files used in music production, such as WAV, so they take up less space on an end user's phone. However, MP3 compression is lossy, which means some of the information contained in the original recording is lost in the compression process. FLAC, as the name implies, is a lossless format, so none of the information contained in the original raw files is lost. Despite the fact that it is very difficult to tell a difference between modern MP3 compression and lossless FLAC, insecure audiophiles like myself can only relax when the potential bottleneck of compression is eliminated in our quest for aural nirvana (especially when we spend so much on the equipment).
 
