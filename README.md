@@ -1,7 +1,7 @@
 # Boomic Music
 Boomic Music is a music playback app designed to provide an elegant, low-friction way to manage a High Resolution music library on iOS. 
 
-This project was my final project for the iOS App Development class at Penn State. It was a 5-week (6-week if you include fall break) project where the majority of the development was completed. The final submission can be found in the [original repository](), along with all my other projects from the class. There are some updates from after December 2022, but not much. 
+This project was my final project for the iOS App Development class at Penn State. It was a 5-week (6-week if you include fall break) project where the majority of the development was completed. The final submission can be found in the [original repository](https://github.com/kevink2022/ios-apps), along with all my other projects from the class. There are some updates from after December 2022, but not much. 
 
 ## Current Features
 Boomic music currently supports the following features:
