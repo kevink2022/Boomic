@@ -7,17 +7,26 @@
 
 import Foundation
 
-public struct Artist {
-    public let id: UUID = UUID()
+public struct Artist: Codable, Identifiable {
+    public let id: ArtistID
     public let name: String
-    public let albums: [Album]
+    
+    public let albums: [AlbumID]
     
     public init(
-        name: String
-        , albums: [Album]
+        id: ArtistID
+        , name: String
+        , albums: [AlbumID]
     ) {
+        self.id = id
         self.name = name
         self.albums = albums
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case albums
     }
 }
 

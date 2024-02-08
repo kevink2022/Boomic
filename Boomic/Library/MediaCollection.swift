@@ -24,25 +24,25 @@ public protocol MediaCollectionItem : Identifiable {
 
 extension Song: MediaCollectionItem {
     public var label: String { title ?? source.label }
-    public var subLabel: String? { artist?.label }
+    public var subLabel: String? { nil } //artist?.label }
 }
 
 // MARK: - Album Conformance
 
 extension Album: MediaCollection {
-    public var items: [any MediaCollectionItem] { [] }
+    public var items: [any MediaCollectionItem] { [] } //songs }
 }
 
 extension Album: MediaCollectionItem {
     public var duration: TimeInterval { 0 }
     public var label: String { title }
-    public var subLabel: String? { artist?.label }
+    public var subLabel: String? { nil } //artist?.label }
 }
 
 // MARK: - Artist Conformance
 
 extension Artist: MediaCollection {
-    public var items: [any MediaCollectionItem] { albums }
+    public var items: [any MediaCollectionItem] { [] } //albums }
 }
 
 extension Artist: MediaCollectionItem {
