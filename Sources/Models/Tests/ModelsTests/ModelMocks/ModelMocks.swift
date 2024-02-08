@@ -9,58 +9,56 @@ import Foundation
 import Models
 
 extension Song {
-    static let girlsApartment : [Song] = [
-        Song.aCagedPersona
-        , Song.labyrinth
-        , Song.noMoreNews
-        , Song.burningRumTea
+    static let girlsApartment : [SongID] = [
+        Song.aCagedPersona.id
+        , Song.labyrinth.id
+        , Song.noMoreNews.id
+        , Song.burningRumTea.id
     ]
 
     static let aCagedPersona = Song(
-        source: .local(URL.documentsDirectory)
+        id: SongID()
+        , source: .local(URL.documentsDirectory)
         , duration: 219
         , title: "A Caged Persona"
-        , artist: Artist.saxi
-        , album: Album.girlsApartment2
+        , artist: Artist.saxi.id
+        , album: Album.girlsApartment.id
         , art: nil
     )
     static let labyrinth = Song(
-        source: .local(URL.documentsDirectory)
+        id: SongID()
+        , source: .local(URL.documentsDirectory)
         , duration: 238
         , title: "Labyrinth"
-        , artist: Artist.con
-        , album: Album.girlsApartment2
+        , artist: Artist.con.id
+        , album: Album.girlsApartment.id
         , art: nil
     )
     static let noMoreNews = Song(
-        source: .local(URL.documentsDirectory)
+        id: SongID()
+        , source: .local(URL.documentsDirectory)
         , duration: 223
         , title: "No More News"
-        , artist: Artist.saxi
-        , album: Album.girlsApartment2
+        , artist: Artist.saxi.id
+        , album: Album.girlsApartment.id
         , art: nil
     )
     static let burningRumTea = Song(
-        source: .local(URL.documentsDirectory)
+        id: SongID()
+        , source: .local(URL.documentsDirectory)
         , duration: 296
         , title: "Burning Rum Tea"
-        , artist: Artist.con
-        , album: Album.girlsApartment2
+        , artist: Artist.con.id
+        , album: Album.girlsApartment.id
         , art: nil
     )
 }
 
 extension Album {
     static let girlsApartment = Album(
-        title: "Girls Apartment"
-        , songs: []
-        , art: nil
-        , artist: nil
-    )
-    // Prevent looping inits in previews
-    static let girlsApartment2 = Album(
-        title: "Girls Apartment"
-        , songs: []
+        id: AlbumID()
+        , title: "Girls Apartment"
+        , songs: Song.girlsApartment
         , art: nil
         , artist: nil
     )
@@ -68,11 +66,13 @@ extension Album {
 
 extension Artist {
     static let saxi = Artist(
-        name: "SaXi"
+        id: ArtistID()
+        , name: "SaXi"
         , albums: []
     )
     static let con = Artist(
-        name: "CON"
+        id: ArtistID()
+        , name: "CON"
         , albums: []
     )
 
