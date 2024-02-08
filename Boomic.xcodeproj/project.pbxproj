@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,6 +14,9 @@
 		4F04DCCB2B74727F006114B3 /* BoomicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F04DCCA2B74727F006114B3 /* BoomicTests.swift */; };
 		4F04DCD52B74727F006114B3 /* BoomicUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F04DCD42B74727F006114B3 /* BoomicUITests.swift */; };
 		4F04DCD72B74727F006114B3 /* BoomicUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F04DCD62B74727F006114B3 /* BoomicUITestsLaunchTests.swift */; };
+		4F04DCF42B74AEBC006114B3 /* MediaCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F04DCF12B74AEBC006114B3 /* MediaCollection.swift */; };
+		4F04DCF62B74AEBC006114B3 /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F04DCF32B74AEBC006114B3 /* Library.swift */; };
+		4F04DCF92B74B77B006114B3 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 4F04DCF82B74B77B006114B3 /* Models */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +52,8 @@
 		4F04DCE52B747EFC006114B3 /* Database */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Database; sourceTree = "<group>"; };
 		4F04DCE62B747F0D006114B3 /* Networking */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Networking; sourceTree = "<group>"; };
 		4F04DCE72B747F38006114B3 /* Models */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Models; sourceTree = "<group>"; };
+		4F04DCF12B74AEBC006114B3 /* MediaCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaCollection.swift; sourceTree = "<group>"; };
+		4F04DCF32B74AEBC006114B3 /* Library.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Library.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F04DCF92B74B77B006114B3 /* Models in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,11 +106,12 @@
 		4F04DCB72B74727D006114B3 /* Boomic */ = {
 			isa = PBXGroup;
 			children = (
+				4F04DCE92B74ADEB006114B3 /* Library */,
+				4F04DCBC2B74727E006114B3 /* Assets.xcassets */,
+				4F04DCBF2B74727E006114B3 /* Preview Content */,
+				4F04DCBE2B74727E006114B3 /* Boomic.entitlements */,
 				4F04DCB82B74727D006114B3 /* BoomicApp.swift */,
 				4F04DCBA2B74727D006114B3 /* ContentView.swift */,
-				4F04DCBC2B74727E006114B3 /* Assets.xcassets */,
-				4F04DCBE2B74727E006114B3 /* Boomic.entitlements */,
-				4F04DCBF2B74727E006114B3 /* Preview Content */,
 			);
 			path = Boomic;
 			sourceTree = "<group>";
@@ -145,6 +152,15 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
+		4F04DCE92B74ADEB006114B3 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				4F04DCF32B74AEBC006114B3 /* Library.swift */,
+				4F04DCF12B74AEBC006114B3 /* MediaCollection.swift */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -161,6 +177,9 @@
 			dependencies = (
 			);
 			name = Boomic;
+			packageProductDependencies = (
+				4F04DCF82B74B77B006114B3 /* Models */,
+			);
 			productName = Boomic;
 			productReference = 4F04DCB52B74727D006114B3 /* Boomic.app */;
 			productType = "com.apple.product-type.application";
@@ -233,6 +252,9 @@
 				Base,
 			);
 			mainGroup = 4F04DCAC2B74727D006114B3;
+			packageReferences = (
+				4F04DCF72B74B77B006114B3 /* XCLocalSwiftPackageReference "Sources/Models" */,
+			);
 			productRefGroup = 4F04DCB62B74727D006114B3 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -275,7 +297,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F04DCF62B74AEBC006114B3 /* Library.swift in Sources */,
 				4F04DCBB2B74727D006114B3 /* ContentView.swift in Sources */,
+				4F04DCF42B74AEBC006114B3 /* MediaCollection.swift in Sources */,
 				4F04DCB92B74727D006114B3 /* BoomicApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -633,6 +657,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		4F04DCF72B74B77B006114B3 /* XCLocalSwiftPackageReference "Sources/Models" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Sources/Models;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4F04DCF82B74B77B006114B3 /* Models */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Models;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4F04DCAD2B74727D006114B3 /* Project object */;
 }
