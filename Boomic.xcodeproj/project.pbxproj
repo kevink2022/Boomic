@@ -45,6 +45,10 @@
 		4F04DCD02B74727F006114B3 /* BoomicUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BoomicUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F04DCD42B74727F006114B3 /* BoomicUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoomicUITests.swift; sourceTree = "<group>"; };
 		4F04DCD62B74727F006114B3 /* BoomicUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoomicUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		4F04DCE42B7476E4006114B3 /* Repository */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Repository; sourceTree = "<group>"; };
+		4F04DCE52B747EFC006114B3 /* Database */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Database; sourceTree = "<group>"; };
+		4F04DCE62B747F0D006114B3 /* Networking */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Networking; sourceTree = "<group>"; };
+		4F04DCE72B747F38006114B3 /* Models */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Models; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +79,7 @@
 		4F04DCAC2B74727D006114B3 = {
 			isa = PBXGroup;
 			children = (
+				4F04DCE32B7476C0006114B3 /* Sources */,
 				4F04DCB72B74727D006114B3 /* Boomic */,
 				4F04DCC92B74727F006114B3 /* BoomicTests */,
 				4F04DCD32B74727F006114B3 /* BoomicUITests */,
@@ -127,6 +132,17 @@
 				4F04DCD62B74727F006114B3 /* BoomicUITestsLaunchTests.swift */,
 			);
 			path = BoomicUITests;
+			sourceTree = "<group>";
+		};
+		4F04DCE32B7476C0006114B3 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				4F04DCE72B747F38006114B3 /* Models */,
+				4F04DCE62B747F0D006114B3 /* Networking */,
+				4F04DCE52B747EFC006114B3 /* Database */,
+				4F04DCE42B7476E4006114B3 /* Repository */,
+			);
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
