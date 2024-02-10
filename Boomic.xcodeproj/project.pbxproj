@@ -54,6 +54,7 @@
 		4F04DCE72B747F38006114B3 /* Models */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Models; sourceTree = "<group>"; };
 		4F04DCF12B74AEBC006114B3 /* MediaCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaCollection.swift; sourceTree = "<group>"; };
 		4F04DCF32B74AEBC006114B3 /* Library.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Library.swift; sourceTree = "<group>"; };
+		4F6135CD2B7757DB00AF825C /* BoomicTestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = BoomicTestPlan.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +86,7 @@
 		4F04DCAC2B74727D006114B3 = {
 			isa = PBXGroup;
 			children = (
+				4F6135CD2B7757DB00AF825C /* BoomicTestPlan.xctestplan */,
 				4F04DCE32B7476C0006114B3 /* Sources */,
 				4F04DCB72B74727D006114B3 /* Boomic */,
 				4F04DCC92B74727F006114B3 /* BoomicTests */,
