@@ -35,6 +35,141 @@ extension Song {
         , albumTitle: "Girls Apartment"
     )
     
+    static let songsSmallJSON = """
+    [
+        {
+          "id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+          "source": {
+            "local" : {
+              "url": "file:///fakepath/a_caged_persona.mp3"
+            }
+          },
+          "duration": 217,
+          "title": "a caged persona",
+          "track_number": 1,
+          "artist_name": "TLi-synth",
+          "album_title": "Girls Apartment"
+        },
+        {
+          "id": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+          "source": {
+            "local" : {
+              "url": "file:///fakepath/voyage_gothic_bold.mp3"
+            }
+          },
+          "duration": 219,
+          "title": "voyage Gothic Bold",
+          "track_number": 2,
+          "artist_name": "flap+frog",
+          "album_title": "Girls Apartment"
+        },
+        {
+          "id": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+          "source": {
+            "local" : {
+              "url": "file:///fakepath/fall_coin_sunset.mp3"
+            }
+          },
+          "duration": 260,
+          "title": "Fall Coin Sunset",
+          "track_number": 3,
+          "artist_name": "OrangeCoffee",
+          "album_title": "Girls Apartment"
+        },
+        {
+          "id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
+          "source": {
+            "local" : {
+              "url": "file:///fakepath/in_the_shade.mp3"
+            }
+          },
+          "duration": 233,
+          "title": "In The Shade",
+          "track_number": 4,
+          "artist_name": "トマト組",
+          "album_title": "Girls Apartment"
+        },
+        {
+          "id": "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b",
+          "source": {
+            "local" : {
+              "url": "file:///fakepath/labyrinth.mp3"
+            }
+          },
+          "duration": 236,
+          "title": "Labyrinth",
+          "track_number": 5,
+          "artist_name": "surreacheese",
+          "album_title": "Girls Apartment"
+        },
+        {
+          "id": "6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c",
+          "source": {
+            "local" : {
+              "url": "file:///fakepath/tea_break.mp3"
+            }
+          },
+          "duration": 215,
+          "title": "tea break",
+          "track_number": 6,
+          "artist_name": "OrangeCoffee",
+          "album_title": "Girls Apartment"
+        },
+        {
+          "id": "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d",
+          "source": {
+            "local" : {
+              "url": "file:///fakepath/no_more_news.mp3"
+            }
+          },
+          "duration": 225,
+          "title": "No More News",
+          "track_number": 7,
+          "artist_name": "TLi-synth",
+          "album_title": "Girls Apartment"
+        },
+        {
+          "id": "8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
+          "source": {
+            "local" : {
+              "url": "file:///fakepath/parfait_amour.mp3"
+            }
+          },
+          "duration": 280,
+          "title": "Parfait Amour",
+          "track_number": 8,
+          "artist_name": "トマト組",
+          "album_title": "Girls Apartment"
+        },
+        {
+          "id": "9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f",
+          "source": {
+            "local" : {
+              "url": "file:///fakepath/burning_rum_tea.mp3"
+            }
+          },
+          "duration": 295,
+          "title": "Burning Rum Tea",
+          "track_number": 9,
+          "artist_name": "surreacheese",
+          "album_title": "Girls Apartment"
+        },
+        {
+          "id": "0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5g",
+          "source": {
+            "local" : {
+              "url": "file:///fakepath/un_fiore_rosso_take1.mp3"
+            }
+          },
+          "duration": 172,
+          "title": "Un Fiore Rosso (Take1)",
+          "track_number": 10,
+          "artist_name": "flap+frog",
+          "album_title": "Girls Apartment"
+        }
+    ]
+    """
+    
     static let songsJSON = """
     [
       {
@@ -155,7 +290,7 @@ extension Song {
         "album_title": "Girls Apartment"
       },
       {
-        "id": "0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5g",
+        "id": "0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a",
         "source": {
           "local" : {
             "url": "file:///fakepath/un_fiore_rosso_take1.mp3"
