@@ -137,6 +137,69 @@ final class ModelsTests: XCTestCase {
         XCTAssertEqual(album.title, Optional("Girls Apartment"))
     }
     
+    func test_artist_decodeJSON_parsesKeys() {
+        guard let jsonData = Artist.synthJSON.data(using: .utf8) else {
+            XCTFail("Failed to convert test data to JSON")
+            return
+        }
+        
+        let artist: Artist
+        do {
+            artist = try decoder.decode(Artist.self, from: jsonData)
+        } catch {
+            XCTFail("Failed to decode test data: \(error.localizedDescription)")
+            return
+        }
+        
+        XCTAssertEqual(artist.id, UUID(uuidString: "98a3cb51-319e-4c98-92ce-5047b2ea7536"))
+        XCTAssertEqual(artist.name, "TLi-synth")
+    }
+    
+    func test_artist_decodeJSON_parsesOptionals() {
+        guard let jsonData = Artist.synthJSON.data(using: .utf8) else {
+            XCTFail("Failed to convert test data to JSON")
+            return
+        }
+        
+        let artist: Artist
+        do {
+            artist = try decoder.decode(Artist.self, from: jsonData)
+        } catch {
+            XCTFail("Failed to decode test data: \(error.localizedDescription)")
+            return
+        }
+        
+        XCTAssertEqual(artist.songs.count, 2)
+        XCTAssertEqual(artist.songs[0], UUID(uuidString: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"))
+        XCTAssertEqual(artist.songs[1], UUID(uuidString: "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d"))
+        XCTAssertEqual(artist.albums.count, 1)
+        XCTAssertEqual(artist.albums[0], UUID(uuidString: "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"))
+        XCTAssertEqual(artist.art, nil)
+    }
+    
+    func test_artist_encodeAndDecodeJSON() {
+        let jsonData: Data
+        
+        do {
+            jsonData = try encoder.encode(Artist.synth)
+        } catch {
+            XCTFail("Failed to encode test model: \(error.localizedDescription)")
+            return
+        }
+        
+        //print("\(String(describing: String(data: jsonData, encoding: .utf8)))")
+        
+        let artist: Artist
+        do {
+            artist = try decoder.decode(Artist.self, from: jsonData)
+        } catch {
+            XCTFail("Failed to decode test data: \(error.localizedDescription)")
+            return
+        }
+                
+        XCTAssertEqual(artist.name, Optional("TLi-synth"))
+    }
+    
 //    func test_songArray_decodeJSON_parsesKeys() {
 //        XCTFail("Test not yet initialized.")
 //        
