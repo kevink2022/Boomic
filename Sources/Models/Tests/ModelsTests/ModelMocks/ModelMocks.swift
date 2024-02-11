@@ -13,15 +13,27 @@ extension Song {
     {
       "id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
       "source": {
-        "local": "file:///fakepath/a_caged_persona.mp3"
+        "local" : {
+          "_0": "file:///fakepath/a_caged_persona.mp3"
+        }
       },
       "duration": 217,
       "title": "a caged persona",
-      "trackNumber": 1,
-      "artistName": "TLi-synth",
-      "albumTitle": "Girls Apartment"
+      "track_number": 1,
+      "artist_name": "TLi-synth",
+      "album_title": "Girls Apartment"
     }
     """
+    
+    static let aCagedPersona = Song(
+        id: UUID(uuidString: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d")!
+        , source: .local(URL(string: "file:///fakepath/a_caged_persona.mp3")!)
+        , duration: 217
+        , title: "a caged persona"
+        , trackNumber: 1
+        , artistName: "TLi-synth"
+        , albumTitle: "Girls Apartment"
+    )
     
     static let girlsApartmentJSON = """
     [
@@ -30,164 +42,94 @@ extension Song {
         "source": "UnknownSource",
         "duration": 217,
         "title": "a caged persona",
-        "trackNumber": 1,
-        "artistName": "TLi-synth",
-        "albumTitle": "Girls Apartment"
+        "track_number": 1,
+        "artist_name": "TLi-synth",
+        "album_title": "Girls Apartment"
       },
       {
         "id": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
         "source": "UnknownSource",
         "duration": 219,
         "title": "voyage Gothic Bold",
-        "trackNumber": 2,
-        "artistName": "flap+frog",
-        "albumTitle": "Girls Apartment"
+        "track_number": 2,
+        "artist_name": "flap+frog",
+        "album_title": "Girls Apartment"
       },
       {
         "id": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
         "source": "UnknownSource",
         "duration": 260,
         "title": "Fall Coin Sunset",
-        "trackNumber": 3,
-        "artistName": "OrangeCoffee",
-        "albumTitle": "Girls Apartment"
+        "track_number": 3,
+        "artist_name": "OrangeCoffee",
+        "album_title": "Girls Apartment"
       },
       {
         "id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
         "source": "UnknownSource",
         "duration": 233,
         "title": "In The Shade",
-        "trackNumber": 4,
-        "artistName": "トマト組",
-        "albumTitle": "Girls Apartment"
+        "track_number": 4,
+        "artist_name": "トマト組",
+        "album_title": "Girls Apartment"
       },
       {
         "id": "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b",
         "source": "UnknownSource",
         "duration": 236,
         "title": "Labyrinth",
-        "trackNumber": 5,
-        "artistName": "surreacheese",
-        "albumTitle": "Girls Apartment"
+        "track_number": 5,
+        "artist_name": "surreacheese",
+        "album_title": "Girls Apartment"
       },
       {
         "id": "6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c",
         "source": "UnknownSource",
         "duration": 215,
         "title": "tea break",
-        "trackNumber": 6,
-        "artistName": "OrangeCoffee",
-        "albumTitle": "Girls Apartment"
+        "track_number": 6,
+        "artist_name": "OrangeCoffee",
+        "album_title": "Girls Apartment"
       },
       {
         "id": "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d",
         "source": "UnknownSource",
         "duration": 225,
         "title": "No More News",
-        "trackNumber": 7,
-        "artistName": "TLi-synth",
-        "albumTitle": "Girls Apartment"
+        "track_number": 7,
+        "artist_name": "TLi-synth",
+        "album_title": "Girls Apartment"
       },
       {
         "id": "8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
         "source": "UnknownSource",
         "duration": 280,
         "title": "Parfait Amour",
-        "trackNumber": 8,
-        "artistName": "トマト組",
-        "albumTitle": "Girls Apartment"
+        "track_number": 8,
+        "artist_name": "トマト組",
+        "album_title": "Girls Apartment"
       },
       {
         "id": "9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f",
         "source": "UnknownSource",
         "duration": 295,
         "title": "Burning Rum Tea",
-        "trackNumber": 9,
-        "artistName": "surreacheese",
-        "albumTitle": "Girls Apartment"
+        "track_number": 9,
+        "artist_name": "surreacheese",
+        "album_title": "Girls Apartment"
       },
       {
         "id": "0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5g",
         "source": "UnknownSource",
         "duration": 172,
         "title": "Un Fiore Rosso (Take1)",
-        "trackNumber": 10,
-        "artistName": "flap+frog",
-        "albumTitle": "Girls Apartment"
+        "track_number": 10,
+        "artist_name": "flap+frog",
+        "album_title": "Girls Apartment"
       }
     ]
     """
-    
 }
-//extension Song {
-//    static let girlsApartment : [SongID] = [
-//        Song.aCagedPersona.id
-//        , Song.labyrinth.id
-//        , Song.noMoreNews.id
-//        , Song.burningRumTea.id
-//    ]
-//
-//    static let aCagedPersona = Song(
-//        id: SongID()
-//        , source: .local(URL.documentsDirectory)
-//        , duration: 219
-//        , title: "A Caged Persona"
-//        , artist: Artist.saxi.id
-//        , album: Album.girlsApartment.id
-//        , art: nil
-//    )
-//    static let labyrinth = Song(
-//        id: SongID()
-//        , source: .local(URL.documentsDirectory)
-//        , duration: 238
-//        , title: "Labyrinth"
-//        , artist: Artist.con.id
-//        , album: Album.girlsApartment.id
-//        , art: nil
-//    )
-//    static let noMoreNews = Song(
-//        id: SongID()
-//        , source: .local(URL.documentsDirectory)
-//        , duration: 223
-//        , title: "No More News"
-//        , artist: Artist.saxi.id
-//        , album: Album.girlsApartment.id
-//        , art: nil
-//    )
-//    static let burningRumTea = Song(
-//        id: SongID()
-//        , source: .local(URL.documentsDirectory)
-//        , duration: 296
-//        , title: "Burning Rum Tea"
-//        , artist: Artist.con.id
-//        , album: Album.girlsApartment.id
-//        , art: nil
-//    )
-//}
-//
-//extension Album {
-//    static let girlsApartment = Album(
-//        id: AlbumID()
-//        , title: "Girls Apartment"
-//        , songs: Song.girlsApartment
-//        , art: nil
-//        , artist: nil
-//    )
-//}
-//
-//extension Artist {
-//    static let saxi = Artist(
-//        id: ArtistID()
-//        , name: "SaXi"
-//        , albums: []
-//    )
-//    static let con = Artist(
-//        id: ArtistID()
-//        , name: "CON"
-//        , albums: []
-//    )
-//
-//}
 
 /*
 1 A Caged Persona 3:39

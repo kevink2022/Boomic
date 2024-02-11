@@ -17,11 +17,11 @@ public typealias SongID = MediaID
 public typealias AlbumID = MediaID
 public typealias ArtistID = MediaID
 
-public enum MediaSource : Codable {
+public enum MediaSource: Codable, Equatable {
     case local(URL)
 }
 
-public enum MediaArt : Codable {
+public enum MediaArt: Codable {
     case local(URL)
     case embedded(URL)
 }
