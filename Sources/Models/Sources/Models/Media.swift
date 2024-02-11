@@ -18,7 +18,7 @@ public typealias AlbumID = MediaID
 public typealias ArtistID = MediaID
 
 public enum MediaSource: Codable, Equatable {
-    case local(URL)
+    case local(url: URL)
 }
 
 public enum MediaArt: Codable, Equatable {
