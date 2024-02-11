@@ -11,22 +11,31 @@ public struct Artist: Codable, Identifiable {
     public let id: ArtistID
     public let name: String
     
+    public let songs: [SongID]
     public let albums: [AlbumID]
+    
+    public let art: MediaArt?
     
     public init(
         id: ArtistID
         , name: String
+        , songs: [SongID]
         , albums: [AlbumID]
+        , art: MediaArt? = nil
     ) {
         self.id = id
         self.name = name
+        self.songs = songs
         self.albums = albums
+        self.art = art
     }
     
     enum CodingKeys: String, CodingKey {
         case id
         case name
+        case songs
         case albums
+        case art
     }
 }
 

@@ -38,7 +38,7 @@ public struct Album: Codable, Identifiable {
         case title
         case art
         case songs
-        case artistName
+        case artistName = "artist_name"
         case artists
     }
 }
