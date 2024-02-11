@@ -200,46 +200,60 @@ final class ModelsTests: XCTestCase {
         XCTAssertEqual(artist.name, Optional("TLi-synth"))
     }
     
-//    func test_songArray_decodeJSON_parsesKeys() {
-//        XCTFail("Test not yet initialized.")
-//        
-//        guard let jsonData = Song.aCagedPersonaJSON.data(using: .utf8) else {
-//            XCTFail("Failed to convert test data to JSON")
-//            return
-//        }
-//        
-//        let song: Song
-//        do {
-//            song = try decoder.decode(Song.self, from: jsonData)
-//        } catch {
-//            XCTFail("Failed to decode test data: \(error.localizedDescription)")
-//            return
-//        }
-//        
-//        XCTAssertEqual(song.id, UUID(uuidString: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"))
-//        XCTAssertEqual(song.source, .local(URL(string: "file:///fakepath/a_caged_persona.mp3")!))
-//        XCTAssertEqual(song.duration, 217)
-//    }
-//    
-//    func test_songArray_decodeJSON_parsesOptionals() {
-//        XCTFail("Test not yet initialized.")
-//        
-//        guard let jsonData = Song.aCagedPersonaJSON.data(using: .utf8) else {
-//            XCTFail("Failed to convert test data to JSON")
-//            return
-//        }
-//        
-//        let song: Song
-//        do {
-//            song = try decoder.decode(Song.self, from: jsonData)
-//        } catch {
-//            XCTFail("Failed to decode test data: \(error.localizedDescription)")
-//            return
-//        }
-//        
-//        XCTAssertEqual(song.title, "a caged persona")
-//        XCTAssertEqual(song.trackNumber, 1)
-//        XCTAssertEqual(song.artistName, "TLi-synth")
-//        XCTAssertEqual(song.albumTitle, "Girls Apartment")
-//    }
+    func test_songArray_decodeJSON_parsesKeys() {
+        guard let jsonData = Song.songsJSON.data(using: .utf8) else {
+            XCTFail("Failed to convert test data to JSON")
+            return
+        }
+        
+        let songs: [Song]
+        do {
+            songs = try decoder.decode([Song].self, from: jsonData)
+        } catch {
+            XCTFail("Failed to decode test data: \(error.localizedDescription)")
+            return
+        }
+        
+        XCTAssertEqual(songs.count, 21)
+    }
+    
+    func test_songArray_decodeJSON_parsesOptionals() {
+        guard let jsonData = Song.songsJSON.data(using: .utf8) else {
+            XCTFail("Failed to convert test data to JSON")
+            return
+        }
+        
+        let songs: [Song]
+        do {
+            songs = try decoder.decode([Song].self, from: jsonData)
+        } catch {
+            XCTFail("Failed to decode test data: \(error.localizedDescription)")
+            return
+        }
+        
+        XCTAssertEqual(songs.count, 21)
+    }
+    
+    func test_songArray_encodeAndDecodeJSON() {
+        let jsonData: Data
+        
+        do {
+            jsonData = try encoder.encode([Song.aCagedPersona, Song.aCagedPersona])
+        } catch {
+            XCTFail("Failed to encode test model: \(error.localizedDescription)")
+            return
+        }
+        
+        print("\(String(describing: String(data: jsonData, encoding: .utf8)))")
+        
+        let songs: [Song]
+        do {
+            songs = try decoder.decode([Song].self, from: jsonData)
+        } catch {
+            XCTFail("Failed to decode test data: \(error.localizedDescription)")
+            return
+        }
+        
+        XCTAssertEqual(songs.count, 2)
+    }
 }
