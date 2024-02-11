@@ -21,7 +21,7 @@ final class ModelsTests: XCTestCase {
         }
         
         XCTAssertEqual(song.id, UUID(uuidString: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"))
-        XCTAssertEqual(song.source, .local(URL(string: "file:///fakepath/a_caged_persona.mp3")!))
+        XCTAssertEqual(song.source, .local(url: URL(string: "file:///fakepath/a_caged_persona.mp3")!))
         XCTAssertEqual(song.duration, 217)
     }
     
@@ -58,6 +58,8 @@ final class ModelsTests: XCTestCase {
             XCTFail("Failed to encode test model: \(error.localizedDescription)")
             return
         }
+        
+        //print("\(String(describing: String(data: jsonData, encoding: .utf8)))")
         
         let song: Song
         do {
@@ -103,7 +105,11 @@ final class ModelsTests: XCTestCase {
         }
         
         XCTAssertEqual(album.art, nil)
-        //XCTAssertEqual(album.songs, [])
+        XCTAssertEqual(album.songs.count, 10)
+        XCTAssertEqual(album.songs[0], UUID(uuidString: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"))
+        XCTAssertEqual(album.songs[4], UUID(uuidString: "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b"))
+        XCTAssertEqual(album.songs[6], UUID(uuidString: "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d"))
+        XCTAssertEqual(album.songs[8], UUID(uuidString: "9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f"))
         XCTAssertEqual(album.artistName, "Various Artists")
         XCTAssertEqual(album.artists, [])
     }
@@ -117,7 +123,9 @@ final class ModelsTests: XCTestCase {
             XCTFail("Failed to encode test model: \(error.localizedDescription)")
             return
         }
-                
+        
+        //print("\(String(describing: String(data: jsonData, encoding: .utf8)))")
+        
         let album: Album
         do {
             album = try decoder.decode(Album.self, from: jsonData)
@@ -125,7 +133,7 @@ final class ModelsTests: XCTestCase {
             XCTFail("Failed to decode test data: \(error.localizedDescription)")
             return
         }
-        
+                
         XCTAssertEqual(album.title, Optional("Girls Apartment"))
     }
     

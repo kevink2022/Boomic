@@ -8,7 +8,7 @@
 import Foundation
 
 public struct Song: Media {
-    public let id: UUID
+    public let id: SongID
     public let source: MediaSource
     public let duration: TimeInterval
     
@@ -23,7 +23,7 @@ public struct Song: Media {
     public let album: AlbumID?
     
     public init(
-        id: UUID
+        id: SongID
         , source: MediaSource
         , duration: TimeInterval
         , title: String? = nil
