@@ -18,7 +18,7 @@ public struct Song: Media {
     public let art: MediaArt?
     
     public let artistName: String?
-    public let artist: ArtistID?
+    public let artists: [ArtistID]
     public let albumTitle: String?
     public let album: AlbumID?
     
@@ -31,7 +31,7 @@ public struct Song: Media {
         , discNumber: Int? = nil
         , art: MediaArt? = nil
         , artistName: String? = nil
-        , artist: ArtistID? = nil
+        , artists: [ArtistID] = []
         , albumTitle: String? = nil
         , album: AlbumID? = nil
     ) {
@@ -43,7 +43,7 @@ public struct Song: Media {
         self.discNumber = discNumber        
         self.art = art
         self.artistName = artistName
-        self.artist = artist
+        self.artists = artists
         self.albumTitle = albumTitle
         self.album = album
     }
@@ -55,7 +55,7 @@ public struct Song: Media {
         case title
         case trackNumber = "track_number"
         case discNumber = "disc_number"
-        case artist
+        case artists
         case album
         case artistName = "artist_name"
         case albumTitle = "album_title"
