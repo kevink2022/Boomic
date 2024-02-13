@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Album: Codable, Identifiable {
+public struct Album: Codable, Identifiable, Hashable {
     public let id: AlbumID
     public let title: String
     
@@ -40,6 +40,10 @@ public struct Album: Codable, Identifiable {
         case songs
         case artistName = "artist_name"
         case artists
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
 

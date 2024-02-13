@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  Media.swift
+//  Boomic
 //
 //  Created by Kevin Kelly on 2/7/24.
 //

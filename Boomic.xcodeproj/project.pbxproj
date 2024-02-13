@@ -17,6 +17,7 @@
 		4F04DCF42B74AEBC006114B3 /* MediaCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F04DCF12B74AEBC006114B3 /* MediaCollection.swift */; };
 		4F04DCF62B74AEBC006114B3 /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F04DCF32B74AEBC006114B3 /* Library.swift */; };
 		4F04DCF92B74B77B006114B3 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 4F04DCF82B74B77B006114B3 /* Models */; };
+		4F6135D02B7AB3CC00AF825C /* Database in Frameworks */ = {isa = PBXBuildFile; productRef = 4F6135CF2B7AB3CC00AF825C /* Database */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4F04DCF92B74B77B006114B3 /* Models in Frameworks */,
+				4F6135D02B7AB3CC00AF825C /* Database in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,6 +183,7 @@
 			name = Boomic;
 			packageProductDependencies = (
 				4F04DCF82B74B77B006114B3 /* Models */,
+				4F6135CF2B7AB3CC00AF825C /* Database */,
 			);
 			productName = Boomic;
 			productReference = 4F04DCB52B74727D006114B3 /* Boomic.app */;
@@ -256,6 +259,7 @@
 			mainGroup = 4F04DCAC2B74727D006114B3;
 			packageReferences = (
 				4F04DCF72B74B77B006114B3 /* XCLocalSwiftPackageReference "Sources/Models" */,
+				4F6135CE2B7AB3CC00AF825C /* XCLocalSwiftPackageReference "Sources/Database" */,
 			);
 			productRefGroup = 4F04DCB62B74727D006114B3 /* Products */;
 			projectDirPath = "";
@@ -665,12 +669,20 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Sources/Models;
 		};
+		4F6135CE2B7AB3CC00AF825C /* XCLocalSwiftPackageReference "Sources/Database" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Sources/Database;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		4F04DCF82B74B77B006114B3 /* Models */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Models;
+		};
+		4F6135CF2B7AB3CC00AF825C /* Database */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Database;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
