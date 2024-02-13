@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Artist: Codable, Identifiable {
+public struct Artist: Codable, Identifiable, Hashable {
     public let id: ArtistID
     public let name: String
     
@@ -36,6 +36,10 @@ public struct Artist: Codable, Identifiable {
         case songs
         case albums
         case art
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
 

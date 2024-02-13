@@ -6,6 +6,8 @@ final class ModelsTests: XCTestCase {
     let decoder = JSONDecoder()
     let encoder = JSONEncoder()
     
+    // MARK: - Single Object
+    
     func test_song_decodeJSON_parsesKeys() {
         guard let jsonData = Song.aCagedPersonaJSON.data(using: .utf8) else {
             XCTFail("Failed to convert test data to JSON")
@@ -132,6 +134,8 @@ final class ModelsTests: XCTestCase {
         XCTAssertEqual(artist.albums[0], UUID(uuidString: "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"))
         XCTAssertEqual(artist.art, nil)
     }
+    
+    // MARK: - Array
     
     func test_songArray_decodeJSON_parsesKeys() {
         guard let jsonData = Song.songsJSON.data(using: .utf8) else {

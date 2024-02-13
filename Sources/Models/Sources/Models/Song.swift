@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Song: Media {
+public struct Song: Media, Identifiable, Hashable {
     public let id: SongID
     public let source: MediaSource
     public let duration: TimeInterval
@@ -60,6 +60,10 @@ public struct Song: Media {
         case artistName = "artist_name"
         case albumTitle = "album_title"
         case art
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
 
