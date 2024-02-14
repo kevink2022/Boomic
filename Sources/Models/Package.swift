@@ -14,6 +14,9 @@ let package = Package(
         .library(
             name: "Models",
             targets: ["Models"]),
+        .library(
+            name: "ModelsMocks",
+            targets: ["ModelsMocks"]),
     ],
     dependencies: [],
     targets: [
@@ -22,8 +25,11 @@ let package = Package(
         .target(
             name: "Models",
             dependencies: []),
+        .target(
+            name: "ModelsMocks",
+            dependencies: ["Models"]),
         .testTarget(
             name: "ModelsTests",
-            dependencies: ["Models"]),
+            dependencies: ["Models", "ModelsMocks"]),
     ]
 )

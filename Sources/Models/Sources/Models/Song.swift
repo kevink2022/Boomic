@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Song: Media, Identifiable, Hashable {
+public struct Song: Media, Identifiable, Hashable, Equatable {
     public let id: SongID
     public let source: MediaSource
     public let duration: TimeInterval
@@ -64,6 +64,10 @@ public struct Song: Media, Identifiable, Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+    
+    public static func == (lhs: Song, rhs: Song) -> Bool {
+        lhs.id == rhs.id
     }
 }
 

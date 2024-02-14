@@ -9,11 +9,11 @@ import Foundation
 import Models
 
 public protocol Database {
-    func getSongs(_ songs: [SongID]?) async throws -> [Song]
-    func getAlbums(_ albums: [AlbumID]?) async throws -> [Album]
-    func getArtists(_ artists: [ArtistID]?) async throws -> [Artist]
+    func getSongs(_ songIDs: [SongID]?) async throws -> [Song]
+    func getAlbums(_ albumIDs: [AlbumID]?) async throws -> [Album]
+    func getArtists(_ artistIDs: [ArtistID]?) async throws -> [Artist]
     
-    func saveSongs(_ songs: [Song]) async throws
-    func saveAlbums(_ albums: [Album]) async throws
-    func saveArtists(_ artists: [Artist]) async throws
+    func saveSongs(_ songsToSave: [Song]) async throws
+    func saveAlbums(_ albumsToSave: [Album]) async throws
+    func saveArtists(_ artistsToSave: [Artist]) async throws
 }

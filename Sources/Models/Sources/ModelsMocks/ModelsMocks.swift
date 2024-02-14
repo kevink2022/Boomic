@@ -9,7 +9,7 @@ import Foundation
 import Models
 
 extension Song {
-    static let aCagedPersonaJSON = """
+    public static let aCagedPersonaJSON = """
     {
       "id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
       "source": {
@@ -28,7 +28,7 @@ extension Song {
     }
     """
     
-    static let aCagedPersona = Song(
+    public static let aCagedPersona = Song(
         id: UUID(uuidString: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d")!
         , source: .local(url: URL(string: "file:///fakepath/a_caged_persona.mp3")!)
         , duration: 217
@@ -38,7 +38,7 @@ extension Song {
         , albumTitle: "Girls Apartment"
     )
     
-    static let songsJSON = """
+    public static let songsJSON = """
     [
       {
         "id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
@@ -403,7 +403,7 @@ extension Song {
 
 extension Album {
     
-    static let girlsApartmentJSON = """
+    public static let girlsApartmentJSON = """
     {
       "id": "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a",
       "title": "Girls Apartment",
@@ -430,7 +430,7 @@ extension Album {
     }
     """
     
-    static let girlsApartment = Album(
+    public static let girlsApartment = Album(
         id: UUID(uuidString: "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a")!
         , title: "Girls Apartment"
         , songs: [
@@ -449,7 +449,7 @@ extension Album {
         , artists: []
     )
     
-    static let albumsJSON = """
+    public static let albumsJSON = """
     [
       {
         "id": "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a",
@@ -506,7 +506,7 @@ extension Album {
 }
 
 extension Artist {
-    static let synthJSON = """
+    public static let synthJSON = """
     {
       "id": "98a3cb51-319e-4c98-92ce-5047b2ea7536",
       "name": "TLi-synth",
@@ -520,7 +520,7 @@ extension Artist {
     }
     """
     
-    static let synth = Artist(
+    public static let synth = Artist(
         id: UUID(uuidString: "98a3cb51-319e-4c98-92ce-5047b2ea7536")!
         , name: "TLi-synth"
         , songs: [
@@ -532,7 +532,7 @@ extension Artist {
         ]
     )
     
-    static let artistsJSON = """
+    public static let artistsJSON = """
     [
       {
         "id": "98a3cb51-319e-4c98-92ce-5047b2ea7536",
