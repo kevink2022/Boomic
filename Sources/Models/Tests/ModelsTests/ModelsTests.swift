@@ -1,4 +1,5 @@
 import XCTest
+import ModelsMocks
 @testable import Models
 
 final class ModelsTests: XCTestCase {

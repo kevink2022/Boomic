@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Artist: Codable, Identifiable, Hashable {
+public struct Artist: Codable, Identifiable, Hashable, Equatable {
     public let id: ArtistID
     public let name: String
     
@@ -40,6 +40,10 @@ public struct Artist: Codable, Identifiable, Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+    
+    public static func == (lhs: Artist, rhs: Artist) -> Bool {
+        lhs.id == rhs.id
     }
 }
 
