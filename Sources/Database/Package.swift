@@ -26,6 +26,9 @@ let package = Package(
             dependencies: ["Models"]),
         .testTarget(
             name: "DatabaseTests",
-            dependencies: ["Database"]),
+            dependencies: [
+                "Database",
+                .product(name: "ModelsMocks", package: "Models")
+            ]),
     ]
 )
