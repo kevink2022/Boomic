@@ -37,35 +37,59 @@ final public class JSONArrayDatabase: Database {
         self.albumsURL = albumsURL ?? JSONArrayDatabase.albumsDefaultURL_ios
         self.artistsURL = artistsURL ?? JSONArrayDatabase.artistsDefaultURL_ios
         
-//        do {
-            songs = try initFromURL([Song].self, from: self.songsURL) ?? []
-//        } catch {
-//            // TODO: errors
-//            print("Failed to initialize songs: \(error.localizedDescription)")
-//            songs = []
-//        }
+        songs = try initFromURL([Song].self, from: self.songsURL) ?? []
+        albums = try initFromURL([Album].self, from: self.albumsURL) ?? []
+        artists = try initFromURL([Artist].self, from: self.artistsURL) ?? []
+    }
+    
+    public func get<Getting: Model> (_ getting: Getting.Type) async throws -> [Getting] {
+        return try table(for: getting)
+    }
+    
+    public func get<Getting: Model, From: Model> (_ getting: Getting.Type, from object: From) async throws -> [Getting] {
+        guard
+            let getting = getting as? any RelationalModel.Type,
+            let object = object as? any RelationalModel
+        else {
+            throw DatabaseError.unresolvedRelation(From.self, Getting.self)
+        }
         
-//        do {
-            albums = try initFromURL([Album].self, from: self.albumsURL) ?? []
-//        } catch {
-//            // TODO: errors
-//            print("Failed to initialize albums: \(error.localizedDescription)")
-//            albums = []
-//        }
+        let table = try table(for: getting)
         
-//        do {
-            artists = try initFromURL([Artist].self, from: self.artistsURL) ?? []
-//        } catch {
-//            // TODO: errors
-//            print("Failed to initialize artists: \(error.localizedDescription)")
-//            artists = []
-//        }
+        let results = try table.filter { item in
+            try item.to(object).contains(object.id)
+        }
+        
+        return results as! [Getting]
+    }
+    
+    public func save<T: Model>(_ objects: [T]) async throws {
+        var table = try table(for: T.self)
+        var new = [T]()
+        
+        objects.forEach { objectToSave in
+            if let index = table.firstIndex(where: {row in row.id == objectToSave.id}) {
+                table[index] = objectToSave
+            } else {
+                new.append(objectToSave)
+            }
+        }
+        
+        table += new
+        try setTable(table)
+        
+        let url = try url(for: T.self)
+        try saveToURL(table, to: url)
     }
     
     private func initFromURL<T: Decodable>(_ type: T.Type, from url: URL) throws -> T? {
         do {
             let data = try Data.init(contentsOf: url)
             return try decoder.decode(T.self, from: data)
+        }
+        
+        catch DecodingError.dataCorrupted {
+            throw DatabaseError.dataCorrupted(url)
         } catch {
             let nsError = error as NSError
             if nsError.domain == NSCocoaErrorDomain {
@@ -84,82 +108,40 @@ final public class JSONArrayDatabase: Database {
         try data.write(to: url)
     }
     
-    public func getSongs(_ songIDs: [SongID]? = nil) async throws -> [Song] {
-        if let songIDs = songIDs {
-            return songs.filter { song in songIDs.contains(song.id) }
-        } else {
-            return songs
+    private func table<T:Model>(for object: T.Type) throws -> [T] {
+        switch T.self {
+        case is Song.Type: return self.songs as! [T]
+        case is Album.Type: return self.albums as! [T]
+        case is Artist.Type: return self.artists as! [T]
+        default: throw DatabaseError.unresolvedTable(T.self)
         }
     }
     
-    public func getAlbums(_ albumIDs: [AlbumID]? = nil) async throws -> [Album] {
-        if let albumIDs = albumIDs {
-            return albums.filter { album in albumIDs.contains(album.id) }
-        } else {
-            return albums
+    private func setTable<T:Model>(_ objects: [T]) throws {
+        switch T.self {
+        case is Song.Type: self.songs = objects as! [Song]
+        case is Album.Type: self.albums = objects as! [Album]
+        case is Artist.Type: self.artists = objects as! [Artist]
+        default: throw DatabaseError.unresolvedTable(T.self)
         }
     }
     
-    public func getArtists(_ artistIDs: [ArtistID]? = nil) async throws -> [Artist] {
-        if let artistIDs = artistIDs {
-            return artists.filter { artist in artistIDs.contains(artist.id) }
-        } else {
-            return artists
+    private func url<T:Model>(for object: T.Type) throws -> URL {
+        switch T.self {
+        case is Song.Type: return self.songsURL
+        case is Album.Type: return self.albumsURL
+        case is Artist.Type: return self.artistsURL
+        default: throw DatabaseError.unresolvedTable(T.self)
         }
-    }
-    
-    public func saveSongs(_ songsToSave: [Song]) async throws {
-        var newSongs = [Song]()
-        
-        songsToSave.forEach { songToSave in
-            if let index = songs.firstIndex(where: {song in song == songToSave}) {
-                songs[index] = songToSave
-            } else {
-                newSongs.append(songToSave)
-            }
-        }
-        
-        songs += newSongs
-        try saveToURL(songs, to: songsURL)
-    }
-    
-    public func saveAlbums(_ albumsToSave: [Album]) async throws {
-        var newAlbums = [Album]()
-        
-        albumsToSave.forEach { albumToSave in
-            if let index = albums.firstIndex(where: {album in album == albumToSave}) {
-                albums[index] = albumToSave
-            } else {
-                newAlbums.append(albumToSave)
-            }
-        }
-        
-        albums += newAlbums
-        try saveToURL(albums, to: albumsURL)
-    }
-    
-    public func saveArtists(_ artistsToSave: [Artist]) async throws {
-        var newArtists = [Artist]()
-        
-        artistsToSave.forEach { artistToSave in
-            if let index = artists.firstIndex(where: {artist in artist == artistToSave}) {
-                artists[index] = artistToSave
-            } else {
-                newArtists.append(artistToSave)
-            }
-        }
-        
-        artists += newArtists
-        try saveToURL(artists, to: artistsURL)
     }
     
     private static let songsDefaultURL_ios = URL.applicationSupportDirectory
-        .appending(component: "Database")
+        .appending(component: "Database/")
         .appending(component: "songs.json")
     private static let albumsDefaultURL_ios = URL.applicationSupportDirectory
-        .appending(component: "Database")
+        .appending(component: "Database/")
         .appending(component: "albums.json")
     private static let artistsDefaultURL_ios = URL.applicationSupportDirectory
-        .appending(component: "Database")
+        .appending(component: "Database/")
         .appending(component: "artists.json")
 }
