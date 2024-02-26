@@ -16,7 +16,6 @@ final public class JSONArrayDatabase: Database {
     
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
-    private let fileManager: FileManager
     
     private let songsURL: URL
     private let albumsURL: URL
@@ -25,14 +24,12 @@ final public class JSONArrayDatabase: Database {
     public init (
         decoder: JSONDecoder = JSONDecoder()
         , encoder: JSONEncoder = JSONEncoder()
-        , fileManager: FileManager = FileManager()
         , songsURL: URL? = nil
         , albumsURL: URL? = nil
         , artistsURL: URL? = nil
     ) throws {
         self.decoder = decoder
         self.encoder = encoder
-        self.fileManager = fileManager
         self.songsURL = songsURL ?? JSONArrayDatabase.songsDefaultURL_ios
         self.albumsURL = albumsURL ?? JSONArrayDatabase.albumsDefaultURL_ios
         self.artistsURL = artistsURL ?? JSONArrayDatabase.artistsDefaultURL_ios
