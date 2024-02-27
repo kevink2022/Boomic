@@ -9,20 +9,20 @@ import Foundation
 import Models
 
 public protocol Database {
-    func get<Getting: Model> (_ getting: Getting.Type) async throws -> [Getting]
-    func get<Getting: Model, From: Model> (_ getting: Getting.Type, from object: From) async throws -> [Getting]
+    func get<GetT: Model> (_ getting: GetT.Type) async throws -> [GetT]
+    func get<GetT: Model, FromT: Model> (_ getting: GetT.Type, from object: FromT) async throws -> [GetT]
     func save<T: Model>(_ objects: [T]) async throws
 }
 
 public enum DatabaseError: LocalizedError, Equatable {
     case dataCorrupted(URL)
-    case unresolvedTable(Any.Type)
+    case unresolvedModel(Any.Type)
     case unresolvedRelation(Any.Type, Any.Type)
     
     public var errorDescription: String? {
         switch self {
         case .dataCorrupted(let url): return "Data cannot be read from \(url)"
-        case .unresolvedTable(let type): return "Type \"\(type)\" has no associated table."
+        case .unresolvedModel(let type): return "Type \"\(type)\" has no associated table."
         case .unresolvedRelation(let from, let to): return "Type \"\(from)\" does not map to type \"\(to)\"."
         }
     }
@@ -31,7 +31,7 @@ public enum DatabaseError: LocalizedError, Equatable {
         switch (lhs, rhs) {
             case (.dataCorrupted(let lhsURL), .dataCorrupted(let rhsURL)):
                 return lhsURL == rhsURL
-            case (.unresolvedTable(let lhsType), .unresolvedTable(let rhsType)):
+            case (.unresolvedModel(let lhsType), .unresolvedModel(let rhsType)):
                 return String(describing: lhsType) == String(describing: rhsType)
             case (.unresolvedRelation(let lhsFrom, let lhsTo), .unresolvedRelation(let rhsFrom, let rhsTo)):
                 return String(describing: lhsFrom) == String(describing: rhsFrom) && String(describing: lhsTo) == String(describing: rhsTo)

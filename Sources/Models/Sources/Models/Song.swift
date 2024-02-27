@@ -71,6 +71,12 @@ public struct Song: Media, Identifiable, Hashable, Equatable {
     }
 }
 
+extension Song {
+    public var label: String {
+        self.title ?? self.source.label
+    }
+}
+
 
 
 

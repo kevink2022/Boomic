@@ -3,7 +3,13 @@ import Models
 import ModelsMocks
 @testable import Database
 
-
+/// TODO
+/// - Sort on update
+/// - Object delete
+/// - Proper sorting tests
+/// - Bulk Tests
+/// - Documentation
+/// The first two will require the model resolver, so thats what I will work on now,
 
 final class JSONArrayDatabaseTests: XCTestCase {
     
@@ -124,21 +130,55 @@ final class JSONArrayDatabaseTests: XCTestCase {
         setUpTestDB { try createValidTestDB() }
         guard let sut = initWrapper({ try initTestDB() }) else { return }
         
-        let albums = try! await sut.get(Album.self)
-        let album = albums.first!
+        let (songs, albums, artists) = sampleModels()
+        let song = songs.filter { $0.id == UUID(uuidString: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d")! }.first!
+        let album = albums.filter { $0.id == UUID(uuidString: "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a")! }.first!
+        let artist = artists.filter { $0.id == UUID(uuidString: "9eecb26c-3254-4d76-9e02-29f211da7684")! }.first!
         
-        let artists: [Artist]
-        let songs: [Song]
         do {
-            artists = try await sut.get(Artist.self, from: album)
-            songs = try await sut.get(Song.self, from: album)
-        } catch {
-            XCTFail("Failed to get: \(error.localizedDescription)")
-            return
+            let albumsFromSong: [Album]
+            let artistsFromSong: [Artist]
+            do {
+                albumsFromSong = try await sut.get(Album.self, from: song)
+                artistsFromSong = try await sut.get(Artist.self, from: song)
+            } catch {
+                XCTFail("Failed to get: \(error.localizedDescription)")
+                return
+            }
+            
+            XCTAssertEqual(albumsFromSong.count, 1)
+            XCTAssertEqual(artistsFromSong.count, 1)
         }
         
-        XCTAssertEqual(artists.count, 5)
-        XCTAssertEqual(songs.count, 10)
+        do {
+            let songsFromAlbum: [Song]
+            let artistsFromAlbum: [Artist]
+            do {
+                songsFromAlbum = try await sut.get(Song.self, from: album)
+                artistsFromAlbum = try await sut.get(Artist.self, from: album)
+            } catch {
+                XCTFail("Failed to get: \(error.localizedDescription)")
+                return
+            }
+            
+            XCTAssertEqual(songsFromAlbum.count, 10)
+            XCTAssertEqual(artistsFromAlbum.count, 5)
+        }
+        
+        do {
+            let songsFromArtist: [Song]
+            let albumsFromArtist: [Album]
+            do {
+                songsFromArtist = try await sut.get(Song.self, from: artist)
+                albumsFromArtist = try await sut.get(Album.self, from: artist)
+            } catch {
+                XCTFail("Failed to get: \(error.localizedDescription)")
+                return
+            }
+            
+            XCTAssertEqual(songsFromArtist.count, 4)
+            XCTAssertEqual(albumsFromArtist.count, 2)
+        }
     }
 
     func test_getInvalid() async {
@@ -147,7 +187,7 @@ final class JSONArrayDatabaseTests: XCTestCase {
         guard let sut = initWrapper({ try initTestDB() }) else { return }
         
         let albums = try! await sut.get(Album.self)
-        let album = albums.first!
+        let album = albums.filter { $0.id == UUID(uuidString: "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a")! }.first!
        
         do {
             _ = try await sut.get(Album.self, from: album)
@@ -187,11 +227,11 @@ final class JSONArrayDatabaseTests: XCTestCase {
         
         // Test new session
         do {
-            guard let sut2 = initWrapper({ try initTestDB() }) else { return }
+            guard let sut = initWrapper({ try initTestDB() }) else { return }
             
-            let songs = try! await sut2.get(Song.self)
-            let albums = try! await sut2.get(Album.self)
-            let artists = try! await sut2.get(Artist.self)
+            let songs = try! await sut.get(Song.self)
+            let albums = try! await sut.get(Album.self)
+            let artists = try! await sut.get(Artist.self)
             XCTAssertEqual(songs.count, 21)
             XCTAssertEqual(albums.count, 2)
             XCTAssertEqual(artists.count, 7)
