@@ -194,8 +194,8 @@ final class JSONArrayDatabaseTests: XCTestCase {
             XCTFail("Expected to throw on invalid relationship")
         } catch {
             XCTAssertEqual(
-                error as! DatabaseError,
-                DatabaseError.unresolvedRelation(Album.self, Album.self))
+                error as! ModelError,
+                ModelError.unresolvedRelation(Album.self, Album.self))
         }
     }
 

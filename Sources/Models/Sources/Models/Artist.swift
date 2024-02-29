@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Artist: Codable, Identifiable, Hashable, Equatable {
+public struct Artist: Model {
     public let id: ArtistID
     public let name: String
     
@@ -41,11 +41,26 @@ public struct Artist: Codable, Identifiable, Hashable, Equatable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
-    
+}
+
+extension Artist: Hashable {
     public static func == (lhs: Artist, rhs: Artist) -> Bool {
         lhs.id == rhs.id
     }
 }
 
-
+extension Artist: Relational {
+    public func to<T:Relational>(_ object: T) throws -> [UUID] {
+        switch T.self {
+        
+        case is Song.Type:
+            return self.songs
+        
+        case is Album.Type:
+            return self.albums
+        
+        default: throw ModelError.unresolvedRelation(Artist.self, T.self)
+        }
+    }
+}
 

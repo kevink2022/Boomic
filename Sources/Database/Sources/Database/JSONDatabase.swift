@@ -55,13 +55,7 @@ final public class JSONArrayDatabase: Database {
         return try getTable(for: getT)
     }
     
-    public func get<GetT: Model, FromT: Model> (_ getT: GetT.Type, from object: FromT) async throws -> [GetT] {
-        guard
-            let getT = getT as? any RelationalModel.Type,
-            let object = object as? any RelationalModel
-        else {
-            throw DatabaseError.unresolvedRelation(FromT.self, GetT.self)
-        }
+    public func get<GetT: Relational, FromT: Relational> (_ getT: GetT.Type, from object: FromT) async throws -> [GetT] {
         
         let table = try getTable(for: getT)
         
@@ -69,7 +63,7 @@ final public class JSONArrayDatabase: Database {
             try item.to(object).contains(object.id)
         }
         
-        return results as! [GetT]
+        return results
     }
     
     public func save<T: Model>(_ objects: [T]) async throws {
