@@ -10,7 +10,7 @@ import Models
 
 public protocol Database {
     func get<GetT: Model> (_ getting: GetT.Type) async throws -> [GetT]
-    func get<GetT: Model, FromT: Model> (_ getting: GetT.Type, from object: FromT) async throws -> [GetT]
+    func get<GetT: Relational, FromT: Relational> (_ getting: GetT.Type, from object: FromT) async throws -> [GetT]
     func save<T: Model>(_ objects: [T]) async throws
 }
 
@@ -41,66 +41,4 @@ public enum DatabaseError: LocalizedError, Equatable {
     }
 }
 
-public protocol Model: Identifiable, Codable {
-    var id: UUID { get }
-}
-
-extension Song: Model {}
-extension Album: Model {}
-extension Artist: Model {}
-
-/// Will likely become db implementation specific. So much for saving boilerplate lol.
-
-internal protocol RelationalModel: Model {
-    func to<T:RelationalModel>(_ object: T) throws -> [UUID]
-}
-
-extension Song: RelationalModel {
-    
-    internal func to<T:RelationalModel>(_ object: T) throws -> [UUID] {
-        switch T.self {
-        
-        case is Album.Type:
-            guard let album = self.album else { return [UUID]() }
-            return [album]
-        
-        case is Artist.Type:
-            return self.artists
-        
-        default: throw DatabaseError.unresolvedRelation(Song.self, T.self)
-        }
-    }
-}
-
-extension Album: RelationalModel {
-    
-    internal func to<T:RelationalModel>(_ object: T) throws -> [UUID] {
-        switch T.self {
-        
-        case is Song.Type:
-            return self.songs
-        
-        case is Artist.Type: 
-            return self.artists
-        
-        default: throw DatabaseError.unresolvedRelation(Album.self, T.self)
-        }
-    }
-}
-
-extension Artist: RelationalModel {
-    
-    internal func to<T:RelationalModel>(_ object: T) throws -> [UUID] {
-        switch T.self {
-        
-        case is Song.Type:
-            return self.songs
-        
-        case is Album.Type:
-            return self.albums
-        
-        default: throw DatabaseError.unresolvedRelation(Artist.self, T.self)
-        }
-    }
-}
 

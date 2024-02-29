@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Song: Media, Identifiable, Hashable, Equatable {
+public struct Song: Media, Model {
     public let id: SongID
     public let source: MediaSource
     public let duration: TimeInterval
@@ -62,10 +62,6 @@ public struct Song: Media, Identifiable, Hashable, Equatable {
         case art
     }
     
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
     public static func == (lhs: Song, rhs: Song) -> Bool {
         lhs.id == rhs.id
     }
@@ -77,6 +73,27 @@ extension Song {
     }
 }
 
+extension Song: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
+extension Song: Relational {
+    public func to<T:Relational>(_ object: T) throws -> [UUID] {
+        switch T.self {
+        
+        case is Album.Type:
+            guard let album = self.album else { return [UUID]() }
+            return [album]
+        
+        case is Artist.Type:
+            return self.artists
+        
+        default: throw ModelError.unresolvedRelation(Song.self, T.self)
+        }
+    }
+}
 
 
 
