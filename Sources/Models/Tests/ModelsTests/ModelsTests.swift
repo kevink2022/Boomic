@@ -49,7 +49,7 @@ final class ModelsTests: XCTestCase {
         XCTAssertEqual(song.artistName, "TLi-synth")
         XCTAssertEqual(song.artists, [UUID(uuidString: "98a3cb51-319e-4c98-92ce-5047b2ea7536")!])
         XCTAssertEqual(song.albumTitle, "Girls Apartment")
-        XCTAssertEqual(song.album, nil)
+        XCTAssertEqual(song.albums, [UUID(uuidString: "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a")!])
     }
       
     func test_album_decodeJSON_parsesKeys() {
@@ -185,7 +185,7 @@ final class ModelsTests: XCTestCase {
         XCTAssertEqual(songs[10].artistName, "flap+frog")
         XCTAssertEqual(songs[10].artists, [UUID(uuidString: "9eecb26c-3254-4d76-9e02-29f211da7684")!])
         XCTAssertEqual(songs[10].albumTitle, "Girls Apartment 2")
-        XCTAssertEqual(songs[10].album, UUID(uuidString: "0536d5fe-2435-486c-81a3-2642e6273d70"))
+        XCTAssertEqual(songs[10].albums, [UUID(uuidString: "0536d5fe-2435-486c-81a3-2642e6273d70")])
     }
 
     

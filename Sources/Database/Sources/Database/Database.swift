@@ -9,9 +9,11 @@ import Foundation
 import Models
 
 public protocol Database {
-    func get<GetT: Model> (_ getting: GetT.Type) async throws -> [GetT]
-    func get<GetT: Relational, FromT: Relational> (_ getting: GetT.Type, from object: FromT) async throws -> [GetT]
-    func save<T: Model>(_ objects: [T]) async throws
+    func getSongs(for ids: [UUID]?) async -> [Song]
+    func getAlbums(for ids: [UUID]?) async -> [Album]
+    func getArtists(for ids: [UUID]?) async -> [Artist]
+    
+    func addSongs(_ songs: [Song]) async
 }
 
 public enum DatabaseError: LocalizedError, Equatable {
