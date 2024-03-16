@@ -11,10 +11,6 @@ public protocol Model: Identifiable, Codable, Equatable {
     var id: UUID { get }
 }
 
-public protocol Relational: Model {
-    func to<T:Relational>(_ object: T) throws -> [UUID]
-}
-
 public enum ModelError: LocalizedError, Equatable {
     case unresolvedModel(Any.Type)
     case unresolvedRelation(Any.Type, Any.Type)

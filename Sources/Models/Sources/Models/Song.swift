@@ -8,7 +8,7 @@
 import Foundation
 
 public struct Song: Media, Model {
-    public let id: SongID
+    public let id: UUID
     public let source: MediaSource
     public let duration: TimeInterval
     
@@ -18,12 +18,12 @@ public struct Song: Media, Model {
     public let art: MediaArt?
     
     public let artistName: String?
-    public let artists: [ArtistID]
+    public let artists: [UUID]
     public let albumTitle: String?
-    public let album: AlbumID?
+    public let albums: [UUID]
     
     public init(
-        id: SongID
+        id: UUID
         , source: MediaSource
         , duration: TimeInterval
         , title: String? = nil
@@ -31,9 +31,9 @@ public struct Song: Media, Model {
         , discNumber: Int? = nil
         , art: MediaArt? = nil
         , artistName: String? = nil
-        , artists: [ArtistID] = []
+        , artists: [UUID] = []
         , albumTitle: String? = nil
-        , album: AlbumID? = nil
+        , albums: [UUID] = []
     ) {
         self.id = id
         self.source = source
@@ -45,7 +45,7 @@ public struct Song: Media, Model {
         self.artistName = artistName
         self.artists = artists
         self.albumTitle = albumTitle
-        self.album = album
+        self.albums = albums
     }
     
     enum CodingKeys: String, CodingKey {
@@ -56,7 +56,7 @@ public struct Song: Media, Model {
         case trackNumber = "track_number"
         case discNumber = "disc_number"
         case artists
-        case album
+        case albums
         case artistName = "artist_name"
         case albumTitle = "album_title"
         case art
@@ -76,22 +76,6 @@ extension Song {
 extension Song: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
-    }
-}
-
-extension Song: Relational {
-    public func to<T:Relational>(_ object: T) throws -> [UUID] {
-        switch T.self {
-        
-        case is Album.Type:
-            guard let album = self.album else { return [UUID]() }
-            return [album]
-        
-        case is Artist.Type:
-            return self.artists
-        
-        default: throw ModelError.unresolvedRelation(Song.self, T.self)
-        }
     }
 }
 

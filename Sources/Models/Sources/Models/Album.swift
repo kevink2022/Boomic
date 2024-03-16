@@ -8,22 +8,22 @@
 import Foundation
 
 public struct Album: Model {
-    public let id: AlbumID
+    public let id: UUID
     public let title: String
     
     public let art: MediaArt?
-    public let songs: [SongID]
+    public let songs: [UUID]
     
     public let artistName: String?
-    public let artists: [ArtistID]
+    public let artists: [UUID]
     
     public init(
-        id: AlbumID
+        id: UUID
         , title: String
         , art: MediaArt? = nil
-        , songs: [SongID] = []
+        , songs: [UUID] = []
         , artistName: String? = nil
-        , artists: [ArtistID] = []
+        , artists: [UUID] = []
     ) {
         self.id = id
         self.title = title
@@ -52,21 +52,3 @@ extension Album: Hashable {
         hasher.combine(id)
     }
 }
-
-extension Album: Relational {
-    public func to<T:Relational>(_ object: T) throws -> [UUID] {
-        switch T.self {
-        
-        case is Song.Type:
-            return self.songs
-        
-        case is Artist.Type:
-            return self.artists
-        
-        default: throw ModelError.unresolvedRelation(Album.self, T.self)
-        }
-    }
-}
-
-
-

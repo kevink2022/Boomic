@@ -8,19 +8,19 @@
 import Foundation
 
 public struct Artist: Model {
-    public let id: ArtistID
+    public let id: UUID
     public let name: String
     
-    public let songs: [SongID]
-    public let albums: [AlbumID]
+    public let songs: [UUID]
+    public let albums: [UUID]
     
     public let art: MediaArt?
     
     public init(
-        id: ArtistID
+        id: UUID
         , name: String
-        , songs: [SongID]
-        , albums: [AlbumID]
+        , songs: [UUID]
+        , albums: [UUID]
         , art: MediaArt? = nil
     ) {
         self.id = id
@@ -48,19 +48,3 @@ extension Artist: Hashable {
         lhs.id == rhs.id
     }
 }
-
-extension Artist: Relational {
-    public func to<T:Relational>(_ object: T) throws -> [UUID] {
-        switch T.self {
-        
-        case is Song.Type:
-            return self.songs
-        
-        case is Album.Type:
-            return self.albums
-        
-        default: throw ModelError.unresolvedRelation(Artist.self, T.self)
-        }
-    }
-}
-

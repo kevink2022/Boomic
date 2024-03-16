@@ -14,6 +14,9 @@ let package = Package(
         .library(
             name: "Database",
             targets: ["Database"]),
+        .library(
+            name: "DatabaseMocks",
+            targets: ["DatabaseMocks"]),
     ],
     dependencies: [
         .package(url: "./Models", from: "1.0.0"),
@@ -24,6 +27,12 @@ let package = Package(
         .target(
             name: "Database",
             dependencies: ["Models"]),
+        .target(
+            name: "DatabaseMocks",
+            dependencies: [
+                "Database",
+                .product(name: "ModelsMocks", package: "Models")
+            ]),
         .testTarget(
             name: "DatabaseTests",
             dependencies: [
