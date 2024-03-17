@@ -491,7 +491,13 @@ extension Album {
             , UUID(uuidString: "0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a")!
         ]
         , artistName: "Various Artists"
-        , artists: []
+        , artists: [
+            UUID(uuidString: "98a3cb51-319e-4c98-92ce-5047b2ea7536")!
+            , UUID(uuidString: "9eecb26c-3254-4d76-9e02-29f211da7684")!
+            , UUID(uuidString: "68482652-ab83-4813-9d5d-60a3b0526ae2")!
+            , UUID(uuidString: "5c0b4a45-af04-4422-9dec-c07d6d8430e7")!
+            , UUID(uuidString: "3ec38329-47db-405e-a71b-be1c452b52c4")!
+          ]
     )
     
     public static let albumsJSON = """

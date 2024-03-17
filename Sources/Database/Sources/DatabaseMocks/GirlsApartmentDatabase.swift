@@ -39,7 +39,7 @@ public final class GirlsApartmentDatabase: Database {
     
     private var modelCache: ModelCache
     
-    init() {
+    public init() {
         let decoder = JSONDecoder()
         
         let songData = Song.songsJSON.data(using: .utf8)!
