@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import DatabaseMocks
 
 
 struct LibraryScreen: View {
@@ -14,9 +13,19 @@ struct LibraryScreen: View {
         NavigationStack {
             List {
                 NavigationLink {
+                    AllSongsScreen()
+                } label: {
+                    Text("Songs")
+                }
+                NavigationLink {
                     AllAlbumsScreen()
                 } label: {
                     Text("Albums")
+                }
+                NavigationLink {
+                    AllArtistsScreen()
+                } label: {
+                    Text("Artists")
                 }
             }
         }
@@ -25,5 +34,5 @@ struct LibraryScreen: View {
 
 #Preview {
     LibraryScreen()
-        .environment(\.database, GirlsApartmentDatabase())
+        .environment(\.database, previewDatabase())
 }

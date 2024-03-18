@@ -1,5 +1,5 @@
 //
-//  AlbumListEntry.swift
+//  AlbumGridEntry.swift
 //  Boomic
 //
 //  Created by Kevin Kelly on 3/16/24.
@@ -9,7 +9,7 @@ import SwiftUI
 import Models
 import DatabaseMocks
 
-struct AlbumListEntry: View {
+struct AlbumGridEntry: View {
     let album: Album
     
     var body: some View {
@@ -38,8 +38,7 @@ struct AlbumListEntry: View {
 }
 
 #Preview {
-    AllAlbumsScreen()
-        .environment(\.database, GirlsApartmentDatabase())
+    AlbumGridEntry(album: previewAlbum())
 }
 
 
