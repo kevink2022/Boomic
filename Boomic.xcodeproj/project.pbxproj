@@ -16,15 +16,23 @@
 		4F04DCD72B74727F006114B3 /* BoomicUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F04DCD62B74727F006114B3 /* BoomicUITestsLaunchTests.swift */; };
 		4F04DCF92B74B77B006114B3 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 4F04DCF82B74B77B006114B3 /* Models */; };
 		4F6135D02B7AB3CC00AF825C /* Database in Frameworks */ = {isa = PBXBuildFile; productRef = 4F6135CF2B7AB3CC00AF825C /* Database */; };
+		4F853B5D2BA75D1100721E59 /* AllArtistsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F853B5C2BA75D1100721E59 /* AllArtistsScreen.swift */; };
+		4F853B5F2BA7632E00721E59 /* ArtistGridEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F853B5E2BA7632E00721E59 /* ArtistGridEntry.swift */; };
+		4F853B612BA7669100721E59 /* PreviewMocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F853B602BA7669100721E59 /* PreviewMocks.swift */; };
+		4F853B632BA76AA600721E59 /* ArtistScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F853B622BA76AA600721E59 /* ArtistScreen.swift */; };
+		4F853B682BA7DA3C00721E59 /* LargeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F853B672BA7DA3C00721E59 /* LargeButton.swift */; };
+		4F853B6A2BA7F1E700721E59 /* TimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F853B692BA7F1E700721E59 /* TimeInterval.swift */; };
+		4F853B6C2BA7F44100721E59 /* DynamicList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F853B6B2BA7F44100721E59 /* DynamicList.swift */; };
+		4F853B6E2BA80C3D00721E59 /* AllSongsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F853B6D2BA80C3D00721E59 /* AllSongsScreen.swift */; };
 		4FB41E192BA6228600270496 /* LibraryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E182BA6228600270496 /* LibraryScreen.swift */; };
 		4FB41E1B2BA6241900270496 /* LibraryNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E1A2BA6241900270496 /* LibraryNavigationView.swift */; };
 		4FB41E1D2BA6247E00270496 /* AllAlbumsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E1C2BA6247E00270496 /* AllAlbumsScreen.swift */; };
 		4FB41E202BA6289000270496 /* DatabaseMocks in Frameworks */ = {isa = PBXBuildFile; productRef = 4FB41E1F2BA6289000270496 /* DatabaseMocks */; };
 		4FB41E222BA6444100270496 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E212BA6444100270496 /* Environment.swift */; };
-		4FB41E242BA644BC00270496 /* AlbumListEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E232BA644BC00270496 /* AlbumListEntry.swift */; };
+		4FB41E242BA644BC00270496 /* AlbumGridEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E232BA644BC00270496 /* AlbumGridEntry.swift */; };
 		4FB41E262BA659E300270496 /* ViewConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E252BA659E300270496 /* ViewConstants.swift */; };
 		4FB41E282BA6637300270496 /* AlbumScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E272BA6637300270496 /* AlbumScreen.swift */; };
-		4FB41E2A2BA67EF200270496 /* SongList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E292BA67EF200270496 /* SongList.swift */; };
+		4FB41E2A2BA67EF200270496 /* SongListEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E292BA67EF200270496 /* SongListEntry.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,14 +69,22 @@
 		4F04DCE62B747F0D006114B3 /* Networking */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Networking; sourceTree = "<group>"; };
 		4F04DCE72B747F38006114B3 /* Models */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Models; sourceTree = "<group>"; };
 		4F6135CD2B7757DB00AF825C /* BoomicTestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = BoomicTestPlan.xctestplan; sourceTree = "<group>"; };
+		4F853B5C2BA75D1100721E59 /* AllArtistsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllArtistsScreen.swift; sourceTree = "<group>"; };
+		4F853B5E2BA7632E00721E59 /* ArtistGridEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistGridEntry.swift; sourceTree = "<group>"; };
+		4F853B602BA7669100721E59 /* PreviewMocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewMocks.swift; sourceTree = "<group>"; };
+		4F853B622BA76AA600721E59 /* ArtistScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistScreen.swift; sourceTree = "<group>"; };
+		4F853B672BA7DA3C00721E59 /* LargeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeButton.swift; sourceTree = "<group>"; };
+		4F853B692BA7F1E700721E59 /* TimeInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeInterval.swift; sourceTree = "<group>"; };
+		4F853B6B2BA7F44100721E59 /* DynamicList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicList.swift; sourceTree = "<group>"; };
+		4F853B6D2BA80C3D00721E59 /* AllSongsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllSongsScreen.swift; sourceTree = "<group>"; };
 		4FB41E182BA6228600270496 /* LibraryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryScreen.swift; sourceTree = "<group>"; };
 		4FB41E1A2BA6241900270496 /* LibraryNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryNavigationView.swift; sourceTree = "<group>"; };
 		4FB41E1C2BA6247E00270496 /* AllAlbumsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllAlbumsScreen.swift; sourceTree = "<group>"; };
 		4FB41E212BA6444100270496 /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
-		4FB41E232BA644BC00270496 /* AlbumListEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumListEntry.swift; sourceTree = "<group>"; };
+		4FB41E232BA644BC00270496 /* AlbumGridEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumGridEntry.swift; sourceTree = "<group>"; };
 		4FB41E252BA659E300270496 /* ViewConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewConstants.swift; sourceTree = "<group>"; };
 		4FB41E272BA6637300270496 /* AlbumScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumScreen.swift; sourceTree = "<group>"; };
-		4FB41E292BA67EF200270496 /* SongList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongList.swift; sourceTree = "<group>"; };
+		4FB41E292BA67EF200270496 /* SongListEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongListEntry.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +141,7 @@
 		4F04DCB72B74727D006114B3 /* Boomic */ = {
 			isa = PBXGroup;
 			children = (
+				4F853B642BA7CA1500721E59 /* Utility */,
 				4F04DCE92B74ADEB006114B3 /* Library */,
 				4F04DCBC2B74727E006114B3 /* Assets.xcassets */,
 				4F04DCBF2B74727E006114B3 /* Preview Content */,
@@ -133,6 +150,7 @@
 				4F04DCBA2B74727D006114B3 /* ContentView.swift */,
 				4FB41E212BA6444100270496 /* Environment.swift */,
 				4FB41E252BA659E300270496 /* ViewConstants.swift */,
+				4F853B602BA7669100721E59 /* PreviewMocks.swift */,
 			);
 			path = Boomic;
 			sourceTree = "<group>";
@@ -184,6 +202,16 @@
 			path = Library;
 			sourceTree = "<group>";
 		};
+		4F853B642BA7CA1500721E59 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				4F853B672BA7DA3C00721E59 /* LargeButton.swift */,
+				4F853B692BA7F1E700721E59 /* TimeInterval.swift */,
+				4F853B6B2BA7F44100721E59 /* DynamicList.swift */,
+			);
+			path = Utility;
+			sourceTree = "<group>";
+		};
 		4FB41E1E2BA6289000270496 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -197,6 +225,8 @@
 				4FB41E182BA6228600270496 /* LibraryScreen.swift */,
 				4FB41E1A2BA6241900270496 /* LibraryNavigationView.swift */,
 				4FB41E1C2BA6247E00270496 /* AllAlbumsScreen.swift */,
+				4F853B5C2BA75D1100721E59 /* AllArtistsScreen.swift */,
+				4F853B6D2BA80C3D00721E59 /* AllSongsScreen.swift */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -204,7 +234,7 @@
 		4FB41E2C2BA6C51000270496 /* Song */ = {
 			isa = PBXGroup;
 			children = (
-				4FB41E292BA67EF200270496 /* SongList.swift */,
+				4FB41E292BA67EF200270496 /* SongListEntry.swift */,
 			);
 			path = Song;
 			sourceTree = "<group>";
@@ -212,7 +242,7 @@
 		4FB41E2D2BA6C51500270496 /* Album */ = {
 			isa = PBXGroup;
 			children = (
-				4FB41E232BA644BC00270496 /* AlbumListEntry.swift */,
+				4FB41E232BA644BC00270496 /* AlbumGridEntry.swift */,
 				4FB41E272BA6637300270496 /* AlbumScreen.swift */,
 			);
 			path = Album;
@@ -221,6 +251,8 @@
 		4FB41E2E2BA6C51F00270496 /* Artist */ = {
 			isa = PBXGroup;
 			children = (
+				4F853B5E2BA7632E00721E59 /* ArtistGridEntry.swift */,
+				4F853B622BA76AA600721E59 /* ArtistScreen.swift */,
 			);
 			path = Artist;
 			sourceTree = "<group>";
@@ -364,16 +396,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4FB41E2A2BA67EF200270496 /* SongList.swift in Sources */,
+				4F853B632BA76AA600721E59 /* ArtistScreen.swift in Sources */,
+				4F853B6A2BA7F1E700721E59 /* TimeInterval.swift in Sources */,
+				4F853B612BA7669100721E59 /* PreviewMocks.swift in Sources */,
+				4F853B5D2BA75D1100721E59 /* AllArtistsScreen.swift in Sources */,
+				4F853B682BA7DA3C00721E59 /* LargeButton.swift in Sources */,
+				4FB41E2A2BA67EF200270496 /* SongListEntry.swift in Sources */,
 				4F04DCBB2B74727D006114B3 /* ContentView.swift in Sources */,
 				4FB41E222BA6444100270496 /* Environment.swift in Sources */,
 				4FB41E1D2BA6247E00270496 /* AllAlbumsScreen.swift in Sources */,
 				4FB41E192BA6228600270496 /* LibraryScreen.swift in Sources */,
+				4F853B6E2BA80C3D00721E59 /* AllSongsScreen.swift in Sources */,
 				4FB41E282BA6637300270496 /* AlbumScreen.swift in Sources */,
-				4FB41E242BA644BC00270496 /* AlbumListEntry.swift in Sources */,
+				4FB41E242BA644BC00270496 /* AlbumGridEntry.swift in Sources */,
 				4FB41E1B2BA6241900270496 /* LibraryNavigationView.swift in Sources */,
 				4FB41E262BA659E300270496 /* ViewConstants.swift in Sources */,
 				4F04DCB92B74727D006114B3 /* BoomicApp.swift in Sources */,
+				4F853B6C2BA7F44100721E59 /* DynamicList.swift in Sources */,
+				4F853B5F2BA7632E00721E59 /* ArtistGridEntry.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
