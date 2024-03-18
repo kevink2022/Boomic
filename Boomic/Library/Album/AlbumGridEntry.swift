@@ -30,7 +30,7 @@ struct AlbumGridEntry: View {
                 .font(F.listSubtitle)
                 .lineLimit(1)
         }
-        .foregroundColor(.primary)
+        .foregroundStyle(.primary)
     }
     
     typealias F = ViewConstants.Fonts

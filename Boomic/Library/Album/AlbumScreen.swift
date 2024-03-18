@@ -77,9 +77,10 @@ struct AlbumScreen: View {
                         .font(F.trackNumber)
                         .frame(minWidth: 20, alignment: .leading)
 
-                    SongListEntry(song: song)
+                    SongListEntry(song: song, showAlbumArt: false)
                  }
             }
+            
             
             HStack {
                 Text("Artists")
@@ -92,12 +93,7 @@ struct AlbumScreen: View {
             ScrollView(.horizontal) {
                 HStack {
                     ForEach(artists) { artist in
-                        NavigationLink {
-                            ArtistScreen(artist: artist)
-                        } label: {
-                            ArtistGridEntry(artist: artist)
-
-                        }
+                        ArtistGridLink(artist: artist)
                     }
                     .frame(width: 120)
                 }
