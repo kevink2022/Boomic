@@ -22,6 +22,7 @@ struct ArtistGridEntry: View {
                 .font(F.listTitle)
                 .lineLimit(1)
         }
+        .foregroundStyle(.primary)
     }
     
     typealias F = ViewConstants.Fonts

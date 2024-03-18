@@ -26,11 +26,7 @@ struct AllAlbumsScreen: View {
 
             LazyVGrid(columns: columns, alignment: .leading) {
                 ForEach(albums) { album in
-                    NavigationLink {
-                        AlbumScreen(album: album)
-                    } label: {
-                        AlbumGridEntry(album: album)
-                    }
+                    AlbumGridLink(album: album)
                 }
             }
             

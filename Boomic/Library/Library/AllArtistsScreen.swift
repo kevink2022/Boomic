@@ -26,11 +26,7 @@ struct AllArtistsScreen: View {
 
             LazyVGrid(columns: columns, alignment: .leading) {
                 ForEach(artists) { artist in
-                    NavigationLink {
-                        ArtistScreen(artist: artist)
-                    } label: {
-                        ArtistGridEntry(artist: artist)
-                    }
+                    ArtistGridLink(artist: artist)
                 }
             }
             
