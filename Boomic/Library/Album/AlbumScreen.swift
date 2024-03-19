@@ -16,7 +16,7 @@ struct AlbumScreen: View {
     @State private var artists: [Artist] = []
     
     var body: some View {
-        List {
+        ScrollView {
             VStack {
                 HStack {
                     Spacer(minLength: 70)
@@ -69,26 +69,31 @@ struct AlbumScreen: View {
                     
                     Spacer()
                 }
-            }
-            
-            ForEach(songs) { song in
-                HStack {
-                    Text("\(song.trackNumber.map { String($0) } ?? "")")
-                        .font(F.trackNumber)
-                        .frame(minWidth: 20, alignment: .leading)
-
-                    SongListEntry(song: song, showAlbumArt: false)
-                 }
-            }
-            
-            
-            HStack {
-                Text("Artists")
-                    .font(F.sectionTitle)
                 
-                Spacer()
+                VStack(spacing: 0) {
+                    ForEach(songs) { song in
+                        Divider()
+                        HStack {
+                            Text("\(song.trackNumber.map { String($0) } ?? "")")
+                                .font(F.trackNumber)
+                                .frame(minWidth: 22, alignment: .leading)
+
+                            SongListEntry(song: song, showAlbumArt: false)
+                         }
+                        .padding(7)
+                    }
+                    Divider()
+                }
+                
+                HStack {
+                    Text("Artists")
+                        .font(F.sectionTitle)
+                    
+                    Spacer()
+                }
+                .padding(.top)
             }
-            .padding(.top)
+            .padding(C.gridPadding)
             
             ScrollView(.horizontal) {
                 HStack {
@@ -97,11 +102,10 @@ struct AlbumScreen: View {
                     }
                     .frame(width: 120)
                 }
+                .frame(height: 150)
+                .padding(C.gridPadding)
             }
-            .frame(height: 150)
-            .padding(.horizontal, -15)
         }
-        .listStyle(.inset)
         
         .task {
             songs = await database.getSongs(for: album.songs)

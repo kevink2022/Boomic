@@ -67,4 +67,7 @@ struct ViewConstants {
     
     static let buttonCornerRadius : CGFloat = 12
     static let buttonHeight : CGFloat = 55
+    
+    static let smallAlbumFrame : CGFloat = 50
+    static let smallAlbumCornerRadius : CGFloat = 4
 }

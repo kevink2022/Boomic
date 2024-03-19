@@ -28,10 +28,10 @@ struct SongListEntry: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .clipShape(RoundedRectangle(cornerSize: CGSize(
-                        width: C.albumCornerRadius,
-                        height: C.albumCornerRadius
+                        width: C.smallAlbumCornerRadius,
+                        height: C.smallAlbumCornerRadius
                     )))
-                    .frame(height: 50)
+                    .frame(height: C.smallAlbumFrame)
             }
             
             VStack(alignment: .leading) {
@@ -40,6 +40,7 @@ struct SongListEntry: View {
                 
                 if showArtist, let artist = song.artistName {
                     Text(artist)
+                        .font(F.listDuration)
                 }
             }
             
