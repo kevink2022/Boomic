@@ -14,7 +14,7 @@ struct AllSongsScreen: View {
     @State private var songs: [Song] = []
     
     var body: some View {
-        List {
+        ScrollView {
             
             HStack {
                 Text("Songs")
@@ -23,16 +23,16 @@ struct AllSongsScreen: View {
                 Spacer()
             }
             
-            //List {
+            VStack(spacing: 0) {
                 ForEach(songs) { song in
-                    HStack {
-                        SongListEntry(song: song)
-                     }
+                    Divider()
+                    SongListEntry(song: song)
+                        .padding(7)
                 }
-            //}
+                Divider()
+            }
             
         }
-        .listStyle(.inset)
         
         .task {
             songs = await database.getSongs(for: nil)

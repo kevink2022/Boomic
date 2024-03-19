@@ -14,6 +14,9 @@ struct ArtistScreen: View {
     @State private var songs: [Song] = []
     @State private var albums: [Album] = []
     
+    private let topSongCount = 3
+    @State private var showAllSongs = false
+    
     @State var albumColumns: [GridItem] = Array(repeating: .init(.flexible()), count: 2)
 
     
@@ -35,20 +38,33 @@ struct ArtistScreen: View {
                 .font(F.listDuration)
             
             HStack {
-                Text("Songs")
+                Text("Top Songs")
                     .font(F.sectionTitle)
                 
                 Spacer()
             }
             .padding(.top)
             
-            // Simulated List
             VStack(spacing: 0) {
-                ForEach(songs) { song in
+                ForEach(songs.prefix(showAllSongs ? songs.count : topSongCount)) { song in
                     Divider()
                     SongListEntry(song: song)
                         .padding(7)
                 }
+                Divider()
+                
+                if topSongCount < songs.count {
+                    Button {
+                        withAnimation(.easeOut(duration: 0.2)) { showAllSongs.toggle() }
+                    } label: {
+                        ZStack {
+                            Color(.clear)
+                            Text(showAllSongs ? "Show Less" : "Show All")
+                        }
+                        .frame(height: C.smallAlbumFrame + 5)
+                    }
+                }
+
                 Divider()
             }
             
