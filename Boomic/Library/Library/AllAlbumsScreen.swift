@@ -16,20 +16,11 @@ struct AllAlbumsScreen: View {
     
     var body: some View {
         ScrollView {
-            
-            HStack {
-                Text("Albums")
-                    .font(F.screenTitle)
- 
-                Spacer()
-            }
-
-            LazyVGrid(columns: columns, alignment: .leading) {
+            DynamicGrid(title: "Albums", titleFont: F.screenTitle) {
                 ForEach(albums) { album in
                     AlbumGridLink(album: album)
                 }
             }
-            
         }
         .padding(C.gridPadding)
         

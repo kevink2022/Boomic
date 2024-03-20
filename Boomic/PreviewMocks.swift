@@ -15,4 +15,7 @@ func previewDatabase() -> Database { GirlsApartmentDatabase() }
 func previewSong() -> Song { Song.aCagedPersona }
 func previewAlbum() -> Album { Album.girlsApartment }
 func previewArtist() -> Artist { Artist.synth }
+func previewArtists() -> [Artist] {
+    return GirlsApartmentDatabase().getArtists(for: nil)
+}
 
