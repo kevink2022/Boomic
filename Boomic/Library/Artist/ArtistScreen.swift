@@ -68,19 +68,12 @@ struct ArtistScreen: View {
                 Divider()
             }
             
-            HStack {
-                Text("Albums")
-                    .font(F.sectionTitle)
-                
-                Spacer()
-            }
-            .padding(.top)
-            
-            LazyVGrid(columns: albumColumns, alignment: .leading) {
+            DynamicGrid(title: "Albums") {
                 ForEach(albums) { album in
                     AlbumGridLink(album: album)
                 }
             }
+            .padding(.top)
         }
         .padding(C.gridPadding)
         
