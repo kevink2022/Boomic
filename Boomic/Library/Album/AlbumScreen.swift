@@ -10,7 +10,7 @@ import Models
 import Database
 
 struct AlbumScreen: View {
-    @Environment(\.database) private var database
+    @Environment(\.repository) private var repository
     let album: Album
     @State private var songs: [Song] = []
     @State private var artists: [Artist] = []
@@ -108,8 +108,8 @@ struct AlbumScreen: View {
         }
         
         .task {
-            songs = await database.getSongs(for: album.songs)
-            artists = await database.getArtists(for: album.artists)
+            songs = await repository.getSongs(for: album.songs)
+            artists = await repository.getArtists(for: album.artists)
         }
     }
     
@@ -119,7 +119,7 @@ struct AlbumScreen: View {
 
 #Preview {
     AlbumScreen(album: previewAlbum())
-        .environment(\.database, previewDatabase())
+        .environment(\.repository, previewRepository())
 }
 
 

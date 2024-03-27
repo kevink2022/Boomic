@@ -37,6 +37,7 @@
 		4FB41E262BA659E300270496 /* ViewConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E252BA659E300270496 /* ViewConstants.swift */; };
 		4FB41E282BA6637300270496 /* AlbumScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E272BA6637300270496 /* AlbumScreen.swift */; };
 		4FB41E2A2BA67EF200270496 /* SongListEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E292BA67EF200270496 /* SongListEntry.swift */; };
+		4FD48D0A2BB3E2B800D06055 /* Repository in Frameworks */ = {isa = PBXBuildFile; productRef = 4FD48D092BB3E2B800D06055 /* Repository */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +103,7 @@
 			files = (
 				4F853B7C2BAE30B400721E59 /* MediaFileKit in Frameworks */,
 				4F04DCF92B74B77B006114B3 /* Models in Frameworks */,
+				4FD48D0A2BB3E2B800D06055 /* Repository in Frameworks */,
 				4F6135D02B7AB3CC00AF825C /* Database in Frameworks */,
 				4FB41E202BA6289000270496 /* DatabaseMocks in Frameworks */,
 			);
@@ -291,6 +293,7 @@
 				4F6135CF2B7AB3CC00AF825C /* Database */,
 				4FB41E1F2BA6289000270496 /* DatabaseMocks */,
 				4F853B7B2BAE30B400721E59 /* MediaFileKit */,
+				4FD48D092BB3E2B800D06055 /* Repository */,
 			);
 			productName = Boomic;
 			productReference = 4F04DCB52B74727D006114B3 /* Boomic.app */;
@@ -368,6 +371,7 @@
 				4F04DCF72B74B77B006114B3 /* XCLocalSwiftPackageReference "Sources/Models" */,
 				4F6135CE2B7AB3CC00AF825C /* XCLocalSwiftPackageReference "Sources/Database" */,
 				4F853B7A2BAE30B400721E59 /* XCLocalSwiftPackageReference "Sources/MediaFileKit" */,
+				4FD48D082BB3E2B800D06055 /* XCLocalSwiftPackageReference "Sources/Repository" */,
 			);
 			productRefGroup = 4F04DCB62B74727D006114B3 /* Products */;
 			projectDirPath = "";
@@ -802,6 +806,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Sources/MediaFileKit;
 		};
+		4FD48D082BB3E2B800D06055 /* XCLocalSwiftPackageReference "Sources/Repository" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Sources/Repository;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -820,6 +828,10 @@
 		4FB41E1F2BA6289000270496 /* DatabaseMocks */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DatabaseMocks;
+		};
+		4FD48D092BB3E2B800D06055 /* Repository */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Repository;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

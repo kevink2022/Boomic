@@ -10,7 +10,7 @@ import Models
 import Database
 
 struct AllAlbumsScreen: View {
-    @Environment(\.database) private var database
+    @Environment(\.repository) private var repository
     @State private var albums: [Album] = []
     @State var columns: [GridItem] = Array(repeating: .init(.flexible()), count: 2)
     
@@ -25,7 +25,7 @@ struct AllAlbumsScreen: View {
         .padding(C.gridPadding)
         
         .task {
-            albums = await database.getAlbums(for: nil)
+            albums = await repository.getAlbums(for: nil)
         }
     }
     
@@ -35,7 +35,7 @@ struct AllAlbumsScreen: View {
 
 #Preview {
     AllAlbumsScreen()
-        .environment(\.database, previewDatabase())
+        .environment(\.repository, previewRepository())
 }
 
 

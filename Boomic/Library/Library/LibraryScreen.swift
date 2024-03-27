@@ -34,5 +34,5 @@ struct LibraryScreen: View {
 
 #Preview {
     LibraryScreen()
-        .environment(\.database, previewDatabase())
+        .environment(\.repository, previewRepository())
 }

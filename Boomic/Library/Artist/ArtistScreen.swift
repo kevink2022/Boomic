@@ -9,7 +9,7 @@ import SwiftUI
 import Models
 
 struct ArtistScreen: View {
-    @Environment(\.database) private var database
+    @Environment(\.repository) private var repository
     let artist: Artist
     @State private var songs: [Song] = []
     @State private var albums: [Album] = []
@@ -78,8 +78,8 @@ struct ArtistScreen: View {
         .padding(C.gridPadding)
         
         .task {
-            songs = await database.getSongs(for: artist.songs)
-            albums = await database.getAlbums(for: artist.albums)
+            songs = await repository.getSongs(for: artist.songs)
+            albums = await repository.getAlbums(for: artist.albums)
         }
     }
     
@@ -90,5 +90,5 @@ struct ArtistScreen: View {
 
 #Preview {
     ArtistScreen(artist: previewArtist())
-        .environment(\.database, previewDatabase())
+        .environment(\.repository, previewRepository())
 }

@@ -10,7 +10,7 @@ import Models
 import Database
 
 struct AllArtistsScreen: View {
-    @Environment(\.database) private var database
+    @Environment(\.repository) private var repository
     @State private var artists: [Artist] = []
     
     // dynamic grid
@@ -34,7 +34,7 @@ struct AllArtistsScreen: View {
         .padding(C.gridPadding)
         
         .task {
-            artists = await database.getArtists(for: nil)
+            artists = await repository.getArtists(for: nil)
         }
     }
     
@@ -44,5 +44,5 @@ struct AllArtistsScreen: View {
 
 #Preview {
     AllArtistsScreen()
-        .environment(\.database, previewDatabase())
+        .environment(\.repository, previewRepository())
 }
