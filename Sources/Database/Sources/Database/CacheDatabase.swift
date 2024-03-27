@@ -49,7 +49,7 @@ final public class CacheDatabase: Database {
         , songsURL: URL? = nil
         , albumsURL: URL? = nil
         , artistsURL: URL? = nil
-    ) throws {
+    ) {
         self.decoder = decoder
         self.encoder = encoder
         self.songsURL = songsURL ?? C.songsDefaultURL_ios
@@ -58,9 +58,11 @@ final public class CacheDatabase: Database {
         
         self.modelCache = ModelCache(songs: [], albums: [], artists: [])
         
-        let songs = try initFromURL([Song].self, from: self.songsURL) ?? []
-        let albums = try initFromURL([Album].self, from: self.albumsURL) ?? []
-        let artists = try initFromURL([Artist].self, from: self.artistsURL) ?? []
+        // TODO: Handle errors
+        // (any guesses on how long until i get to this?)
+        let songs = (try? initFromURL([Song].self, from: self.songsURL)) ?? []
+        let albums = (try? initFromURL([Album].self, from: self.albumsURL)) ?? []
+        let artists = (try? initFromURL([Artist].self, from: self.artistsURL)) ?? []
         
         self.modelCache = ModelCache(songs: songs, albums: albums, artists: artists)
     }

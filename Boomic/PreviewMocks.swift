@@ -8,13 +8,17 @@
 import Foundation
 import Models
 import ModelsMocks
-import Database
 import DatabaseMocks
+import Repository
 
-func previewDatabase() -> Database { GirlsApartmentDatabase() }
+func previewRepository() -> Repository { RepositoryImpl(database: GirlsApartmentDatabase() )}
+
 func previewSong() -> Song { Song.aCagedPersona }
+
 func previewAlbum() -> Album { Album.girlsApartment }
+
 func previewArtist() -> Artist { Artist.synth }
+
 func previewArtists() -> [Artist] {
     return GirlsApartmentDatabase().getArtists(for: nil)
 }

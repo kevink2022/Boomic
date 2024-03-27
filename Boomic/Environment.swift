@@ -6,15 +6,16 @@
 //
 
 import SwiftUI
-import Database
+import Repository
 
-struct DatabaseEnvironmentKey: EnvironmentKey {
-    static let defaultValue: Database = try! CacheDatabase() // Provide a default
+struct RepositoryEnvironmentKey: EnvironmentKey {
+    static let defaultValue: Repository = RepositoryImpl()
 }
 
 extension EnvironmentValues {
-    var database: Database {
-        get { self[DatabaseEnvironmentKey.self] }
-        set { self[DatabaseEnvironmentKey.self] = newValue }
+    var repository: Repository {
+        get { self[RepositoryEnvironmentKey.self] }
+        set { self[RepositoryEnvironmentKey.self] = newValue }
     }
 }
+

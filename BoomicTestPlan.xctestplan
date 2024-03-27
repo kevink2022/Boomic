@@ -32,6 +32,13 @@
         "identifier" : "MediaFileKitTests",
         "name" : "MediaFileKitTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Sources\/Repository",
+        "identifier" : "RepositoryTests",
+        "name" : "RepositoryTests"
+      }
     }
   ],
   "version" : 1

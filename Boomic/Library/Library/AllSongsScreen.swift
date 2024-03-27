@@ -10,7 +10,7 @@ import Models
 import Database
 
 struct AllSongsScreen: View {
-    @Environment(\.database) private var database
+    @Environment(\.repository) private var repository
     @State private var songs: [Song] = []
     
     var body: some View {
@@ -35,7 +35,7 @@ struct AllSongsScreen: View {
         }
         
         .task {
-            songs = await database.getSongs(for: nil)
+            songs = await repository.getSongs(for: nil)
         }
     }
     
@@ -45,5 +45,5 @@ struct AllSongsScreen: View {
 
 #Preview {
     AllSongsScreen()
-        .environment(\.database, previewDatabase())
+        .environment(\.repository, previewRepository())
 }
