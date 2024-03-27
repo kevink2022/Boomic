@@ -25,6 +25,13 @@
         "identifier" : "DatabaseTests",
         "name" : "DatabaseTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Sources\/MediaFileKit",
+        "identifier" : "MediaFileKitTests",
+        "name" : "MediaFileKitTests"
+      }
     }
   ],
   "version" : 1
