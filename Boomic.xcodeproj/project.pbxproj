@@ -27,6 +27,7 @@
 		4F853B722BA8926500721E59 /* AlbumGridLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F853B712BA8926500721E59 /* AlbumGridLink.swift */; };
 		4F853B762BAA1C1F00721E59 /* SectionTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F853B752BAA1C1F00721E59 /* SectionTitle.swift */; };
 		4F853B782BAA22D100721E59 /* DynamicGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F853B772BAA22D100721E59 /* DynamicGrid.swift */; };
+		4F853B7C2BAE30B400721E59 /* MediaFileKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4F853B7B2BAE30B400721E59 /* MediaFileKit */; };
 		4FB41E192BA6228600270496 /* LibraryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E182BA6228600270496 /* LibraryScreen.swift */; };
 		4FB41E1B2BA6241900270496 /* LibraryNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E1A2BA6241900270496 /* LibraryNavigationView.swift */; };
 		4FB41E1D2BA6247E00270496 /* AllAlbumsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E1C2BA6247E00270496 /* AllAlbumsScreen.swift */; };
@@ -83,6 +84,7 @@
 		4F853B712BA8926500721E59 /* AlbumGridLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumGridLink.swift; sourceTree = "<group>"; };
 		4F853B752BAA1C1F00721E59 /* SectionTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionTitle.swift; sourceTree = "<group>"; };
 		4F853B772BAA22D100721E59 /* DynamicGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicGrid.swift; sourceTree = "<group>"; };
+		4F853B792BAA8B5900721E59 /* MediaFileKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MediaFileKit; sourceTree = "<group>"; };
 		4FB41E182BA6228600270496 /* LibraryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryScreen.swift; sourceTree = "<group>"; };
 		4FB41E1A2BA6241900270496 /* LibraryNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryNavigationView.swift; sourceTree = "<group>"; };
 		4FB41E1C2BA6247E00270496 /* AllAlbumsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllAlbumsScreen.swift; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F853B7C2BAE30B400721E59 /* MediaFileKit in Frameworks */,
 				4F04DCF92B74B77B006114B3 /* Models in Frameworks */,
 				4F6135D02B7AB3CC00AF825C /* Database in Frameworks */,
 				4FB41E202BA6289000270496 /* DatabaseMocks in Frameworks */,
@@ -189,6 +192,7 @@
 		4F04DCE32B7476C0006114B3 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				4F853B792BAA8B5900721E59 /* MediaFileKit */,
 				4F04DCE72B747F38006114B3 /* Models */,
 				4F04DCE62B747F0D006114B3 /* Networking */,
 				4F04DCE52B747EFC006114B3 /* Database */,
@@ -286,6 +290,7 @@
 				4F04DCF82B74B77B006114B3 /* Models */,
 				4F6135CF2B7AB3CC00AF825C /* Database */,
 				4FB41E1F2BA6289000270496 /* DatabaseMocks */,
+				4F853B7B2BAE30B400721E59 /* MediaFileKit */,
 			);
 			productName = Boomic;
 			productReference = 4F04DCB52B74727D006114B3 /* Boomic.app */;
@@ -362,6 +367,7 @@
 			packageReferences = (
 				4F04DCF72B74B77B006114B3 /* XCLocalSwiftPackageReference "Sources/Models" */,
 				4F6135CE2B7AB3CC00AF825C /* XCLocalSwiftPackageReference "Sources/Database" */,
+				4F853B7A2BAE30B400721E59 /* XCLocalSwiftPackageReference "Sources/MediaFileKit" */,
 			);
 			productRefGroup = 4F04DCB62B74727D006114B3 /* Products */;
 			projectDirPath = "";
@@ -792,6 +798,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Sources/Database;
 		};
+		4F853B7A2BAE30B400721E59 /* XCLocalSwiftPackageReference "Sources/MediaFileKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Sources/MediaFileKit;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -802,6 +812,10 @@
 		4F6135CF2B7AB3CC00AF825C /* Database */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Database;
+		};
+		4F853B7B2BAE30B400721E59 /* MediaFileKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MediaFileKit;
 		};
 		4FB41E1F2BA6289000270496 /* DatabaseMocks */ = {
 			isa = XCSwiftPackageProductDependency;
