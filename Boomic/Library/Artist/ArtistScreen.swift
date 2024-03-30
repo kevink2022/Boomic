@@ -33,6 +33,7 @@ struct ArtistScreen: View {
             
             Text(artist.name)
                 .font(F.title)
+                .multilineTextAlignment(.center)
             
             Text("\(albums.count) albums • \(songs.count) tracks")
                 .font(F.listDuration)

@@ -3,21 +3,13 @@ import Models
 import ModelsMocks
 @testable import Database
 
-/// TODO
-/// - Sort on update
-/// - Object delete
-/// - Proper sorting tests
-/// - Bulk Tests
-/// - Documentation
-/// The first two will require the model resolver, so thats what I will work on now,
-
 final class CacheDatabaseTests: XCTestCase {
     
     private let fileManager = FileManager()
     private let decoder = JSONDecoder()
     
     private func initTestDB() throws -> CacheDatabase {
-        try CacheDatabase(
+        CacheDatabase(
             decoder: JSONDecoder()
             , encoder: JSONEncoder()
             , songsURL: C.songsDefaultURL_ios
@@ -181,6 +173,24 @@ final class CacheDatabaseTests: XCTestCase {
 //                ModelError.unresolvedRelation(Album.self, Album.self))
 //        }
 //    }
+    
+    func test_addSongs() async {
+        defer { try? deleteTestDB() }
+        setUpTestDB { try createValidTestDB() }
+        guard let sut = initWrapper({ try initTestDB() }) else { return }
+        
+        let (newSongs, _, _) = sampleModels()
+        
+        await sut.addSongs(newSongs)
+        
+        let songs = sut.getSongs()
+        let albums = sut.getAlbums()
+        let artists = sut.getArtists()
+        
+        XCTAssertEqual(songs.count, 21)
+        XCTAssertEqual(albums.count, 2)
+        XCTAssertEqual(artists.count, 7)
+    }
     
     // MARK: - Helpers
     

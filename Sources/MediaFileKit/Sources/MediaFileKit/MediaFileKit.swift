@@ -79,12 +79,13 @@ public final class LocalMediaFileInterface: MediaFileInterface {
     
     private func newFiles(at url: URL, known files: [URL]) throws -> [URL] {
         
-        guard let enumerator = fileManager.enumerator(at: url, includingPropertiesForKeys: nil) else { throw MediaFileInterfaceError.enumeratorInitFail(url) }
+        guard let enumerator = fileManager.enumerator(at: url, includingPropertiesForKeys: nil) 
+        else { throw MediaFileInterfaceError.enumeratorInitFail(url) }
         
         return enumerator.allObjects
             .compactMap { $0 as? URL }
+            .filter { Song.codecs.contains($0.pathExtension.lowercased()) }
             .filter { !files.contains($0) }
     }
-    
 }
 

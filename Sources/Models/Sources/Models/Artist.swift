@@ -48,3 +48,9 @@ extension Artist: Hashable {
         lhs.id == rhs.id
     }
 }
+
+extension Artist {
+    public static func alphabeticalSort(_ artistA: Artist, _ artistB: Artist) -> Bool {
+        artistA.name.compare(artistB.name, options: .caseInsensitive) == .orderedAscending
+    }
+}

@@ -8,30 +8,6 @@
 import Foundation
 import Models
 
-private final class ModelCache {
-    public let songMap: [UUID: Song]
-    public let albumMap: [UUID: Album]
-    public let artistMap: [UUID: Artist]
-    
-    public let allSongs: [Song]
-    public let allAlbums: [Album]
-    public let allArtists: [Artist]
-    
-    init(
-        songs: [Song]
-        , albums: [Album]
-        , artists: [Artist]
-    ) {
-        self.allSongs = songs
-        self.allAlbums = albums
-        self.allArtists = artists
-        
-        self.songMap = songs.reduce(into: [:]) { $0[$1.id] = $1 }
-        self.albumMap = albums.reduce(into: [:]) { $0[$1.id] = $1 }
-        self.artistMap = artists.reduce(into: [:]) { $0[$1.id] = $1 }
-    }
-}
-
 final public class CacheDatabase: Database {
     
     private var modelCache: ModelCache
@@ -94,7 +70,10 @@ final public class CacheDatabase: Database {
     }
     
     public func addSongs(_ songs: [Song]) async {
+        let resolver = ModelResolver(currentCache: modelCache)
         
+        // TODO: Some kind of queueing probably for any mutation ops.
+        modelCache = await resolver.addSongs(songs)
     }
 
     // MARK: - Private Helpers
@@ -149,15 +128,275 @@ final public class CacheDatabase: Database {
         static let artistsDefaultURL_ios = URL.applicationSupportDirectory
             .appending(component: "Database/")
             .appending(component: "artists.json")
+    }
+}
+
+// MARK: - ModelCache -
+private final class ModelCache {
+    public let songMap: [UUID: Song]
+    public let albumMap: [UUID: Album]
+    public let artistMap: [UUID: Artist]
+    
+    public let allSongs: [Song]
+    public let allAlbums: [Album]
+    public let allArtists: [Artist]
+    
+    init(
+        songs: [Song]
+        , albums: [Album]
+        , artists: [Artist]
+        , songMap: [UUID: Song]? = nil
+        , albumMap: [UUID: Album]? = nil
+        , artistMap: [UUID: Artist]? = nil
+    ) {
+        self.allSongs = songs
+        self.allAlbums = albums
+        self.allArtists = artists
         
-        static func songsAlphabeticalSort(_ songA: Song, _ songB: Song) -> Bool {
-            songA.label.compare(songB.label, options: .caseInsensitive) == .orderedAscending
+        self.songMap = songMap ?? songs.reduce(into: [:]) { $0[$1.id] = $1 }
+        self.albumMap = albumMap ?? albums.reduce(into: [:]) { $0[$1.id] = $1 }
+        self.artistMap = artistMap ?? artists.reduce(into: [:]) { $0[$1.id] = $1 }
+    }
+}
+
+// MARK: - ModelResolver -
+private final class ModelResolver {
+    
+    private let currentCache: ModelCache
+    
+    private lazy var albumTitles: [String:UUID] = {
+        currentCache.allAlbums
+            .reduce(into: [String:UUID]()) { dict, album in dict[album.title] = album.id }
+    }()
+    
+    private lazy var artistNames: [String:UUID] = {
+        currentCache.allArtists
+            .reduce(into: [String:UUID]()) { dict, artist in dict[artist.name] = artist.id }
+    }()
+    
+    init(currentCache: ModelCache) {
+        self.currentCache = currentCache
+    }
+    
+    public func addSongs(_ unlinkedSongs: [Song]) async -> ModelCache {
+        
+        async let albumTitleLinks_await = songsToTitleLinks(unlinkedSongs)
+        async let artistNameLinks_await = songsToNameLinks(unlinkedSongs)
+        
+        let (albumTitleLinks, artistNameLinks) = await (albumTitleLinks_await, artistNameLinks_await)
+        
+        async let linkedSongs_await = linkSongs(unlinkedSongs, albumTitles: albumTitleLinks, artistNames: artistNameLinks)
+        let affectedAlbums = albumTitleLinks.keys.map { $0 as String }
+        let affectedArtists = albumTitleLinks.keys.map { $0 as String }
+        
+        let linkedSongs = await linkedSongs_await
+        
+        async let linkedAlbums_await = linkAlbums(albumTitleLinks, linkedSongs: linkedSongs)
+        async let linkedArtists_await = linkArtists(artistNameLinks, linkedSongs: linkedSongs)
+        
+        let (linkedAlbums, linkedArtists) = await (linkedAlbums_await, linkedArtists_await)
+        let tempCache = ModelCache(songs: linkedSongs, albums: linkedAlbums, artists: linkedArtists)
+        
+        async let newSongs_await = songDetails(linkedSongs, tempCache)
+        async let newAlbums_await = albumDetails(linkedAlbums, tempCache)
+        async let newArtists_await = artistDetails(linkedArtists, tempCache)
+        
+        let (newSongs, newAlbums, newArtists) = await (newSongs_await, newAlbums_await, newArtists_await)
+        
+        let currentSongMap = currentCache.songMap
+        let currentAlbumMap = currentCache.albumMap
+        let currentArtistMap = currentCache.artistMap
+        async let newSongMap_await = { newSongs.reduce(into: currentSongMap) { $0[$1.id] = $1 } }()
+        async let newAlbumMap_await = { newAlbums.reduce(into: currentAlbumMap) { $0[$1.id] = $1 } }()
+        async let newArtistMap_await = { newArtists.reduce(into: currentArtistMap) { $0[$1.id] = $1 } }()
+        
+        let (
+            newSongMap, newAlbumMap, newArtistMap
+        ) = await (
+            newSongMap_await, newAlbumMap_await, newArtistMap_await
+        )
+            
+        async let newAllSongs_await = { newSongMap.values.sorted{ Song.alphabeticalSort($0, $1) } }()
+        async let newAllAlbums_await = { newAlbumMap.values.sorted{ Album.alphabeticalSort($0, $1) } }()
+        async let newAllArtists_await = { newArtistMap.values.sorted{ Artist.alphabeticalSort($0, $1) } }()
+        
+        let (
+            newAllSongs, newAllAlbums, newAllArtists
+        ) = await (
+            newAllSongs_await, newAllAlbums_await, newAllArtists_await
+        )
+        
+        return ModelCache(
+            songs: newAllSongs
+            , albums: newAllAlbums
+            , artists: newAllArtists
+            , songMap: newSongMap
+            , albumMap: newAlbumMap
+            , artistMap: newArtistMap
+        )
+    }
+    
+    // MARK: - String Maps
+    private func songsToTitleLinks(_ songs: [Song]) -> [String:UUID] {
+        return songs.reduce(into: [String:UUID]()) { dict, song in
+            
+            guard let songAlbumTitle = song.albumTitle else { return }
+            
+            if let albumID = albumTitles[songAlbumTitle] {
+                dict[songAlbumTitle] = albumID
+            } else {
+                dict[songAlbumTitle] = UUID()
+            }
         }
-        static func albumAlphabeticalSort(_ albumA: Album, _ albumB: Album) -> Bool {
-            albumA.title.compare(albumB.title, options: .caseInsensitive) == .orderedAscending
+    }
+    
+    private func songsToNameLinks(_ songs: [Song]) -> [String:UUID] {
+        return songs.reduce(into: [String:UUID]()) { dict, song in
+            
+            guard let songArtistName = song.artistName else { return }
+            
+            if let artistID = artistNames[songArtistName] {
+                dict[songArtistName] = artistID
+            } else {
+                dict[songArtistName] = UUID()
+            }
         }
-        static func artistAlphabeticalSort(_ artistA: Artist, _ artistB: Artist) -> Bool {
-            artistA.name.compare(artistB.name, options: .caseInsensitive) == .orderedAscending
+    }
+    
+    // MARK: - Naive Linking
+    private func linkSongs(_ unlinkedSongs: [Song], albumTitles: [String:UUID], artistNames: [String:UUID]) -> [Song] {
+        
+        return unlinkedSongs.map { song in
+
+            let albums: [UUID]? = {
+                if let albumTitle = song.albumTitle { return parseAlbums(albumTitle).compactMap{ albumTitles[$0] } }
+                else { return nil }
+            }()
+            
+            let artists: [UUID]? = {
+                if let artistName = song.artistName { return parseArtists(artistName).compactMap{ artistNames[$0] } }
+                else { return nil }
+            }()
+            
+            return Song(
+                existingSong: song
+                , artists: artists
+                , albums: albums
+            )
         }
+    }
+    
+    private func linkAlbums(_ affectedAlbums: [String:UUID], linkedSongs: [Song]) -> [Album] {
+        return affectedAlbums.map { title, albumID in
+            
+            let album = currentCache.albumMap[albumID] ?? Album(id: albumID, title: title)
+            
+            let linkedSongs = linkedSongs.filter { $0.albums.contains(album.id) }
+            
+            let albumSongs = Array(linkedSongs.reduce(into: Set(album.songs)){ $0.insert($1.id ) })
+            let albumArtists = Array(linkedSongs.reduce(into: Set(album.artists)){ $0.formUnion($1.artists) })
+            
+            return Album(
+                id: album.id
+                , title: album.title
+                , songs: albumSongs
+                , artists: albumArtists
+            )
+        }
+    }
+    
+    private func linkArtists(_ affectedArtists: [String:UUID], linkedSongs: [Song]) -> [Artist] {
+        return affectedArtists.map { name, artistID in
+            
+            let artist = currentCache.artistMap[artistID] ?? Artist(id: artistID, name: name, songs: [], albums: [])
+            
+            let linkedSongs = linkedSongs.filter { $0.artists.contains(artist.id) }
+            
+            let artistSongs = Array(linkedSongs.reduce(into: Set(artist.songs)){ $0.insert($1.id ) })
+            let artistAlbums = Array(linkedSongs.reduce(into: Set(artist.albums)){ $0.formUnion($1.albums) })
+            
+            return Artist(
+                id: artist.id
+                , name: artist.name
+                , songs: artistSongs
+                , albums: artistAlbums
+            )
+        }
+    }
+    
+    // MARK: - Detail Resolution
+    private func songDetails(_ linkedSongs: [Song], _ tempCache: ModelCache) -> [Song] {
+        return linkedSongs.map { song in
+
+            let albums = song.albums
+                .compactMap { tempCache.albumMap[$0] ?? currentCache.albumMap[$0] }
+                .sorted { Album.alphabeticalSort($0, $1) }
+                .map { $0.id }
+            
+            let artists = song.artists
+                .compactMap { tempCache.artistMap[$0] ?? currentCache.artistMap[$0] }
+                .sorted { Artist.alphabeticalSort($0, $1) }
+                .map { $0.id }
+            
+            return Song(
+                existingSong: song
+                , artists: artists
+                , albums: albums
+            )
+        }
+    }
+    
+    private func albumDetails(_ linkedAlbums: [Album], _ tempCache: ModelCache) -> [Album] {
+        return linkedAlbums.map { album in
+
+            let songs = album.songs
+                .compactMap { tempCache.songMap[$0] ?? currentCache.songMap[$0] }
+                .sorted { Song.discAndTrackNumberSort($0, $1) }
+                .map { $0.id }
+            
+            let artists = album.artists
+                .compactMap { tempCache.artistMap[$0] ?? currentCache.artistMap[$0] }
+                .sorted { Artist.alphabeticalSort($0, $1) }
+                .map { $0.id }
+            
+            return Album(
+                id: album.id
+                , title: album.title
+                , songs: songs
+                , artists: artists
+            )
+        }
+    }
+    
+    private func artistDetails(_ linkedArtists: [Artist], _ tempCache: ModelCache) -> [Artist] {
+        return linkedArtists.map { artist in
+
+            let songs = artist.songs
+                .compactMap { tempCache.songMap[$0] ?? currentCache.songMap[$0] }
+                .sorted { Song.discAndTrackNumberSort($0, $1) }
+                .map { $0.id }
+            
+            let albums = artist.albums
+                .compactMap { tempCache.albumMap[$0] ?? currentCache.albumMap[$0] }
+                .sorted { Album.alphabeticalSort($0, $1) }
+                .map { $0.id }
+            
+            return Artist(
+                id: artist.id
+                , name: artist.name
+                , songs: songs
+                , albums: albums
+            )
+        }
+    }
+    
+    // MARK: - Parsers
+    /// these will likely be moved long term.
+    private func parseArtists(_ artistName: String) -> [String] {
+        return [artistName]
+    }
+    
+    private func parseAlbums(_ albumTitle: String) -> [String] {
+        return [albumTitle]
     }
 }

@@ -34,9 +34,11 @@ struct AlbumScreen: View {
                 
                 Text(album.title)
                     .font(F.title)
+                    .multilineTextAlignment(.center)
                 
                 Text(album.artistName ?? "Unknown Artist")
                     .font(F.subtitle)
+                    .multilineTextAlignment(.center)
                 
                 Text("\(songs.count) tracks • \(songs.reduce(TimeInterval(), {$0 + $1.duration}).formatted)")
                     .font(F.listDuration)

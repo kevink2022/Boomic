@@ -14,26 +14,26 @@ public final class AudioToolboxParser {
     public let hasTags: Bool
     public let hasEmbeddedArt: Bool
     private let tags: [String : Any]?
-    private typealias Static = AudioToolboxParser
+    private typealias S = AudioToolboxParser
     
     init(file: URL) {
         source = file
         
-        guard let fileID = Static.openFile(url: file) else {
+        guard let fileID = S.openFile(url: file) else {
             hasTags = false
             hasEmbeddedArt = false
             tags = nil
             return
         }
-        defer { Static.closeFile(fileID) }
+        defer { S.closeFile(fileID) }
         
-        tags = Static.initTags(fileID)
+        tags = S.initTags(fileID)
         hasTags = tags == nil ? false : true
-        hasEmbeddedArt = Static.hasEmbedded(fileID)
+        hasEmbeddedArt = S.hasEmbedded(fileID)
     }
     
     private static func openFile(url: URL) -> AudioFileID? {
-        guard let fileType = Static.fileToType(url) else { return nil }
+        guard let fileType = S.fileToType(url) else { return nil }
         
         var fileID: AudioFileID? = nil
         let fileOpenStatus: OSStatus = AudioFileOpenURL(url as CFURL, .readPermission, fileType, &fileID)

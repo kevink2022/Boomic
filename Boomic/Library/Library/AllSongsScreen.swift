@@ -23,7 +23,7 @@ struct AllSongsScreen: View {
                 Spacer()
             }
             
-            VStack(spacing: 0) {
+            LazyVStack(spacing: 0) {
                 ForEach(songs) { song in
                     Divider()
                     SongListEntry(song: song)

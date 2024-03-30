@@ -52,3 +52,9 @@ extension Album: Hashable {
         hasher.combine(id)
     }
 }
+
+extension Album {
+    public static func alphabeticalSort(_ albumA: Album, _ albumB: Album) -> Bool {
+        albumA.title.compare(albumB.title, options: .caseInsensitive) == .orderedAscending
+    }
+}

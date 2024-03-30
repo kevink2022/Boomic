@@ -9,6 +9,9 @@ import SwiftUI
 
 
 struct LibraryScreen: View {
+    
+    @Environment(\.repository) private var repository
+    
     var body: some View {
         NavigationStack {
             List {
@@ -27,6 +30,11 @@ struct LibraryScreen: View {
                 } label: {
                     Text("Artists")
                 }
+                Button {
+                    Task { await repository.addSongs([]) }
+                } label: {
+                    Text("Add Songs")
+                }
             }
         }
     }
@@ -34,5 +42,5 @@ struct LibraryScreen: View {
 
 #Preview {
     LibraryScreen()
-        .environment(\.repository, previewRepository())
+        .environment(\.repository, livePreviewRepository())
 }
