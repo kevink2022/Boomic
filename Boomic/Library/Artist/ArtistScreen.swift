@@ -22,61 +22,60 @@ struct ArtistScreen: View {
     
     var body: some View {
         ScrollView {
-            HStack {
-                
+            VStack {
                 Image("boomic_logo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .clipShape(Circle())
                     .padding(.horizontal, 110)
-            }
-            
-            Text(artist.name)
-                .font(F.title)
-                .multilineTextAlignment(.center)
-            
-            Text("\(albums.count) albums • \(songs.count) tracks")
-                .font(F.listDuration)
-            
-            HStack {
-                Text("Top Songs")
-                    .font(F.sectionTitle)
                 
-                Spacer()
-            }
-            .padding(.top)
-            
-            VStack(spacing: 0) {
-                ForEach(songs.prefix(showAllSongs ? songs.count : topSongCount)) { song in
-                    Divider()
-                    SongListEntry(song: song)
-                        .padding(7)
+                Text(artist.name)
+                    .font(F.title)
+                    .multilineTextAlignment(.center)
+                
+                Text("\(albums.count) albums • \(songs.count) tracks")
+                    .font(F.listDuration)
+                
+                HStack {
+                    Text("Top Songs")
+                        .font(F.sectionTitle)
+                    
+                    Spacer()
                 }
-                Divider()
+                .padding(.top)
                 
-                if topSongCount < songs.count {
-                    Button {
-                        withAnimation(.easeOut(duration: 0.2)) { showAllSongs.toggle() }
-                    } label: {
-                        ZStack {
-                            Color(.clear)
-                            Text(showAllSongs ? "Show Less" : "Show All")
+                VStack(spacing: 0) {
+                    ForEach(songs.prefix(showAllSongs ? songs.count : topSongCount)) { song in
+                        Divider()
+                        SongListButton(song: song)
+                            .padding(7)
+                    }
+                    Divider()
+                    
+                    if topSongCount < songs.count {
+                        Button {
+                            withAnimation(.easeOut(duration: 0.2)) { showAllSongs.toggle() }
+                        } label: {
+                            ZStack {
+                                Color(.clear)
+                                Text(showAllSongs ? "Show Less" : "Show All")
+                            }
+                            .frame(height: C.smallAlbumFrame + 5)
                         }
-                        .frame(height: C.smallAlbumFrame + 5)
+                    }
+                    
+                    Divider()
+                }
+                
+                DynamicGrid(title: "Albums") {
+                    ForEach(albums) { album in
+                        AlbumGridLink(album: album)
                     }
                 }
-
-                Divider()
+                .padding(.top)
             }
-            
-            DynamicGrid(title: "Albums") {
-                ForEach(albums) { album in
-                    AlbumGridLink(album: album)
-                }
-            }
-            .padding(.top)
+            .padding(C.gridPadding)
         }
-        .padding(C.gridPadding)
         
         .task {
             songs = await repository.getSongs(for: artist.songs)

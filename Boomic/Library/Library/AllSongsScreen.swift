@@ -26,7 +26,7 @@ struct AllSongsScreen: View {
             LazyVStack(spacing: 0) {
                 ForEach(songs) { song in
                     Divider()
-                    SongListEntry(song: song)
+                    SongListButton(song: song)
                         .padding(7)
                 }
                 Divider()

@@ -22,7 +22,7 @@ struct AllAlbumsScreen: View {
                 }
             }
         }
-        .padding(C.gridPadding)
+        .padding(.horizontal, C.gridPadding)
         
         .task {
             albums = await repository.getAlbums(for: nil)

@@ -12,11 +12,18 @@ struct SongListEntry: View {
     let song: Song
     let showAlbumArt: Bool
     let showArtist: Bool
+    let showTrackNumber: Bool
     
-    init(song: Song, showAlbumArt: Bool = true, showArtist: Bool = true) {
+    init(
+        song: Song
+        , showAlbumArt: Bool = true
+        , showArtist: Bool = true
+        , showTrackNumber: Bool = false
+    ) {
         self.song = song
         self.showAlbumArt = showAlbumArt
         self.showArtist = showArtist
+        self.showTrackNumber = showTrackNumber
     }
     
     
@@ -32,6 +39,13 @@ struct SongListEntry: View {
                         height: C.smallAlbumCornerRadius
                     )))
                     .frame(height: C.smallAlbumFrame)
+            }
+            
+            if showTrackNumber {
+                Text("\(song.trackNumber.map { String($0) } ?? "")")
+                    .font(F.trackNumber)
+                    .frame(minWidth: 22, alignment: .leading)
+
             }
             
             VStack(alignment: .leading) {
@@ -65,5 +79,5 @@ struct SongListEntry: View {
 }
 
 #Preview {
-    SongListEntry(song: previewSong())
+    SongListEntry(song: previewSong(), showTrackNumber: true)
 }

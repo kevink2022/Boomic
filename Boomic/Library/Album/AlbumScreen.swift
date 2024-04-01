@@ -75,14 +75,9 @@ struct AlbumScreen: View {
                 VStack(spacing: 0) {
                     ForEach(songs) { song in
                         Divider()
-                        HStack {
-                            Text("\(song.trackNumber.map { String($0) } ?? "")")
-                                .font(F.trackNumber)
-                                .frame(minWidth: 22, alignment: .leading)
-
-                            SongListEntry(song: song, showAlbumArt: false)
-                         }
-                        .padding(7)
+                        
+                        SongListButton(song: song, showAlbumArt: false, showTrackNumber: true)
+                            .padding(7)
                     }
                     Divider()
                 }

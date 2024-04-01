@@ -36,6 +36,7 @@ struct LibraryScreen: View {
                     Text("Add Songs")
                 }
             }
+            .listStyle(.inset)
         }
     }
 }

@@ -31,7 +31,7 @@ struct AllArtistsScreen: View {
                 }
             }
         }
-        .padding(C.gridPadding)
+        .padding(.horizontal, C.gridPadding)
         
         .task {
             artists = await repository.getArtists(for: nil)

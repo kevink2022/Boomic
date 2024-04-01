@@ -8,17 +8,32 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.player) private var player
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        if player.fullscreen {
+            PlayerScreen()
+        } else {
+            TabView {
+                SongBarWrapper { LibraryScreen() }
+                    .tabItem { Label("Home", systemImage: "music.note.house") }
+                
+                SongBarWrapper { SettingsScreen() }
+                    .tabItem { Label("Settings", systemImage: "gear") }
+                
+                SongBarWrapper { MixerScreen() }
+                    .tabItem { Label("Mixer", systemImage: "slider.vertical.3") }
+                
+                SongBarWrapper { SearchScreen() }
+                    .tabItem { Label("Search", systemImage: "magnifyingglass") }
+            }
         }
-        .padding()
     }
 }
 
 #Preview {
     ContentView()
+        .environment(\.repository, livePreviewRepository())
+        .environment(\.player, previewPlayer())
 }
+
