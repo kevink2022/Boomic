@@ -31,9 +31,7 @@ struct SongListEntry: View {
         HStack {
             
             if showAlbumArt {
-                Image("boomic_logo")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+                MediaArtView(song.art)
                     .clipShape(RoundedRectangle(cornerSize: CGSize(
                         width: C.smallAlbumCornerRadius,
                         height: C.smallAlbumCornerRadius

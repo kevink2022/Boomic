@@ -46,6 +46,7 @@
 		4FD48D1E2BB9E8CC00D06055 /* MediaPlayerKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4FD48D1D2BB9E8CC00D06055 /* MediaPlayerKit */; };
 		4FD48D202BB9F02C00D06055 /* SongListButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD48D1F2BB9F02C00D06055 /* SongListButton.swift */; };
 		4FD48D222BBA6CF900D06055 /* PlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD48D212BBA6CF900D06055 /* PlayerScreen.swift */; };
+		4FD48D2B2BBB8B5800D06055 /* LibraryGridEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD48D2A2BBB8B5800D06055 /* LibraryGridEntry.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,6 +111,7 @@
 		4FD48D1B2BB9D86500D06055 /* MediaPlayerKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MediaPlayerKit; sourceTree = "<group>"; };
 		4FD48D1F2BB9F02C00D06055 /* SongListButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongListButton.swift; sourceTree = "<group>"; };
 		4FD48D212BBA6CF900D06055 /* PlayerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerScreen.swift; sourceTree = "<group>"; };
+		4FD48D2A2BBB8B5800D06055 /* LibraryGridEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryGridEntry.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -262,6 +264,7 @@
 				4FB41E1C2BA6247E00270496 /* AllAlbumsScreen.swift */,
 				4F853B5C2BA75D1100721E59 /* AllArtistsScreen.swift */,
 				4F853B6D2BA80C3D00721E59 /* AllSongsScreen.swift */,
+				4FD48D2A2BBB8B5800D06055 /* LibraryGridEntry.swift */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -493,6 +496,7 @@
 				4FD48D0C2BB88B0900D06055 /* MediaArtView.swift in Sources */,
 				4F853B782BAA22D100721E59 /* DynamicGrid.swift in Sources */,
 				4FD48D222BBA6CF900D06055 /* PlayerScreen.swift in Sources */,
+				4FD48D2B2BBB8B5800D06055 /* LibraryGridEntry.swift in Sources */,
 				4FD48D202BB9F02C00D06055 /* SongListButton.swift in Sources */,
 				4FD48D142BB92CAA00D06055 /* SearchScreen.swift in Sources */,
 				4FB41E262BA659E300270496 /* ViewConstants.swift in Sources */,

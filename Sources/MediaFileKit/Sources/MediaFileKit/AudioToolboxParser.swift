@@ -71,6 +71,23 @@ public final class AudioToolboxParser {
         return true
     }
     
+    private static func embeddedArt(_ fileID: AudioFileID) -> Data? {
+        var dataSize: UInt32 = 0
+        let status = AudioFileGetPropertyInfo(fileID, kAudioFilePropertyAlbumArtwork, &dataSize, nil)
+
+        guard status == noErr && dataSize > 0 else { return nil }
+            
+        var artworkData: UnsafeMutableRawPointer? = nil
+        let result = AudioFileGetProperty(fileID, kAudioFilePropertyAlbumArtwork, &dataSize, &artworkData)
+        
+        guard result == noErr, let artworkDataUnwrapped = artworkData else { return nil }
+            
+        let dataRef = Unmanaged<CFData>.fromOpaque(artworkDataUnwrapped).takeRetainedValue()
+        let data = Data(referencing: dataRef)
+        
+        return data
+    }
+    
     private static func fileToType(_ file: URL) -> AudioFileTypeID? {
         switch file.pathExtension.lowercased() {
         case "mp3": return kAudioFileMP3Type
@@ -99,4 +116,10 @@ public final class AudioToolboxParser {
     public var trackNumber: Int? { parseTrackNumber(tags?["track number"] as? String) }
 
     public var comments: String? { tags?["comments"] as? String }
+    
+    public static func embeddedArtData(from url: URL) -> Data? {
+        guard let fileID = S.openFile(url: url) else { return nil }
+        defer { S.closeFile(fileID) }
+        return S.embeddedArt(fileID)
+    }
 }

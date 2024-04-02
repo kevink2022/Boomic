@@ -21,9 +21,7 @@ struct AlbumScreen: View {
                 HStack {
                     Spacer(minLength: 70)
                     
-                    Image("boomic_logo")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
+                    MediaArtView(album.art)
                         .clipShape(RoundedRectangle(cornerSize: CGSize(
                             width: C.albumCornerRadius,
                             height: C.albumCornerRadius

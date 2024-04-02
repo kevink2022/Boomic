@@ -14,31 +14,40 @@ struct LibraryScreen: View {
     
     var body: some View {
         NavigationStack {
-            List {
+            DynamicGrid(title: "Library", titleFont: F.screenTitle) {
                 NavigationLink {
                     AllSongsScreen()
                 } label: {
-                    Text("Songs")
+                    LibraryGridEntry(title: "Songs", imageName: "music.quarternote.3")
                 }
+                
                 NavigationLink {
                     AllAlbumsScreen()
                 } label: {
-                    Text("Albums")
+                    LibraryGridEntry(title: "Albums", imageName: "opticaldisc")
                 }
+                
                 NavigationLink {
                     AllArtistsScreen()
                 } label: {
-                    Text("Artists")
+                    LibraryGridEntry(title: "Artists", imageName: "music.mic")
                 }
+                
                 Button {
                     Task { await repository.addSongs([]) }
                 } label: {
-                    Text("Add Songs")
+                    LibraryGridEntry(title: "Add Songs", imageName: "plus.circle")
                 }
             }
-            .listStyle(.inset)
+            .foregroundStyle(.primary)
+            .padding(C.gridPadding)
+            
         }
+        
     }
+    
+    private typealias C = ViewConstants
+    private typealias F = ViewConstants.Fonts
 }
 
 #Preview {

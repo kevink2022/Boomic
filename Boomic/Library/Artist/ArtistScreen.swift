@@ -22,10 +22,8 @@ struct ArtistScreen: View {
     
     var body: some View {
         ScrollView {
-            VStack {
-                Image("boomic_logo")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+            LazyVStack {
+                MediaArtView(artist.art)
                     .clipShape(Circle())
                     .padding(.horizontal, 110)
                 
@@ -44,7 +42,7 @@ struct ArtistScreen: View {
                 }
                 .padding(.top)
                 
-                VStack(spacing: 0) {
+                LazyVStack(spacing: 0) {
                     ForEach(songs.prefix(showAllSongs ? songs.count : topSongCount)) { song in
                         Divider()
                         SongListButton(song: song)

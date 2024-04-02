@@ -331,17 +331,17 @@ private final class ModelResolver {
             let albums = song.albums
                 .compactMap { tempCache.albumMap[$0] ?? currentCache.albumMap[$0] }
                 .sorted { Album.alphabeticalSort($0, $1) }
-                .map { $0.id }
+                
             
             let artists = song.artists
                 .compactMap { tempCache.artistMap[$0] ?? currentCache.artistMap[$0] }
                 .sorted { Artist.alphabeticalSort($0, $1) }
-                .map { $0.id }
+                
             
             return Song(
                 existingSong: song
-                , artists: artists
-                , albums: albums
+                , artists: artists.map { $0.id }
+                , albums: albums.map { $0.id }
             )
         }
     }
@@ -352,18 +352,22 @@ private final class ModelResolver {
             let songs = album.songs
                 .compactMap { tempCache.songMap[$0] ?? currentCache.songMap[$0] }
                 .sorted { Song.discAndTrackNumberSort($0, $1) }
-                .map { $0.id }
+                
             
             let artists = album.artists
                 .compactMap { tempCache.artistMap[$0] ?? currentCache.artistMap[$0] }
                 .sorted { Artist.alphabeticalSort($0, $1) }
-                .map { $0.id }
+            
+            let art = songs.first(where: { $0.art != nil })?.art
+            let artistName = artists.count == 1 ? artists.first?.name : "Various Artists"
             
             return Album(
                 id: album.id
                 , title: album.title
-                , songs: songs
-                , artists: artists
+                , art: art
+                , songs: songs.map { $0.id }
+                , artistName: artistName
+                , artists: artists.map { $0.id }
             )
         }
     }
@@ -374,18 +378,18 @@ private final class ModelResolver {
             let songs = artist.songs
                 .compactMap { tempCache.songMap[$0] ?? currentCache.songMap[$0] }
                 .sorted { Song.discAndTrackNumberSort($0, $1) }
-                .map { $0.id }
+                
             
             let albums = artist.albums
                 .compactMap { tempCache.albumMap[$0] ?? currentCache.albumMap[$0] }
                 .sorted { Album.alphabeticalSort($0, $1) }
-                .map { $0.id }
+                
             
             return Artist(
                 id: artist.id
                 , name: artist.name
-                , songs: songs
-                , albums: albums
+                , songs: songs.map { $0.id }
+                , albums: albums.map { $0.id }
             )
         }
     }

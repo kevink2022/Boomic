@@ -13,9 +13,7 @@ struct ArtistGridEntry: View {
     
     var body: some View {
         VStack{
-            Image("boomic_logo")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
+            MediaArtView(artist.art)
                 .clipShape(Circle())
             
             Text(artist.name)

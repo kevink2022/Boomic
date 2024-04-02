@@ -14,9 +14,7 @@ struct AlbumGridEntry: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Image("boomic_logo")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
+            MediaArtView(album.art)
                 .clipShape(RoundedRectangle(cornerSize: CGSize(
                     width: C.albumCornerRadius,
                     height: C.albumCornerRadius
