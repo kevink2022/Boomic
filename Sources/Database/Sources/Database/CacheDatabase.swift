@@ -185,11 +185,7 @@ private final class ModelResolver {
         
         let (albumTitleLinks, artistNameLinks) = await (albumTitleLinks_await, artistNameLinks_await)
         
-        async let linkedSongs_await = linkSongs(unlinkedSongs, albumTitles: albumTitleLinks, artistNames: artistNameLinks)
-        let affectedAlbums = albumTitleLinks.keys.map { $0 as String }
-        let affectedArtists = albumTitleLinks.keys.map { $0 as String }
-        
-        let linkedSongs = await linkedSongs_await
+        let linkedSongs = linkSongs(unlinkedSongs, albumTitles: albumTitleLinks, artistNames: artistNameLinks)
         
         async let linkedAlbums_await = linkAlbums(albumTitleLinks, linkedSongs: linkedSongs)
         async let linkedArtists_await = linkArtists(artistNameLinks, linkedSongs: linkedSongs)

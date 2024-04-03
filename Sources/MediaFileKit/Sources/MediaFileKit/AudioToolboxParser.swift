@@ -25,8 +25,8 @@ public final class AudioToolboxParser {
             tags = nil
             return
         }
-        defer { S.closeFile(fileID) }
         
+        defer { S.closeFile(fileID) }
         tags = S.initTags(fileID)
         hasTags = tags == nil ? false : true
         hasEmbeddedArt = S.hasEmbedded(fileID)
@@ -57,6 +57,7 @@ public final class AudioToolboxParser {
         return tagsDict as? [String : Any]
     }
     
+    // keeping this for now because otherwise memory spikes when adding songs.
     private static func hasEmbedded(_ fileID: AudioFileID) -> Bool {
         var dataSize: UInt32 = 0
         let status = AudioFileGetPropertyInfo(fileID, kAudioFilePropertyAlbumArtwork, &dataSize, nil)
@@ -66,7 +67,9 @@ public final class AudioToolboxParser {
         var artworkData: UnsafeMutableRawPointer? = nil
         let result = AudioFileGetProperty(fileID, kAudioFilePropertyAlbumArtwork, &dataSize, &artworkData)
         
-        guard result == noErr && artworkData != nil else { return false }
+        guard result == noErr, let artworkDataUnwrapped = artworkData else { return false }
+        
+        let _ = Unmanaged<CFData>.fromOpaque(artworkDataUnwrapped).takeRetainedValue()
             
         return true
     }

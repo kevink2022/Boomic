@@ -22,6 +22,13 @@ public final class AVEngine {
     public init(player: AVPlayer = AVPlayer(), source: URL? = nil) {
         self.player = player
         self.source = source
+        
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            
+        }
     }
     
     public func setSource(_ source: URL) -> EngineStatus {
