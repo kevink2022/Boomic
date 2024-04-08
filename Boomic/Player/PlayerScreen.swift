@@ -52,21 +52,7 @@ struct PlayerScreen: View {
                     .font(F.title)
                 }
                                 
-                VStack {
-                    
-                    RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))
-                        .frame(height: 10)
-                    
-                    HStack {
-                        Text("0:00")
-                            .font(F.trackNumber)
-                        
-                        Spacer()
-                        
-                        Text("0:00")
-                            .font(F.trackNumber)
-                    }
-                }
+                TimeSlider()
                 
                 Spacer()
                 

@@ -7,6 +7,7 @@
 
 import Foundation
 import AVFoundation
+import Combine
 
 public enum EngineStatus {
     case ready
@@ -18,10 +19,19 @@ public final class AVEngine {
     
     private let player: AVPlayer
     public private(set) var source: URL?
+    public private(set) var timePublisher = PassthroughSubject<CMTime, Never>()
+    public private(set) var endOfSongPublisher = PassthroughSubject<Void, Never>()
+    private var boundaryTimeObserverToken: Any?
     
-    public init(player: AVPlayer = AVPlayer(), source: URL? = nil) {
+    public init(
+        player: AVPlayer = AVPlayer()
+        , source: URL? = nil
+        , timeObserverInterval: TimeInterval = 1
+    ) {
         self.player = player
         self.source = source
+        
+        setupPeriodicTimeObserver(interval: timeObserverInterval)
         
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
@@ -32,14 +42,56 @@ public final class AVEngine {
     }
     
     public func setSource(_ source: URL) -> EngineStatus {
+//        if let boundaryTimeObserverToken = boundaryTimeObserverToken {
+//            player.removeTimeObserver(boundaryTimeObserverToken)
+//            self.boundaryTimeObserverToken = nil
+//        }
+        
         let playerItem = AVPlayerItem(url: source)
         player.replaceCurrentItem(with: playerItem)
+        
+        
+//        Task {
+//            sleep(UInt32(0.2))
+//            setupBoundaryTimeObserver(for: playerItem)
+//        }
+        
         return player.engineStatus
     }
     
     public func play() { player.play() }
     public func pause() { player.pause() }
-    public var isPlaying: Bool { player.isPlaying }
+    public func seek(to time: TimeInterval) {
+        let time = CMTime(seconds: time, preferredTimescale: 600)
+        let tolerance = CMTime(seconds: 0.1, preferredTimescale: 600)
+        
+        player.seek(to: time, toleranceBefore: tolerance, toleranceAfter: tolerance)
+    }
+    
+    private func setupPeriodicTimeObserver(interval timeInterval: TimeInterval) {
+        let interval = CMTime(seconds: timeInterval, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        
+        player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
+            self?.timePublisher.send(time)
+        }
+    }
+    
+//    private func setupBoundaryTimeObserver(for playerItem: AVPlayerItem) {
+//        guard CMTIME_IS_NUMERIC(playerItem.duration) && playerItem.duration != CMTime.indefinite else {
+//            print("bad item \(playerItem.duration)")
+//            return
+//        }
+//    
+//        print("set new observer")
+//
+//        let songDuration = playerItem.duration
+//        let boundary = CMTimeSubtract(songDuration, CMTimeMake(value: 1, timescale: 1))
+//
+//        // Add the new boundary time observer
+//        boundaryTimeObserverToken = player.addBoundaryTimeObserver(forTimes: [NSValue(time: boundary)], queue: .main) { [weak self] in
+//            self?.endOfSongPublisher.send()
+//        }
+//    }
 }
 
 

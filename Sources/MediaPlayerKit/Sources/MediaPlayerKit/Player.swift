@@ -8,6 +8,7 @@
 import Foundation
 import Observation
 import Models
+import Combine
 
 @Observable
 public final class SongPlayer: MediaQueueInterface {
@@ -18,14 +19,16 @@ public final class SongPlayer: MediaQueueInterface {
     public private(set) var repeatState: MediaQueueRepeat
     public private(set) var art: MediaArt?
     public private(set) var isPlaying: Bool
-
+    public private(set) var time: TimeInterval
+    
     public var fullscreen: Bool
     
     private var engine: AVEngine
     private var engineStatus: EngineStatus
+    private var cancellables: Set<AnyCancellable> = []
     
     public init(
-        engine: AVEngine = AVEngine()
+        engine: AVEngine = AVEngine(timeObserverInterval: 0.1)
     ) {
         self.song = nil
         self.queue = nil
@@ -35,6 +38,9 @@ public final class SongPlayer: MediaQueueInterface {
         self.queueOrder = .inOrder
         self.repeatState = .noRepeat
         self.isPlaying = false
+        self.time = 0
+        
+        setupTimeSubscribers()
     }
     
     public func setSong(_ song: Song, context: [Song]? = nil, autoPlay: Bool = true) {
@@ -59,9 +65,11 @@ public final class SongPlayer: MediaQueueInterface {
     public func togglePlayPause() {
         guard engineStatus != .error else { return }
         
-        if engine.isPlaying { pause() }
+        if isPlaying { pause() }
         else { play() }
     }
+    
+    public func seek(to time: TimeInterval) { engine.seek(to: time) }
     
     public func toggleRepeatState() {
         
@@ -96,5 +104,19 @@ public final class SongPlayer: MediaQueueInterface {
     private func pause() {
         engine.pause()
         isPlaying = false
+    }
+    
+    private func setupTimeSubscribers() {
+        engine.timePublisher
+            .sink(receiveValue: { time in
+                self.time = time.seconds
+            })
+            .store(in: &cancellables)
+              
+//        engine.endOfSongPublisher
+//            .sink(receiveValue: { _ in
+//                print("Song ended")
+//            })
+//            .store(in: &cancellables)
     }
 }
