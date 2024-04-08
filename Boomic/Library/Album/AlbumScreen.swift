@@ -74,7 +74,7 @@ struct AlbumScreen: View {
                     ForEach(songs) { song in
                         Divider()
                         
-                        SongListButton(song: song, showAlbumArt: false, showTrackNumber: true)
+                        SongListButton(song: song, context: songs, showAlbumArt: false, showTrackNumber: true)
                             .padding(7)
                     }
                     Divider()

@@ -9,14 +9,14 @@ import Foundation
 
 public final class DirectoryParser {
     
-    let source: URL
+    public let source: URL
     private let fileManager: FileManager
     
     public private(set) var externalAlbumArt: URL?
 
     private typealias S = DirectoryParser
     
-    init(
+    public init(
         file: URL
         , fileManager: FileManager = FileManager()
     ) {
@@ -41,13 +41,12 @@ public final class DirectoryParser {
         return nil
     }
     
-    func albumArtInDirectory(_ directoryURL: URL) -> URL? {
+    private func albumArtInDirectory(_ directoryURL: URL) -> URL? {
         let filesInDirectory: [URL]
         
         do {
             filesInDirectory = try fileManager.contentsOfDirectory(at: directoryURL, includingPropertiesForKeys: nil, options: [])
         } catch {
-            print("Error reading directory contents: \(error)")
             return nil
         }
 

@@ -26,6 +26,9 @@ let package = Package(
             dependencies: ["Models"]),
         .testTarget(
             name: "MediaPlayerKitTests",
-            dependencies: ["MediaPlayerKit"]),
+            dependencies: [
+                "MediaPlayerKit",
+                .product(name: "ModelsMocks", package: "Models")
+            ]),
     ]
 )

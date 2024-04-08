@@ -8,6 +8,20 @@
 import Foundation
 import Models
 
+public final class ModelsMocks {
+    public static func sampleModels() -> ([Song], [Album], [Artist]) {
+        let decoder = JSONDecoder()
+        let songsData = Song.songsJSON.data(using: .utf8)!
+        let albumsData = Album.albumsJSON.data(using: .utf8)!
+        let artistsData = Artist.artistsJSON.data(using: .utf8)!
+        let songs = try! decoder.decode([Song].self, from: songsData).sorted(by: { Song.alphabeticalSort($0, $1) })
+        let albums = try! decoder.decode([Album].self, from: albumsData).sorted(by: { Album.alphabeticalSort($0, $1) })
+        let artists = try! decoder.decode([Artist].self, from: artistsData).sorted(by: { Artist.alphabeticalSort($0, $1) })
+        
+        return (songs, albums, artists)
+    }
+}
+
 extension Song {
     public static let aCagedPersonaJSON = """
     {

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Song: Media, Model {
+public final class Song: Media, Model {
     public let id: UUID
     public let source: MediaSource
     public let duration: TimeInterval
@@ -118,7 +118,7 @@ extension Song {
 
 // MARK: - Initializers
 extension Song {
-    public init(
+    public convenience init(
         existingSong: Song
         , id: UUID? = nil
         , source: MediaSource? = nil

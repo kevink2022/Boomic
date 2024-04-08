@@ -13,7 +13,7 @@ struct PlayerScreen: View {
     
     var body: some View {
         VStack {
-            MediaArtView(player.song?.art)
+            MediaArtView(player.art)
                 .clipShape(RoundedRectangle(cornerSize: CGSize(
                     width: C.albumCornerRadius,
                     height: C.albumCornerRadius
@@ -75,7 +75,7 @@ struct PlayerScreen: View {
                     Spacer()
                     
                     Button {
-                        player.togglePlayPause()
+                        player.previous()
                     } label: {
                         Image(systemName: "backward.fill")
                     }
@@ -93,7 +93,7 @@ struct PlayerScreen: View {
                     Spacer()
                     
                     Button {
-                        player.togglePlayPause()
+                        player.next()
                     } label: {
                         Image(systemName: "forward.fill")
                     }
@@ -109,18 +109,26 @@ struct PlayerScreen: View {
                     Spacer()
                     
                     Button {
-                        player.togglePlayPause()
+                        player.toggleShuffle()
                     } label: {
-                        Image(systemName: "shuffle")
+                        switch player.queueOrder {
+                        case .inOrder: Image(systemName: "arrow.forward.to.line")
+                        case .shuffle: Image(systemName: "shuffle")
+                        }
                     }
                     .font(F.title)
                     
                     Spacer()
                     
                     Button {
-                        player.togglePlayPause()
+                        player.toggleRepeatState()
                     } label: {
-                        Image(systemName: "repeat")
+                        switch player.repeatState {
+                        case .noRepeat: Image(systemName: "arrow.right")
+                        case .repeatQueue: Image(systemName: "repeat")
+                        case .repeatSong: Image(systemName: "repeat.1")
+                        case .oneSong: Image(systemName: "1.circle")
+                        }
                     }
                     .font(F.title)
                     

@@ -10,43 +10,91 @@ import Observation
 import Models
 
 @Observable
-public final class SongPlayer {
+public final class SongPlayer: MediaQueueInterface {
     
     public private(set) var song: Song?
+    public private(set) var queue: MediaQueue?
+    public private(set) var queueOrder: MediaQueueOrder
+    public private(set) var repeatState: MediaQueueRepeat
+    public private(set) var art: MediaArt?
+    public private(set) var isPlaying: Bool
+
     public var fullscreen: Bool
+    
     private var engine: AVEngine
     private var engineStatus: EngineStatus
     
     public init(
-        song: Song? = nil
-        , engine: AVEngine = AVEngine()
+        engine: AVEngine = AVEngine()
     ) {
         self.song = nil
+        self.queue = nil
         self.engine = engine
         self.engineStatus = .idle
         self.fullscreen = false
+        self.queueOrder = .inOrder
+        self.repeatState = .noRepeat
+        self.isPlaying = false
     }
     
-    public func setSong(_ song: Song, autoPlay: Bool = true) {
+    public func setSong(_ song: Song, context: [Song]? = nil, autoPlay: Bool = true) {
         self.song = song
+        self.art = song.art
 
         engineStatus = {
             switch (song.source) {
             case .local(let url): return engine.setSource(url)
             }
         }()
-
+        
         guard engineStatus != .error else { return }
         
-        if autoPlay { engine.play() }
+        if autoPlay { play() }
+        
+        guard let context = context else { return }
+        
+        queue = AMQueue(song: song, context: context, queueOrder: queueOrder)
     }
     
     public func togglePlayPause() {
         guard engineStatus != .error else { return }
-        if engine.isPlaying { engine.pause() }
-        else { engine.play() }
+        
+        if engine.isPlaying { pause() }
+        else { play() }
     }
     
-    public var isPlaying: Bool { engine.isPlaying }
-
+    public func toggleRepeatState() {
+        
+    }
+    
+    public func toggleShuffle() { 
+        guard let queue = queue else { return }
+        queue.toggleShuffle()
+        queueOrder = queueOrder == .inOrder ? .shuffle : .inOrder
+    }
+    
+    public func next() {
+        guard let queue = queue else { return }
+        queue.next()
+        setSong(queue.currentSong)
+    }
+    
+    public func previous() {
+        guard let queue = queue else { return }
+        queue.previous()
+        setSong(queue.currentSong)
+    }
+    
+    public func addNext(_ song: Song) { queue?.addNext(song) }
+    public func addToEnd(_ song: Song) { queue?.addToEnd(song) }
+    
+    private func play() {
+        engine.play()
+        isPlaying = true
+    }
+    
+    private func pause() {
+        engine.pause()
+        isPlaying = false
+    }
 }

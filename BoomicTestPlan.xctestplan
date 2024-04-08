@@ -39,6 +39,13 @@
         "identifier" : "RepositoryTests",
         "name" : "RepositoryTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "MediaPlayerKitTests",
+        "name" : "MediaPlayerKitTests"
+      }
     }
   ],
   "version" : 1

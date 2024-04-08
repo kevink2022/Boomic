@@ -11,17 +11,21 @@ import Models
 struct SongListButton: View {
     @Environment(\.player) private var player
     let song: Song
+    let context: [Song]?
+
     let showAlbumArt: Bool
     let showArtist: Bool
     let showTrackNumber: Bool
     
     init(
         song: Song
+        , context: [Song]? = nil
         , showAlbumArt: Bool = true
         , showArtist: Bool = true
         , showTrackNumber: Bool = false
     ) {
         self.song = song
+        self.context = context
         self.showAlbumArt = showAlbumArt
         self.showArtist = showArtist
         self.showTrackNumber = showTrackNumber
@@ -29,7 +33,7 @@ struct SongListButton: View {
     
     var body: some View {
         Button {
-            player.setSong(song)
+            player.setSong(song, context: context)
         } label: {
             SongListEntry(
                 song: song

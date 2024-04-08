@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Artist: Model {
+public final class Artist: Model {
     public let id: UUID
     public let name: String
     
