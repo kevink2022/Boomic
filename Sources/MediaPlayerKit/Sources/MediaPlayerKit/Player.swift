@@ -9,6 +9,7 @@ import Foundation
 import Observation
 import Models
 import Combine
+import MediaPlayer
 
 @Observable
 public final class SongPlayer: MediaQueueInterface {
@@ -40,8 +41,18 @@ public final class SongPlayer: MediaQueueInterface {
         self.isPlaying = false
         self.time = 0
         
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            
+        }
+        setupRemoteTransportControls()
+        
         setupTimeSubscribers()
     }
+    
+    // MARK: - Media Controls
     
     public func setSong(_ song: Song, context: [Song]? = nil, autoPlay: Bool = true) {
         self.song = song
@@ -55,6 +66,7 @@ public final class SongPlayer: MediaQueueInterface {
         
         guard engineStatus != .error else { return }
         
+        updateNowPlayingInfo(for: song)
         if autoPlay { play() }
         
         guard let context = context else { return }
@@ -106,17 +118,75 @@ public final class SongPlayer: MediaQueueInterface {
         isPlaying = false
     }
     
+    // MARK: - Subscriptions
+    
     private func setupTimeSubscribers() {
         engine.timePublisher
             .sink(receiveValue: { time in
                 self.time = time.seconds
+                self.updatePlaybackTime()
             })
             .store(in: &cancellables)
               
-//        engine.endOfSongPublisher
-//            .sink(receiveValue: { _ in
-//                print("Song ended")
-//            })
-//            .store(in: &cancellables)
+        engine.endOfSongPublisher
+            .sink(receiveValue: { _ in
+                self.next()
+            })
+            .store(in: &cancellables)
     }
+    
+    // MARK: - Control Center
+
+    private func updateNowPlayingInfo(for song: Song) {
+        var info = [String: Any]()
+        info[MPMediaItemPropertyTitle] = song.label
+        info[MPMediaItemPropertyArtist] = song.artistName
+        info[MPMediaItemPropertyAlbumTitle] = song.albumTitle
+        info[MPMediaItemPropertyPlaybackDuration] = song.duration
+        
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+    }
+    
+    private func setupRemoteTransportControls() {
+        let commandCenter = MPRemoteCommandCenter.shared()
+        
+        commandCenter.playCommand.addTarget { [weak self] event in
+            self?.play()
+            return .success
+        }
+        
+        commandCenter.pauseCommand.addTarget { [weak self] event in
+            self?.pause()
+            return .success
+        }
+        
+        commandCenter.nextTrackCommand.addTarget { [weak self] event in
+            self?.next()
+            return .success
+        }
+        
+        commandCenter.previousTrackCommand.addTarget { [weak self] event in
+            self?.previous()
+            return .success
+        }
+        
+        commandCenter.changePlaybackPositionCommand.isEnabled = true
+        commandCenter.changePlaybackPositionCommand.addTarget { [weak self] event in
+            
+            guard let playbackEvent = event as? MPChangePlaybackPositionCommandEvent else {
+                return .commandFailed
+            }
+            
+            self?.seek(to: playbackEvent.positionTime)
+            return .success
+        }
+    }
+    
+    private func updatePlaybackTime() {
+        guard var info = MPNowPlayingInfoCenter.default().nowPlayingInfo else { return }
+        info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = time
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+    }
+
 }
+
