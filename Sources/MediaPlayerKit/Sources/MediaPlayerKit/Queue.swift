@@ -8,35 +8,6 @@
 import Foundation
 import Models
 
-//public protocol MediaQueueInterface {
-//    typealias QueueType = MediaQueue
-//    func toggleShuffled() -> QueueType
-//    func next() -> QueueType
-//    func previous() -> QueueType
-//    func addNext(_ song: Song) -> QueueType
-//    func addToEnd(_ song: Song) -> QueueType
-//}
-//
-//public protocol MediaQueue: MediaQueueInterface {
-//    //init(song: Song, context: [Song], queueOrder: MediaQueueOrder)
-//    
-//    var currentSong: Song { get }
-//    var queue: [Song] { get }
-//    var queueOrder: MediaQueueOrder { get }
-//}
-
-public enum MediaQueueOrder: CaseIterable {
-    case inOrder
-    case shuffle
-}
-
-public enum MediaQueueRepeat: CaseIterable {
-    case noRepeat
-    case repeatQueue
-    case repeatSong
-    case oneSong
-}
-
 public protocol MediaQueueInterface {
     func toggleShuffled() -> Self
     func next() -> Self
@@ -53,6 +24,17 @@ public protocol MediaQueue: MediaQueueInterface {
     var queueOrder: MediaQueueOrder { get }
 }
 
+public enum MediaQueueOrder: CaseIterable {
+    case inOrder
+    case shuffle
+}
+
+public enum MediaQueueRepeat: CaseIterable {
+    case noRepeat
+    case repeatQueue
+    case repeatSong
+    case oneSong
+}
 
 public final class AMQueue : MediaQueue {
        

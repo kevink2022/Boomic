@@ -24,16 +24,14 @@ public final class SongPlayer {
     
     public var fullscreen: Bool
     
-    private var engine: AVEngine
+    private var engine: AVEngine? { didSet { setupTimeSubscribers() } }
     private var engineStatus: EngineStatus
     private var cancellables: Set<AnyCancellable> = []
     
-    public init(
-        engine: AVEngine = AVEngine(timeObserverInterval: 0.1)
-    ) {
+    public init() {
         self.song = nil
         self.queue = nil
-        self.engine = engine
+        self.engine = nil
         self.engineStatus = .idle
         self.fullscreen = false
         self.queueOrder = .inOrder
@@ -58,20 +56,20 @@ public final class SongPlayer {
         self.song = song
         self.art = song.art
 
-        engineStatus = {
+        engine = {
             switch (song.source) {
-            case .local(let url): return engine.setSource(url)
+            case .local(let url): AVEngine(source: url)
             }
         }()
         
-        guard engineStatus != .error else { return }
+        guard let engine = engine, engine.status != .error else { return }
         
         updateNowPlayingInfo(for: song)
         if autoPlay { play() }
         
-        guard let context = context else { return }
-        
-        queue = AMQueue(song: song, context: context, queueOrder: queueOrder)
+        if let context = context {
+            queue = AMQueue(song: song, context: context, queueOrder: queueOrder)
+        }
     }
     
     public func togglePlayPause() {
@@ -81,7 +79,7 @@ public final class SongPlayer {
         else { play() }
     }
     
-    public func seek(to time: TimeInterval) { engine.seek(to: time) }
+    public func seek(to time: TimeInterval) { engine?.seek(to: time) }
     
     public func toggleRepeatState() {
         
@@ -106,28 +104,31 @@ public final class SongPlayer {
     public func addToEnd(_ song: Song) { queue = queue?.addToEnd(song) }
     
     private func play() {
-        engine.play()
-        isPlaying = true
+        engine?.play()
+        isPlaying = engine?.isPlaying ?? false
     }
     
     private func pause() {
-        engine.pause()
-        isPlaying = false
+        engine?.pause()
+        isPlaying = engine?.isPlaying ?? false
     }
     
     // MARK: - Subscriptions
     
     private func setupTimeSubscribers() {
+        cancellables.removeAll()
+        guard let engine = engine else { return }
+        
         engine.timePublisher
-            .sink(receiveValue: { time in
-                self.time = time.seconds
-                self.updatePlaybackTime()
+            .sink(receiveValue: { [weak self] time in
+                self?.time = time.seconds
+                self?.updatePlaybackTime()
             })
             .store(in: &cancellables)
               
         engine.endOfSongPublisher
-            .sink(receiveValue: { _ in
-                self.next()
+            .sink(receiveValue: { [weak self] _ in
+                self?.next()
             })
             .store(in: &cancellables)
     }

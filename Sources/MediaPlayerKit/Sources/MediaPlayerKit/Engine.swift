@@ -17,33 +17,33 @@ public enum EngineStatus {
 
 public final class AVEngine {
     
+    public let source: URL?
     private let player: AVPlayer
-    public private(set) var source: URL?
+    private let playerItem: AVPlayerItem
+    
     public private(set) var timePublisher = PassthroughSubject<CMTime, Never>()
     public private(set) var endOfSongPublisher = PassthroughSubject<Void, Never>()
     
-    private var perodicTimeOberserToken: Any?
+    private var periodicTimeOberserToken: Any?
     private var boundaryTimeObserverToken: Any?
+    
+    public var status: EngineStatus { player.engineStatus }
+    public var isPlaying: Bool { player.isPlaying }
     
     public init(
         player: AVPlayer = AVPlayer()
-        , source: URL? = nil
-        , timeObserverInterval: TimeInterval = 1
+        , source: URL
+        , timeObserverInterval: TimeInterval = 0.2
+        , endOfSongInterval: TimeInterval = 0.01
     ) {
         self.player = player
         self.source = source
         
+        self.playerItem = AVPlayerItem(url: source)
+        self.player.replaceCurrentItem(with: playerItem)
+        
         setupPeriodicTimeObserver(interval: timeObserverInterval)
-    }
-    
-    public func setSource(_ source: URL) -> EngineStatus {
-        removeBoundaryTimeObserver()
-        let playerItem = AVPlayerItem(url: source)
-        player.replaceCurrentItem(with: playerItem)
-        
         Task { setupBoundaryTimeObserver(for: playerItem) }
-        
-        return player.engineStatus
     }
     
     public func play() { player.play() }
@@ -56,9 +56,9 @@ public final class AVEngine {
     }
     
     private func setupPeriodicTimeObserver(interval timeInterval: TimeInterval) {
-        let interval = CMTime(seconds: 0.2, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        let interval = CMTime(seconds: timeInterval, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         
-        perodicTimeOberserToken = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
+        periodicTimeOberserToken = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
             self?.timePublisher.send(time)
         }
     }
@@ -90,10 +90,10 @@ public final class AVEngine {
     }
     
     private func removePeriodicTimeObserver() {
-        guard perodicTimeOberserToken != nil else { return }
+        guard periodicTimeOberserToken != nil else { return }
         
-        player.removeTimeObserver(perodicTimeOberserToken!)
-        perodicTimeOberserToken = nil
+        player.removeTimeObserver(periodicTimeOberserToken!)
+        periodicTimeOberserToken = nil
     }
     
     private func removeBoundaryTimeObserver() {
