@@ -12,7 +12,7 @@ import Combine
 import MediaPlayer
 
 @Observable
-public final class SongPlayer: MediaQueueInterface {
+public final class SongPlayer {
     
     public private(set) var song: Song?
     public private(set) var queue: MediaQueue?
@@ -88,25 +88,22 @@ public final class SongPlayer: MediaQueueInterface {
     }
     
     public func toggleShuffle() { 
-        guard let queue = queue else { return }
-        queue.toggleShuffle()
-        queueOrder = queueOrder == .inOrder ? .shuffle : .inOrder
+        queue = queue?.toggleShuffled()
+        queueOrder = queue?.queueOrder ?? .inOrder
     }
     
     public func next() {
-        guard let queue = queue else { return }
-        queue.next()
-        setSong(queue.currentSong)
+        queue = queue?.next()
+        if let song = queue?.currentSong { setSong(song) }
     }
     
     public func previous() {
-        guard let queue = queue else { return }
-        queue.previous()
-        setSong(queue.currentSong)
+        queue = queue?.previous()
+        if let song = queue?.currentSong { setSong(song) }
     }
     
-    public func addNext(_ song: Song) { queue?.addNext(song) }
-    public func addToEnd(_ song: Song) { queue?.addToEnd(song) }
+    public func addNext(_ song: Song) { queue = queue?.addNext(song) }
+    public func addToEnd(_ song: Song) { queue = queue?.addToEnd(song) }
     
     private func play() {
         engine.play()

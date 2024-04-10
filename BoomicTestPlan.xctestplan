@@ -42,7 +42,7 @@
     },
     {
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:Sources\/MediaPlayerKit",
         "identifier" : "MediaPlayerKitTests",
         "name" : "MediaPlayerKitTests"
       }
