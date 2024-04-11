@@ -20,13 +20,15 @@ public final class SongPlayer {
     public private(set) var repeatState: MediaQueueRepeat
     public private(set) var art: MediaArt?
     public private(set) var isPlaying: Bool
-    public private(set) var time: TimeInterval
+    public private(set) var time: TimeInterval { didSet { updatePlaybackTime() } }
     
     public var fullscreen: Bool
     
     private var engine: AVEngine? { didSet { setupTimeSubscribers() } }
     private var engineStatus: EngineStatus
     private var cancellables: Set<AnyCancellable> = []
+    
+    private var isPaused: Bool { !(engine?.isPlaying ?? true) }
     
     public init() {
         self.song = nil
@@ -49,28 +51,11 @@ public final class SongPlayer {
         
         setupTimeSubscribers()
     }
-    
-    // MARK: - Media Controls
-    
-    public func setSong(_ song: Song, context: [Song]? = nil, autoPlay: Bool = true) {
-        self.song = song
-        self.art = song.art
+}
 
-        engine = {
-            switch (song.source) {
-            case .local(let url): AVEngine(source: url)
-            }
-        }()
-        
-        guard let engine = engine, engine.status != .error else { return }
-        
-        updateNowPlayingInfo(for: song)
-        if autoPlay { play() }
-        
-        if let context = context {
-            queue = AMQueue(song: song, context: context, queueOrder: queueOrder)
-        }
-    }
+// MARK: - Triggers
+// Something that happens that causes system events. Event can be executed locally.
+extension SongPlayer {
     
     public func togglePlayPause() {
         guard engineStatus != .error else { return }
@@ -79,25 +64,32 @@ public final class SongPlayer {
         else { play() }
     }
     
-    public func seek(to time: TimeInterval) { engine?.seek(to: time) }
-    
     public func toggleRepeatState() {
-        
+        let states = MediaQueueRepeat.allCases
+        let currentStateIndex = states.firstIndex(of: repeatState) ?? 0
+        let nextStateIndex = {
+            if currentStateIndex == states.endIndex - 1 { return 0 }
+            else { return currentStateIndex + 1 }
+        }()
+        repeatState = states[nextStateIndex]
     }
     
-    public func toggleShuffle() { 
+    public func toggleShuffle() {
         queue = queue?.toggleShuffled()
         queueOrder = queue?.queueOrder ?? .inOrder
     }
     
-    public func next() {
-        queue = queue?.next()
-        if let song = queue?.currentSong { setSong(song) }
-    }
+    public func seek(to time: TimeInterval) { engine?.seek(to: time) }
+    
+    public func next() { goToNextSong() }
     
     public func previous() {
-        queue = queue?.previous()
-        if let song = queue?.currentSong { setSong(song) }
+        let alwaysReset = {
+            self.repeatState != .repeatQueue && self.queue?.backwardRolloverWillOccur ?? true
+        }
+        
+        if time > 2 || alwaysReset() { resetSong() }
+        else { goToPreviousSong() }
     }
     
     public func addNext(_ song: Song) { queue = queue?.addNext(song) }
@@ -113,8 +105,63 @@ public final class SongPlayer {
         isPlaying = engine?.isPlaying ?? false
     }
     
-    // MARK: - Subscriptions
+    private func endOfSong() {
+        switch repeatState {
+        case .noRepeat: goToNextSong()
+        case .repeatQueue: goToNextSong()
+        case .repeatSong: resetSong(pause: false)
+        case .oneSong: resetSong(pause: true)
+        }
+    }
+}
+
+// MARK: - Events
+// Events called by different triggers.
+extension SongPlayer {
     
+    public func setSong(_ song: Song, context: [Song]? = nil, autoPlay: Bool = true) {
+        self.song = song
+        self.art = song.art
+        
+        engine = {
+            switch (song.source) {
+            case .local(let url): AVEngine(source: url)
+            }
+        }()
+        
+        guard let engine = engine, engine.status != .error else { return }
+        
+        updateNowPlayingInfo(for: song)
+        time = 0
+        if autoPlay { play() }
+        else { pause() }
+        
+        if let context = context {
+            queue = AMQueue(song: song, context: context, queueOrder: queueOrder)
+        }
+    }
+    
+    private func resetSong(pause: Bool? = nil) {
+        if pause == true { self.pause() }
+        seek(to: 0)
+    }
+    
+    private func goToNextSong() {
+        let pauseForRollover = repeatState != .repeatQueue && queue?.forwardRolloverWillOccur ?? true
+        let autoPlay = !(isPaused || pauseForRollover)
+        
+        queue = queue?.next()
+        if let song = queue?.currentSong { setSong(song, autoPlay: autoPlay) }
+    }
+    
+    private func goToPreviousSong() {
+        queue = queue?.previous()
+        if let song = queue?.currentSong { setSong(song, autoPlay: isPaused) }
+    }
+}
+
+// MARK: - Subscriptions
+extension SongPlayer {
     private func setupTimeSubscribers() {
         cancellables.removeAll()
         guard let engine = engine else { return }
@@ -122,19 +169,19 @@ public final class SongPlayer {
         engine.timePublisher
             .sink(receiveValue: { [weak self] time in
                 self?.time = time.seconds
-                self?.updatePlaybackTime()
             })
             .store(in: &cancellables)
-              
+        
         engine.endOfSongPublisher
             .sink(receiveValue: { [weak self] _ in
-                self?.next()
+                self?.endOfSong()
             })
             .store(in: &cancellables)
     }
-    
-    // MARK: - Control Center
+}
 
+// MARK: - Control Center
+extension SongPlayer {
     private func updateNowPlayingInfo(for song: Song) {
         var info = [String: Any]()
         info[MPMediaItemPropertyTitle] = song.label

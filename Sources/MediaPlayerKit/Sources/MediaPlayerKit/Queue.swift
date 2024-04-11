@@ -10,8 +10,15 @@ import Models
 
 public protocol MediaQueueInterface {
     func toggleShuffled() -> Self
+    
+    var forwardRolloverWillOccur: Bool { get }
+    func peekNext() -> Song
     func next() -> Self
+    
+    var backwardRolloverWillOccur: Bool { get }
+    func peekPrevious() -> Song
     func previous() -> Self
+    
     func addNext(_ song: Song) -> Self
     func addToEnd(_ song: Song) -> Self
 }
