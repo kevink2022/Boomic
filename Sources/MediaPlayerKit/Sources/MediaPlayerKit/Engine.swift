@@ -19,14 +19,13 @@ public final class AVEngine {
     
     public let source: URL?
     private let player: AVPlayer
-    private let playerItem: AVPlayerItem
     
     public private(set) var timePublisher = PassthroughSubject<CMTime, Never>()
     public private(set) var endOfSongPublisher = PassthroughSubject<Void, Never>()
     
     private var periodicTimeOberserToken: Any?
     private var boundaryTimeObserverToken: Any?
-    
+
     public var status: EngineStatus { player.engineStatus }
     public var isPlaying: Bool { player.isPlaying }
     
@@ -39,11 +38,14 @@ public final class AVEngine {
         self.player = player
         self.source = source
         
-        self.playerItem = AVPlayerItem(url: source)
+        let assetOptions = [AVURLAssetPreferPreciseDurationAndTimingKey: true]
+        let asset = AVURLAsset(url: source, options: assetOptions)
+        let playerItem = AVPlayerItem(asset: asset)
+        
         self.player.replaceCurrentItem(with: playerItem)
         
         setupPeriodicTimeObserver(interval: timeObserverInterval)
-        Task { setupBoundaryTimeObserver(for: playerItem) }
+        Task { setupBoundaryTimeObserver(for: playerItem, interval: endOfSongInterval) }
     }
     
     public func play() { player.play() }
@@ -63,7 +65,7 @@ public final class AVEngine {
         }
     }
     
-    private func setupBoundaryTimeObserver(for playerItem: AVPlayerItem) {
+    private func setupBoundaryTimeObserver(for playerItem: AVPlayerItem, interval timeInterval: TimeInterval) {
         var itemStatusObserver: NSKeyValueObservation? = nil
         
         itemStatusObserver = playerItem.observe(\.status, options: [.new, .initial]) { [weak self, weak playerItem] playerItem, _ in
@@ -74,7 +76,7 @@ public final class AVEngine {
             }
             
             let songDuration = playerItem.duration
-            let boundary = CMTimeSubtract(songDuration, CMTimeMake(value: 10, timescale: 1000))
+            let boundary = CMTimeSubtract(songDuration, CMTimeMake(value: Int64(timeInterval*1000), timescale: 1000))
 
             boundaryTimeObserverToken = player.addBoundaryTimeObserver(forTimes: [NSValue(time: boundary)], queue: .main) { [weak self] in
                 self?.endOfSongPublisher.send()
@@ -108,12 +110,10 @@ public final class AVEngine {
 extension AVPlayer {
     internal var engineStatus: EngineStatus {
         switch self.status {
-        case .readyToPlay: 
-            return .ready
+        case .readyToPlay: return .ready
         case .failed: return .error
         case .unknown: return .idle
-        @unknown default:
-            return .error
+        @unknown default: return .error
         }
     }
     

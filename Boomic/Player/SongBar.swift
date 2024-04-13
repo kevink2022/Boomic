@@ -22,7 +22,7 @@ struct SongBar: View {
             
             VStack(alignment: .leading) {
                 Text(player.song?.label ?? "No Song")
-                    .font(F.body)
+                    .font(F.bold)
                     .lineLimit(1)
             }
             
@@ -32,7 +32,9 @@ struct SongBar: View {
                 player.togglePlayPause()
             } label: {
                 Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
+                    .font(.title3)
             }
+            .padding(.trailing, C.gridPadding)
         }
         
     }

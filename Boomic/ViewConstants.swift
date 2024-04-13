@@ -57,6 +57,11 @@ struct ViewConstants {
             , design: .default
             , weight: .medium
         )
+        static let bold = Font.system(
+            .body
+            , design: .default
+            , weight: .bold
+        )
     }
     
     

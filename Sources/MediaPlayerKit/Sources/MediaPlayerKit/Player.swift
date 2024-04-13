@@ -85,7 +85,7 @@ extension SongPlayer {
     
     public func previous() {
         let alwaysReset = {
-            self.repeatState != .repeatQueue && self.queue?.backwardRolloverWillOccur ?? true
+            self.repeatState != .repeatQueue && self.queue?.backwardRolloverWillOccur ?? false
         }
         
         if time > 2 || alwaysReset() { resetSong() }
@@ -155,8 +155,10 @@ extension SongPlayer {
     }
     
     private func goToPreviousSong() {
+        let autoPlay = !isPaused
+        
         queue = queue?.previous()
-        if let song = queue?.currentSong { setSong(song, autoPlay: isPaused) }
+        if let song = queue?.currentSong { setSong(song, autoPlay: autoPlay) }
     }
 }
 

@@ -30,9 +30,22 @@ struct SongBarWrapper<Content: View> : View{
                     SongBar()
                         .padding(C.gridPadding)
                 }
+                .foregroundStyle(.primary)
                 
                 Divider()
             }
+        }
+        .background {
+            ZStack {
+                Color(.systemBackground)
+                    .overlay {
+                        MediaArtView(player.art, aspectRatio: .fill)
+                            .blur(radius: 50)
+                            .scaleEffect(2)
+                            .opacity(0.4)
+                    }
+            }
+            .clipped()
         }
     }
     

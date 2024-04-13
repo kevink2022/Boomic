@@ -11,9 +11,7 @@ struct ContentView: View {
     @Environment(\.player) private var player
     
     var body: some View {
-        if player.fullscreen {
-            PlayerScreen()
-        } else {
+        ZStack {
             TabView {
                 SongBarWrapper { LibraryScreen() }
                     .tabItem { Label("Home", systemImage: "music.note.house") }
@@ -27,6 +25,9 @@ struct ContentView: View {
                 SongBarWrapper { SearchScreen() }
                     .tabItem { Label("Search", systemImage: "magnifyingglass") }
             }
+            if player.fullscreen {
+                PlayerScreen()
+            }
         }
     }
 }
@@ -36,5 +37,6 @@ struct ContentView: View {
         .environment(\.repository, livePreviewRepository())
         .environment(\.player, previewPlayer())
 }
+
 
 

@@ -11,17 +11,19 @@ import MediaFileKit
 
 struct MediaArtView: View {
     let art: MediaArt?
+    let aspectRatio: ContentMode
     @State var image: Image?
     
-    init(_ art: MediaArt? = nil) {
+    init(_ art: MediaArt? = nil, aspectRatio: ContentMode = .fit) {
         self.art = art
+        self.aspectRatio = aspectRatio
         self.image = nil
     }
     
     var body: some View {
         showImage()
             .resizable()
-            .aspectRatio(contentMode: .fit)
+            .aspectRatio(contentMode: aspectRatio)
             .task {
                 image = await loadImage()
             }

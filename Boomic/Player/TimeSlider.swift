@@ -13,6 +13,8 @@ struct TimeSlider: View {
     @State var barOffset: CGFloat = 0
     @State var dragging: Bool = false
     
+    private var progressPlusOffset: CGFloat { max(0, min(1, progress + barOffset)) }
+    
     var body: some View {
         VStack {
             GeometryReader { geometry in
@@ -20,23 +22,27 @@ struct TimeSlider: View {
                     Rectangle()
                         .opacity(0.3)
                     Rectangle()
-                        .frame(width: (geometry.size.width * (progress + barOffset)))
+                        .frame(width: geometry.size.width * progressPlusOffset)
                 }
                 .gesture(DragGesture()
                     .onChanged { value in
-                        dragging = true
+                        withAnimation(.easeOut(duration: 0.05)) { dragging = true }
                         barOffset = value.translation.width / geometry.size.width
                     }
                     .onEnded { value in
-                        progress += barOffset
+                        progress = progressPlusOffset
                         seek(to: progress)
                         barOffset = 0
-                        dragging = false
+                        Task {
+                            // band-aid for progress bar showing preseek time
+                            try? await Task.sleep(nanoseconds: 10_000_000)
+                            withAnimation(.easeOut(duration: 0.05)) { dragging = false }
+                        }
                     }
                 )
             }
-            .frame(height: 10)
-            .clipShape(RoundedRectangle(cornerSize: CGSize(width: 5, height: 5)))
+            .frame(height: dragging ? 15 : 10)
+            .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
             
             HStack {
                 Text(timePassed.formatted)
@@ -67,7 +73,7 @@ struct TimeSlider: View {
         if !dragging {
             return player.time
         } else {
-            return songDuration * (progress + barOffset)
+            return songDuration * progressPlusOffset
         }
     }
     
@@ -75,7 +81,7 @@ struct TimeSlider: View {
         if !dragging {
             return (player.song?.duration ?? player.time) - player.time
         } else {
-            return songDuration * (1 - (progress + barOffset))
+            return songDuration * (1 - progressPlusOffset)
         }
     }
        
