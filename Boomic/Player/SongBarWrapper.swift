@@ -39,10 +39,10 @@ struct SongBarWrapper<Content: View> : View{
             ZStack {
                 Color(.systemBackground)
                     .overlay {
-                        MediaArtView(player.art, aspectRatio: .fill)
+                        PlayerArtView()
                             .blur(radius: 50)
-                            .scaleEffect(2)
-                            .opacity(0.4)
+                            .scaleEffect(3)
+                            .opacity(0.2)
                     }
             }
             .clipped()

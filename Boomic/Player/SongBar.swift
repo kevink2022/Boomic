@@ -13,11 +13,7 @@ struct SongBar: View {
     
     var body: some View {
         HStack {
-            MediaArtView(player.art)
-                .clipShape(RoundedRectangle(cornerSize: CGSize(
-                    width: C.smallAlbumCornerRadius,
-                    height: C.smallAlbumCornerRadius
-                )))
+            PlayerArtView()
                 .frame(height: C.smallAlbumFrame)
             
             VStack(alignment: .leading) {

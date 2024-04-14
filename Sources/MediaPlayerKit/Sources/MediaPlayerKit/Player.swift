@@ -7,9 +7,11 @@
 
 import Foundation
 import Observation
-import Models
 import Combine
 import MediaPlayer
+
+import Models
+import MediaFileKit
 
 @Observable
 public final class SongPlayer {
@@ -29,8 +31,11 @@ public final class SongPlayer {
     private var cancellables: Set<AnyCancellable> = []
     
     private var isPaused: Bool { !(engine?.isPlaying ?? true) }
-    
-    public init() {
+    private let artLoader: MediaArtLoader
+       
+    public init(
+        artLoader: MediaArtLoader = MediaArtCache(cacheLimit: 1)
+    ) {
         self.song = nil
         self.queue = nil
         self.engine = nil
@@ -40,6 +45,7 @@ public final class SongPlayer {
         self.repeatState = .noRepeat
         self.isPlaying = false
         self.time = 0
+        self.artLoader = artLoader
         
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
@@ -192,6 +198,22 @@ extension SongPlayer {
         info[MPMediaItemPropertyPlaybackDuration] = song.duration
         
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+        
+        if let art = song.art { Task { await updateNowPlayingArt(with: art) } }
+    }
+    
+    private func updateNowPlayingArt(with art: MediaArt) async {
+        guard let platformImage = await artLoader.loadPlatformImage(for: art) else { return }
+        
+        let mpArt = MPMediaItemArtwork(boundsSize: platformImage.size) { size in
+            return platformImage
+        }
+        
+        DispatchQueue.main.async {
+            guard var info = MPNowPlayingInfoCenter.default().nowPlayingInfo else { return }
+            info[MPMediaItemPropertyArtwork] = mpArt
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+        }
     }
     
     private func setupRemoteTransportControls() {

@@ -68,8 +68,8 @@ public final class AVEngine {
     private func setupBoundaryTimeObserver(for playerItem: AVPlayerItem, interval timeInterval: TimeInterval) {
         var itemStatusObserver: NSKeyValueObservation? = nil
         
-        itemStatusObserver = playerItem.observe(\.status, options: [.new, .initial]) { [weak self, weak playerItem] playerItem, _ in
-            guard let self = self else { return }
+        itemStatusObserver = playerItem.observe(\.status, options: [.new, .initial]) { [weak self, weak playerItem] _, _ in
+            guard let self = self, let playerItem = playerItem else { return }
             
             guard playerItem.status == .readyToPlay, CMTIME_IS_NUMERIC(playerItem.duration) && playerItem.duration != CMTime.indefinite else {
                 return

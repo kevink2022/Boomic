@@ -27,7 +27,7 @@ struct MediaArtView: View {
             .aspectRatio(contentMode: aspectRatio)
             .task {
                 if let art = art {
-                    image = await repository.imageLoader.load(art)
+                    image = await repository.artLoader.load(art)
                 }
             }
     }

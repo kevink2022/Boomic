@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class Artist: Model {
+public final class Artist: Identifiable, Codable, Equatable {
     public let id: UUID
     public let name: String
     

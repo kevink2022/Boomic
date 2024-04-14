@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class Song: Media, Model {
+public final class Song: Media, Identifiable, Codable, Equatable {
     public let id: UUID
     public let source: MediaSource
     public let duration: TimeInterval

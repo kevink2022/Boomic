@@ -61,7 +61,8 @@ public final class AudioToolboxParser {
     private static func hasEmbedded(_ fileID: AudioFileID) -> String? {
         var dataSize: UInt32 = 0
         let status = AudioFileGetPropertyInfo(fileID, kAudioFilePropertyAlbumArtwork, &dataSize, nil)
-
+        guard status == noErr else { return nil }
+        
         var hash: String? = nil
         
         autoreleasepool {

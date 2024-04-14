@@ -7,16 +7,30 @@
 
 import SwiftUI
 import Models
-import MediaFileKit
 
-public final class MediaArtLoader {
+#if canImport(UIKit)
+public typealias PlatformImage = UIImage
+#elseif canImport(AppKit)
+public typealias PlatformImage = NSImage
+#endif
+
+public protocol MediaArtLoader {
+    func load(_ art: MediaArt) async -> Image
+    func loadPlatformImage(for art: MediaArt) async -> PlatformImage?
+}
+
+public final class MediaArtCache : MediaArtLoader {
     
-    private var cache = NSCache<NSString, ImageObject>()
+    private let cache: NSCache<NSString, ImageObject>
     private let defaultImage = Image("boomic_logo")
     
-    public init() {}
+    public init(cacheLimit: Int? = nil) {
+        let cache = NSCache<NSString, ImageObject>()
+        if let cacheLimit = cacheLimit { cache.countLimit = cacheLimit }
+        self.cache = cache
+    }
     
-    public func load(_ art: MediaArt) async-> Image {
+    public func load(_ art: MediaArt) async -> Image {
         let hashKey = hashKey(for: art)
         
         if let imageObject = cache.object(forKey: hashKey as NSString) {
@@ -30,8 +44,23 @@ public final class MediaArtLoader {
         
         else { return defaultImage }
     }
-     
-    private func hashKey(for art: MediaArt) -> String{
+    
+    public func loadPlatformImage(for art: MediaArt) async -> PlatformImage? {
+        let hashKey = hashKey(for: art)
+        
+        if let imageObject = cache.object(forKey: hashKey as NSString) {
+            return imageObject.image
+        }
+        
+        else if let newImageObject = imageObject(for: art) {
+            cache.setObject(newImageObject, forKey: hashKey as NSString)
+            return newImageObject.image
+        }
+        
+        else { return nil }
+    }
+
+    private func hashKey(for art: MediaArt) -> String {
         switch art {
         case .embedded(_, let hash): return hash
         case .local(let url): return url.path()
@@ -52,7 +81,7 @@ public final class MediaArtLoader {
 private final class ImageObject {
     
 #if canImport(UIKit)
-    private var image: UIImage?
+    public var image: UIImage?
     
     init(url: URL) {
         if let data = try? Data(contentsOf: url), let loadedImage = UIImage(data: data) {
@@ -70,7 +99,7 @@ private final class ImageObject {
         }
     }
 #elseif canImport(AppKit)
-    private var image: NSImage?
+    public var image: NSImage?
     
     init(url: URL) {
         self.image = NSImage(contentsOf: url)

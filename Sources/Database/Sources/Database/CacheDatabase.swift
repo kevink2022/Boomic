@@ -103,18 +103,7 @@ final public class CacheDatabase: Database {
         let data = try encoder.encode(object)
         try data.write(to: url)
     }
-    
-    // MARK: - Mapping conifuguration
-    
-    private func getURL<T:Model>(for object: T.Type) throws -> URL {
-        switch T.self {
-        case is Song.Type: return self.songsURL
-        case is Album.Type: return self.albumsURL
-        case is Artist.Type: return self.artistsURL
-        default: throw DatabaseError.unresolvedModel(T.self)
-        }
-    }
-    
+       
     // MARK: - Constants
     
     private typealias C = Constants

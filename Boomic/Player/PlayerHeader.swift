@@ -11,11 +11,7 @@ struct PlayerHeader: View {
     @Environment(\.player) private var player
     
     var body: some View {
-        MediaArtView(player.art)
-            .clipShape(RoundedRectangle(cornerSize: CGSize(
-                width: C.albumCornerRadius,
-                height: C.albumCornerRadius
-            )))
+        PlayerArtView()
         
         VStack {
             HStack {

@@ -51,6 +51,7 @@
 		4FEE487C2BCB2DC300F5BC86 /* PlayerControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEE487B2BCB2DC300F5BC86 /* PlayerControls.swift */; };
 		4FEE487E2BCB340500F5BC86 /* QueueControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEE487D2BCB340500F5BC86 /* QueueControls.swift */; };
 		4FEE48802BCB376D00F5BC86 /* PlayerHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEE487F2BCB376D00F5BC86 /* PlayerHeader.swift */; };
+		4FEE48842BCC756E00F5BC86 /* PlayerArtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEE48832BCC756E00F5BC86 /* PlayerArtView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -121,6 +122,7 @@
 		4FEE487B2BCB2DC300F5BC86 /* PlayerControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerControls.swift; sourceTree = "<group>"; };
 		4FEE487D2BCB340500F5BC86 /* QueueControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueControls.swift; sourceTree = "<group>"; };
 		4FEE487F2BCB376D00F5BC86 /* PlayerHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerHeader.swift; sourceTree = "<group>"; };
+		4FEE48832BCC756E00F5BC86 /* PlayerArtView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerArtView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -318,6 +320,7 @@
 				4FEE487B2BCB2DC300F5BC86 /* PlayerControls.swift */,
 				4FEE487D2BCB340500F5BC86 /* QueueControls.swift */,
 				4FEE487F2BCB376D00F5BC86 /* PlayerHeader.swift */,
+				4FEE48832BCC756E00F5BC86 /* PlayerArtView.swift */,
 			);
 			path = Player;
 			sourceTree = "<group>";
@@ -500,6 +503,7 @@
 				4FB41E2A2BA67EF200270496 /* SongListEntry.swift in Sources */,
 				4FEE487E2BCB340500F5BC86 /* QueueControls.swift in Sources */,
 				4F04DCBB2B74727D006114B3 /* ContentView.swift in Sources */,
+				4FEE48842BCC756E00F5BC86 /* PlayerArtView.swift in Sources */,
 				4FB41E222BA6444100270496 /* Environment.swift in Sources */,
 				4FEE487C2BCB2DC300F5BC86 /* PlayerControls.swift in Sources */,
 				4FB41E1D2BA6247E00270496 /* AllAlbumsScreen.swift in Sources */,

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class Album: Model {
+public final class Album: Identifiable, Codable, Equatable {
     public let id: UUID
     public let title: String
     

@@ -6,12 +6,29 @@
 //
 
 import SwiftUI
+import Repository
+import MediaPlayerKit
+import MediaFileKit
 
 @main
 struct BoomicApp: App {
+    let repository: Repository
+    let player: SongPlayer
+    
+    init() {
+        let artCache = MediaArtCache()
+        let repository = RepositoryImpl(artLoader: artCache)
+        let player = SongPlayer(artLoader: artCache)
+        
+        self.repository = repository
+        self.player = player
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(\.repository, repository)
+                .environment(\.player, player)
         }
     }
 }

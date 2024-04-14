@@ -7,23 +7,23 @@ import Database
 import MediaFileKit
 
 public protocol Repository: Database {
-    var imageLoader: MediaArtLoader { get }
+    var artLoader: MediaArtLoader { get }
 }
 
 public final class RepositoryImpl: Repository {
     
-    public let imageLoader: MediaArtLoader
+    public let artLoader: MediaArtLoader
     private let database: Database
     private let localFileInterface: MediaFileInterface
     
     public init(
         database: Database = CacheDatabase()
         , localFileInterface: MediaFileInterface = LocalMediaFileInterface()
-        , imageLoader: MediaArtLoader = MediaArtLoader()
+        , artLoader: MediaArtLoader = MediaArtCache()
     ) {
         self.database = database
         self.localFileInterface = localFileInterface
-        self.imageLoader = imageLoader
+        self.artLoader = artLoader
     }
     
     public func getSongs(for ids: [UUID]?) async -> [Models.Song] {
