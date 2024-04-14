@@ -56,8 +56,8 @@ public final class LocalMediaFileInterface: MediaFileInterface {
             let externalParser = DirectoryParser(file: file)
             
             let albumArt: MediaArt? = {
-                if internalParser.hasEmbeddedArt { return .embedded(file) }
-                if let art = externalParser.albumArt { return .local(art) }
+                if let hash = internalParser.embeddedHash { return .embedded(url: file, hash: hash) }
+                if let art = externalParser.albumArt { return .local(url: art) }
                 return nil
             }()
                         

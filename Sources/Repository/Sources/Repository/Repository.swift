@@ -6,19 +6,24 @@ import Models
 import Database
 import MediaFileKit
 
-public protocol Repository: Database { }
+public protocol Repository: Database {
+    var imageLoader: MediaArtLoader { get }
+}
 
 public final class RepositoryImpl: Repository {
     
+    public let imageLoader: MediaArtLoader
     private let database: Database
     private let localFileInterface: MediaFileInterface
     
     public init(
         database: Database = CacheDatabase()
         , localFileInterface: MediaFileInterface = LocalMediaFileInterface()
+        , imageLoader: MediaArtLoader = MediaArtLoader()
     ) {
         self.database = database
         self.localFileInterface = localFileInterface
+        self.imageLoader = imageLoader
     }
     
     public func getSongs(for ids: [UUID]?) async -> [Models.Song] {

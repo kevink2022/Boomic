@@ -12,7 +12,7 @@ public final class AudioToolboxParser {
     
     public let source: URL
     public let hasTags: Bool
-    public let hasEmbeddedArt: Bool
+    public let embeddedHash: String?
     private let tags: [String : Any]?
     private typealias S = AudioToolboxParser
     
@@ -21,15 +21,15 @@ public final class AudioToolboxParser {
         
         guard let fileID = S.openFile(url: file) else {
             hasTags = false
-            hasEmbeddedArt = false
             tags = nil
+            embeddedHash = nil
             return
         }
         
         defer { S.closeFile(fileID) }
         tags = S.initTags(fileID)
         hasTags = tags == nil ? false : true
-        hasEmbeddedArt = S.hasEmbedded(fileID)
+        embeddedHash = S.hasEmbedded(fileID)
     }
     
     private static func openFile(url: URL) -> AudioFileID? {
@@ -58,22 +58,26 @@ public final class AudioToolboxParser {
     }
     
     // keeping this for now because otherwise memory spikes when adding songs.
-    private static func hasEmbedded(_ fileID: AudioFileID) -> Bool {
+    private static func hasEmbedded(_ fileID: AudioFileID) -> String? {
         var dataSize: UInt32 = 0
         let status = AudioFileGetPropertyInfo(fileID, kAudioFilePropertyAlbumArtwork, &dataSize, nil)
 
-        guard status == noErr && dataSize > 0 else { return false }
-            
-        var artworkData: UnsafeMutableRawPointer? = nil
-        let result = AudioFileGetProperty(fileID, kAudioFilePropertyAlbumArtwork, &dataSize, &artworkData)
+        var hash: String? = nil
         
-        guard result == noErr, let artworkDataUnwrapped = artworkData else { return false }
-        
-        let _ = Unmanaged<CFData>.fromOpaque(artworkDataUnwrapped).takeRetainedValue()
+        autoreleasepool {
+            var artworkData: UnsafeMutableRawPointer? = nil
+            let result = AudioFileGetProperty(fileID, kAudioFilePropertyAlbumArtwork, &dataSize, &artworkData)
             
-        return true
+            guard result == noErr, let artworkDataUnwrapped = artworkData else { return }
+            
+            let cfData = Unmanaged<CFData>.fromOpaque(artworkDataUnwrapped).takeRetainedValue()
+            let data = Data(referencing: cfData)
+            hash = HashUtility.computeHash(data: data)
+        }
+        
+        return hash
     }
-    
+       
     private static func embeddedArt(_ fileID: AudioFileID) -> Data? {
         var dataSize: UInt32 = 0
         let status = AudioFileGetPropertyInfo(fileID, kAudioFilePropertyAlbumArtwork, &dataSize, nil)

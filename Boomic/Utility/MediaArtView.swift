@@ -10,6 +10,7 @@ import Models
 import MediaFileKit
 
 struct MediaArtView: View {
+    @Environment(\.repository) private var repository
     let art: MediaArt?
     let aspectRatio: ContentMode
     @State var image: Image?
@@ -25,51 +26,16 @@ struct MediaArtView: View {
             .resizable()
             .aspectRatio(contentMode: aspectRatio)
             .task {
-                image = await loadImage()
+                if let art = art {
+                    image = await repository.imageLoader.load(art)
+                }
             }
     }
     
-    private func defaultImage() -> Image { Image("boomic_logo") }
-    
-    private func showImage() -> Image { image ?? defaultImage() }
-    
-    private func loadImage() async -> Image {
-        switch art {
-        case .local(let url): urlToImage(url)
-
-        case .embedded(let url): embeddedImage(mediaURL: url)
-        default: defaultImage()
-        }
-    }
-    
-    private func urlToImage(_ url: URL) -> Image {
-#if canImport(UIKit)
-        if let uiImage = UIImage(contentsOfFile: url.path) {
-            Image(uiImage: uiImage)
-        } else { defaultImage() }
-#elseif canImport(AppKit)
-        if let nsImage = NSImage(contentsOf: url) {
-            Image(nsImage: nsImage)
-        } else { defaultImage() }
-#endif
-    }
-    
-    private func embeddedImage(mediaURL: URL) -> Image {
-        guard let data = AudioToolboxParser.embeddedArtData(from: mediaURL)
-        else { return defaultImage() }
-        
-#if canImport(UIKit)
-        if let uiImage = UIImage(data: data) {
-            return Image(uiImage: uiImage)
-        } else { return defaultImage() }
-#elseif canImport(AppKit)
-        if let nsImage = NSImage(data: data) {
-            return Image(nsImage: nsImage)
-        } else { return defaultImage() }
-#endif
-    }
+    private func showImage() -> Image { image ?? Image("boomic_logo") }
 }
 
 #Preview {
-    MediaArtView(.local(URL(string: "/Users/kevinkelly/Music/Stuff/Ratatat-Magnifique/folder.jpg")!))
+    MediaArtView(.local(url: URL(string: "/Users/kevinkelly/Music/Stuff/Joe Hisaishi (久石譲) - 千と千尋の神隠し サウンドトラック (2001) [FLAC]/cover.jpg")!))
+        .environment(\.repository, previewRepository())
 }

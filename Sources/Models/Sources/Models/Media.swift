@@ -17,8 +17,8 @@ public enum MediaSource: Codable, Equatable {
 }
 
 public enum MediaArt: Codable, Equatable {
-    case local(URL)
-    case embedded(URL)
+    case local(url: URL)
+    case embedded(url: URL, hash: String)
 }
 
 extension MediaSource {
