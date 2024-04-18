@@ -41,7 +41,9 @@ struct QueueControls: View {
             Spacer()
             
             Button {
-                player.togglePlayPause()
+                withAnimation(.snappy(duration: 0.3)) {
+                    player.queueView.toggle()
+                }
             } label: {
                 Image(systemName: "list.bullet")
             }

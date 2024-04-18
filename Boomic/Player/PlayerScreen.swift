@@ -10,6 +10,7 @@ import Models
 
 struct PlayerScreen: View {
     @Environment(\.player) private var player
+    @Namespace private var namespace
     
     var body: some View {
         ZStack {
@@ -23,7 +24,24 @@ struct PlayerScreen: View {
                 }
             
             VStack {
-                PlayerHeader()
+                HStack {
+                    PlayerArtView()
+                        .frame(height: player.queueView ? 80 : nil)
+                    
+                    if player.queueView {
+                        Text(player.song?.label ?? "No Song")
+                            .font(F.bold)
+                            .lineLimit(1)
+                        
+                        Spacer()
+                    }
+                }
+                
+                if player.queueView {
+                    QueueList()
+                } else {
+                    PlayerHeader()
+                }
                 
                 TimeSlider()
                     .padding(C.gridPadding)
@@ -31,6 +49,7 @@ struct PlayerScreen: View {
                 Spacer()
                 
                 PlayerControls()
+                    .padding(.vertical, 20)
                 
                 Spacer()
                 
@@ -39,10 +58,12 @@ struct PlayerScreen: View {
             }
             .padding(.horizontal, C.gridPadding)
         }
+        .animation(.snappy(duration: 0.2), value: player.song)
     }
     
     private typealias C = ViewConstants
     private typealias F = ViewConstants.Fonts
+
 }
 
 #Preview {

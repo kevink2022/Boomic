@@ -36,7 +36,7 @@ func previewPlayer() -> SongPlayer { SongPlayer() }
 func previewPlayerWithSong() -> SongPlayer {
     let player = SongPlayer()
     
-    player.setSong(previewSong(), autoPlay: false)
+    player.setSong(previewSong(), context: [previewSong()], autoPlay: false)
     
     return player
 }

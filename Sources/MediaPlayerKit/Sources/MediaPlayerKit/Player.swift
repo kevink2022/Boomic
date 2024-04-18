@@ -24,7 +24,8 @@ public final class SongPlayer {
     public private(set) var isPlaying: Bool
     public private(set) var time: TimeInterval { didSet { updatePlaybackTime() } }
     
-    public var fullscreen: Bool
+    public var fullscreen: Bool = false
+    public var queueView: Bool = false
     
     private var engine: AVEngine? { didSet { setupTimeSubscribers() } }
     private var engineStatus: EngineStatus
@@ -40,21 +41,22 @@ public final class SongPlayer {
         self.queue = nil
         self.engine = nil
         self.engineStatus = .idle
-        self.fullscreen = false
         self.queueOrder = .inOrder
         self.repeatState = .noRepeat
         self.isPlaying = false
         self.time = 0
         self.artLoader = artLoader
         
+#if !os(macOS)
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             
         }
-        setupRemoteTransportControls()
+#endif
         
+        setupRemoteTransportControls()
         setupTimeSubscribers()
     }
 }
@@ -125,7 +127,7 @@ extension SongPlayer {
 // Events called by different triggers.
 extension SongPlayer {
     
-    public func setSong(_ song: Song, context: [Song]? = nil, autoPlay: Bool = true) {
+    private func setSong(_ song: Song, autoPlay: Bool = true) {
         self.song = song
         self.art = song.art
         
@@ -141,10 +143,16 @@ extension SongPlayer {
         time = 0
         if autoPlay { play() }
         else { pause() }
-        
-        if let context = context {
-            queue = AMQueue(song: song, context: context, queueOrder: queueOrder)
-        }
+    }
+    
+    public func setSong(_ song: Song, context: [Song], autoPlay: Bool = true) {
+        setSong(song, autoPlay: autoPlay)
+        queue = AMQueue(song: song, context: context, queueOrder: queueOrder)
+    }
+    
+    public func setSong(_ song: Song, forwardQueueIndex: Int, autoPlay: Bool = true) {
+        setSong(song, autoPlay: autoPlay)
+        queue = queue?.advanceTo(forwardIndex: forwardQueueIndex)
     }
     
     private func resetSong(pause: Bool? = nil) {

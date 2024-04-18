@@ -11,8 +11,6 @@ struct PlayerHeader: View {
     @Environment(\.player) private var player
     
     var body: some View {
-        PlayerArtView()
-        
         VStack {
             HStack {
                 Text(player.song?.label ?? "No Song")

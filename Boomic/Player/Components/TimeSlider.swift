@@ -14,7 +14,7 @@ struct TimeSlider: View {
     @State var dragging: Bool = false
     
     private var progressPlusOffset: CGFloat { max(0, min(1, progress + barOffset)) }
-    
+       
     var body: some View {
         VStack {
             GeometryReader { geometry in
@@ -56,6 +56,9 @@ struct TimeSlider: View {
         }
         .onChange(of: player.time) {
             if !dragging { updateSongProgress() }
+        }
+        .task {
+            updateSongProgress() // update on init
         }
     }
     

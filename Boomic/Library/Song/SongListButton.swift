@@ -11,7 +11,7 @@ import Models
 struct SongListButton: View {
     @Environment(\.player) private var player
     let song: Song
-    let context: [Song]?
+    let context: [Song]
 
     let showAlbumArt: Bool
     let showArtist: Bool
@@ -19,7 +19,7 @@ struct SongListButton: View {
     
     init(
         song: Song
-        , context: [Song]? = nil
+        , context: [Song]
         , showAlbumArt: Bool = true
         , showArtist: Bool = true
         , showTrackNumber: Bool = false
@@ -47,6 +47,6 @@ struct SongListButton: View {
 }
 
 #Preview {
-    SongListButton(song: previewSong())
+    SongListButton(song: previewSong(), context: [previewSong()])
         .environment(\.player, previewPlayer())
 }

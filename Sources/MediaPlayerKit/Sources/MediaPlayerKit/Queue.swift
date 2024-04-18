@@ -19,6 +19,8 @@ public protocol MediaQueueInterface {
     func peekPrevious() -> Song
     func previous() -> Self
     
+    func advanceTo(forwardIndex: Int) -> Self
+    
     func addNext(_ song: Song) -> Self
     func addToEnd(_ song: Song) -> Self
 }
@@ -28,6 +30,7 @@ public protocol MediaQueue: MediaQueueInterface {
     
     var currentSong: Song { get }
     var queue: [Song] { get }
+    var restOfQueue: [Song] { get }
     var queueOrder: MediaQueueOrder { get }
 }
 
@@ -49,6 +52,10 @@ public final class AMQueue : MediaQueue {
     
     public let queue: [Song]
     private let queueIndex: Int
+    public var restOfQueue: [Song] {
+        guard queueIndex + 1 < queue.count else { return [] }
+        return Array(queue[(queueIndex + 1)...])
+    }
     
     private let context: [Song]
     private var contextIndex: Int { context.firstIndex(of: currentSong) ?? 0 }
@@ -71,6 +78,13 @@ public final class AMQueue : MediaQueue {
     public var backwardRolloverWillOccur: Bool { queueIndex == 0 }
     public func peekPrevious() -> Song { queue[previousSongIndex] }
     public func previous() -> AMQueue { AMQueue(currentQueue: self, currentSong: peekPrevious(), queueIndex: previousSongIndex) }
+    
+    public func advanceTo(forwardIndex: Int) -> AMQueue {
+        let newSongIndex = queueIndex + forwardIndex + 1
+        guard newSongIndex < queue.endIndex else { return self }
+        let newSong = queue[newSongIndex]
+        return AMQueue(currentQueue: self, currentSong: newSong, queueIndex: newSongIndex)
+    }
     
     public func addNext(_ song: Song) -> AMQueue {
         var queue = queue
