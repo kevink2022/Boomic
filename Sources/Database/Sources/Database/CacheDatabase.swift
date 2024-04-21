@@ -362,7 +362,7 @@ private final class ModelResolver {
 
             let songs = artist.songs
                 .compactMap { tempCache.songMap[$0] ?? currentCache.songMap[$0] }
-                .sorted { Song.discAndTrackNumberSort($0, $1) }
+                .sorted { Song.alphabeticalSort($0, $1) }
                 
             
             let albums = artist.albums

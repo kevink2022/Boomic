@@ -9,9 +9,9 @@ import Foundation
 import Models
 
 public protocol Database {
-    func getSongs(for ids: [UUID]?) async -> [Song]
-    func getAlbums(for ids: [UUID]?) async -> [Album]
-    func getArtists(for ids: [UUID]?) async -> [Artist]
+    func getSongs(for ids: [UUID]?) -> [Song]
+    func getAlbums(for ids: [UUID]?) -> [Album]
+    func getArtists(for ids: [UUID]?) -> [Artist]
     
     func addSongs(_ songs: [Song]) async
 }

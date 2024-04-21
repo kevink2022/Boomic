@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import Models
 
 struct PlayerHeader: View {
     @Environment(\.player) private var player
-    
+
     var body: some View {
         VStack {
             HStack {
@@ -24,15 +25,20 @@ struct PlayerHeader: View {
             
             HStack {
                 
-                VStack(alignment: .leading) {
-                    Text(player.song?.albumTitle ?? "Unknown Album")
-                        .font(F.subtitle)
-                        .lineLimit(1)
-                    
-                    Text(player.song?.artistName ?? "Unknown Artist")
-                        .font(F.subtitle)
-                        .lineLimit(1)
+                Menu {
+                    SongGoToMenu(song: player.song ?? Song.none)
+                } label: {
+                    VStack(alignment: .leading) {
+                        Text(player.song?.albumTitle ?? "Unknown Album")
+                            .font(F.subtitle)
+                            .lineLimit(1)
+                        
+                        Text(player.song?.artistName ?? "Unknown Artist")
+                            .font(F.subtitle)
+                            .lineLimit(1)
+                    }
                 }
+                .foregroundStyle(.primary)
                 
                 Spacer()
                 

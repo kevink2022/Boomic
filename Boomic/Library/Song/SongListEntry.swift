@@ -62,13 +62,6 @@ struct SongListEntry: View {
             
             Text(song.duration.formatted)
                 .font(F.listDuration)
-            
-            Button {
-                
-            } label: {
-                Image(systemName: "ellipsis")
-            }
-
         }
     }
     

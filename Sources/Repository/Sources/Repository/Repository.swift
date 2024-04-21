@@ -26,20 +26,20 @@ public final class RepositoryImpl: Repository {
         self.artLoader = artLoader
     }
     
-    public func getSongs(for ids: [UUID]?) async -> [Models.Song] {
-        return await database.getSongs(for: ids)
+    public func getSongs(for ids: [UUID]?) -> [Models.Song] {
+        return database.getSongs(for: ids)
     }
     
-    public func getAlbums(for ids: [UUID]?) async -> [Models.Album] {
-        return await database.getAlbums(for: ids)
+    public func getAlbums(for ids: [UUID]?) -> [Models.Album] {
+        return database.getAlbums(for: ids)
     }
     
-    public func getArtists(for ids: [UUID]?) async -> [Models.Artist] {
-        return await database.getArtists(for: ids)
+    public func getArtists(for ids: [UUID]?) -> [Models.Artist] {
+        return database.getArtists(for: ids)
     }
     
     public func addSongs(_ songs: [Models.Song]) async {
-        let existingSongs = await database.getSongs(for: nil)
+        let existingSongs = database.getSongs(for: nil)
         guard let newSongs = try? await localFileInterface.newSongs(existing: existingSongs) else { return }
         await database.addSongs(newSongs)
     }

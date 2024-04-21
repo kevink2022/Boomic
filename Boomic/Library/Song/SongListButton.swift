@@ -43,6 +43,7 @@ struct SongListButton: View {
             )
         }
         .foregroundStyle(.primary)
+        .contextMenu { SongMenu(song: song) }
     }
 }
 

@@ -20,7 +20,7 @@ struct TimeSlider: View {
             GeometryReader { geometry in
                 ZStack(alignment: .bottomLeading) {
                     Rectangle()
-                        .opacity(0.3)
+                        .opacity(0.15)
                     Rectangle()
                         .frame(width: geometry.size.width * progressPlusOffset)
                 }

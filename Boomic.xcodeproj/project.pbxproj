@@ -15,6 +15,8 @@
 		4F04DCD52B74727F006114B3 /* BoomicUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F04DCD42B74727F006114B3 /* BoomicUITests.swift */; };
 		4F04DCD72B74727F006114B3 /* BoomicUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F04DCD62B74727F006114B3 /* BoomicUITestsLaunchTests.swift */; };
 		4F04DCF92B74B77B006114B3 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 4F04DCF82B74B77B006114B3 /* Models */; };
+		4F539D672BD303BF00E12A40 /* SongMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F539D662BD303BF00E12A40 /* SongMenu.swift */; };
+		4F539D6B2BD4B7E400E12A40 /* SongGoToMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F539D6A2BD4B7E400E12A40 /* SongGoToMenu.swift */; };
 		4F6135D02B7AB3CC00AF825C /* Database in Frameworks */ = {isa = PBXBuildFile; productRef = 4F6135CF2B7AB3CC00AF825C /* Database */; };
 		4F853B5D2BA75D1100721E59 /* AllArtistsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F853B5C2BA75D1100721E59 /* AllArtistsScreen.swift */; };
 		4F853B5F2BA7632E00721E59 /* ArtistGridEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F853B5E2BA7632E00721E59 /* ArtistGridEntry.swift */; };
@@ -90,6 +92,8 @@
 		4F04DCE52B747EFC006114B3 /* Database */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Database; sourceTree = "<group>"; };
 		4F04DCE62B747F0D006114B3 /* Networking */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Networking; sourceTree = "<group>"; };
 		4F04DCE72B747F38006114B3 /* Models */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Models; sourceTree = "<group>"; };
+		4F539D662BD303BF00E12A40 /* SongMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongMenu.swift; sourceTree = "<group>"; };
+		4F539D6A2BD4B7E400E12A40 /* SongGoToMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongGoToMenu.swift; sourceTree = "<group>"; };
 		4F6135CD2B7757DB00AF825C /* BoomicTestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = BoomicTestPlan.xctestplan; sourceTree = "<group>"; };
 		4F853B5C2BA75D1100721E59 /* AllArtistsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllArtistsScreen.swift; sourceTree = "<group>"; };
 		4F853B5E2BA7632E00721E59 /* ArtistGridEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistGridEntry.swift; sourceTree = "<group>"; };
@@ -293,6 +297,8 @@
 			children = (
 				4FB41E292BA67EF200270496 /* SongListEntry.swift */,
 				4FD48D1F2BB9F02C00D06055 /* SongListButton.swift */,
+				4F539D662BD303BF00E12A40 /* SongMenu.swift */,
+				4F539D6A2BD4B7E400E12A40 /* SongGoToMenu.swift */,
 			);
 			path = Song;
 			sourceTree = "<group>";
@@ -542,7 +548,9 @@
 				4FB41E262BA659E300270496 /* ViewConstants.swift in Sources */,
 				4F04DCB92B74727D006114B3 /* BoomicApp.swift in Sources */,
 				4FD48D122BB929A200D06055 /* SettingsScreen.swift in Sources */,
+				4F539D672BD303BF00E12A40 /* SongMenu.swift in Sources */,
 				4FEE48802BCB376D00F5BC86 /* PlayerHeader.swift in Sources */,
+				4F539D6B2BD4B7E400E12A40 /* SongGoToMenu.swift in Sources */,
 				4F853B5F2BA7632E00721E59 /* ArtistGridEntry.swift in Sources */,
 				4FD48D182BB92DBB00D06055 /* SongBar.swift in Sources */,
 				4F853B702BA8920800721E59 /* ArtistGridLink.swift in Sources */,

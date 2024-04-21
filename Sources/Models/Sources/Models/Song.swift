@@ -148,6 +148,11 @@ extension Song {
     }
 }
 
+extension Song {
+    public static let none = Song(id: UUID(), source: .local(url: URL.documentsDirectory), duration: 90)
+}
+
+
 
 
 

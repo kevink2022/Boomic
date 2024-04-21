@@ -50,7 +50,6 @@ struct ContentView: View {
                                     playerOffset = 1000
                                 } completion: {
                                     player.fullscreen = false
-                                    playerOffset = 0
                                 }
                             } else {
                                 withAnimation(.easeOut) { playerOffset = 0 }
