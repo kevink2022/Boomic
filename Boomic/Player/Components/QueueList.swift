@@ -9,9 +9,29 @@ import SwiftUI
 
 struct QueueList: View {
     @Environment(\.player) private var player
+    @State var listDisplay: QueueListDisplayMode = .duration
 
     var body: some View {
-        VStack(spacing: 0){
+        VStack(spacing: 0) {
+            
+            HStack {
+                Text(player.queue?.name ?? "Queue")
+                    .lineLimit(1)
+                    .font(F.body)
+                    .opacity(0.5)
+                
+                Spacer()
+                
+                Button {
+                    withAnimation { listDisplay.toggle() }
+                } label: {
+                    Image(systemName: listDisplay.systemImage)
+                        .font(.title2)
+                }
+                .foregroundStyle(.primary)
+            }
+            .padding(.bottom, C.gridPadding)
+            
             Divider()
             
             if let queue = player.queue {
@@ -27,7 +47,7 @@ struct QueueList: View {
                                     value.scrollTo(0)
                                 }
                             } label: {
-                                SongListEntry(song: song)
+                                QueueListEntry(song: song, queueIndex: index, displayMode: $listDisplay)
                             }
                             .foregroundStyle(.primary)
                             .id(song)
@@ -41,6 +61,7 @@ struct QueueList: View {
     }
     
     private typealias C = ViewConstants
+    private typealias F = ViewConstants.Fonts
 }
 
 #Preview {

@@ -12,6 +12,7 @@ struct SongListButton: View {
     @Environment(\.player) private var player
     let song: Song
     let context: [Song]
+    let queueName: String
 
     let showAlbumArt: Bool
     let showArtist: Bool
@@ -20,12 +21,14 @@ struct SongListButton: View {
     init(
         song: Song
         , context: [Song]
+        , queueName: String = "Queue"
         , showAlbumArt: Bool = true
         , showArtist: Bool = true
         , showTrackNumber: Bool = false
     ) {
         self.song = song
         self.context = context
+        self.queueName = queueName
         self.showAlbumArt = showAlbumArt
         self.showArtist = showArtist
         self.showTrackNumber = showTrackNumber
@@ -33,7 +36,7 @@ struct SongListButton: View {
     
     var body: some View {
         Button {
-            player.setSong(song, context: context)
+            player.setSong(song, context: context, queueName: queueName)
         } label: {
             SongListEntry(
                 song: song

@@ -45,7 +45,7 @@ struct ArtistScreen: View {
                 LazyVStack(spacing: 0) {
                     ForEach(songs.prefix(showAllSongs ? songs.count : topSongCount)) { song in
                         Divider()
-                        SongListButton(song: song, context: songs)
+                        SongListButton(song: song, context: songs, queueName: artist.name)
                             .padding(7)
                     }
                     Divider()

@@ -20,14 +20,15 @@ public protocol MediaQueueInterface {
     func previous() -> Self
     
     func advanceTo(forwardIndex: Int) -> Self
+    func swap(_ forwardIndexA: Int, with forwardIndexB: Int) -> Self
+    func remove(forwardIndex: Int) -> Self
     
     func addNext(_ song: Song) -> Self
     func addToEnd(_ song: Song) -> Self
 }
 
 public protocol MediaQueue: MediaQueueInterface {
-    //init(song: Song, context: [Song], queueOrder: MediaQueueOrder)
-    
+    var name: String { get }
     var currentSong: Song { get }
     var queue: [Song] { get }
     var restOfQueue: [Song] { get }
@@ -62,6 +63,8 @@ private final class QueueObject: Identifiable, Equatable {
 
 public final class AMQueue: MediaQueue {
        
+    public let name: String
+    
     public var currentSong: Song { currentObject.object }
     private let currentObject: QueueObject
     
@@ -104,15 +107,49 @@ public final class AMQueue: MediaQueue {
         return AMQueue(currentQueue: self, currentObject: newSong, queueIndex: newSongIndex)
     }
     
+    public func swap(_ forwardIndexA: Int, with forwardIndexB: Int) -> AMQueue {
+        let indexA = queueIndex + forwardIndexA + 1
+        let indexB = queueIndex + forwardIndexB + 1
+        guard indexA < queueObjects.endIndex && indexB < queueObjects.endIndex else { return self }
+        
+        let objectA = queueObjects[indexA]
+        let objectB = queueObjects[indexB]
+        var queueObjects = queueObjects
+        queueObjects[indexA] = objectB
+        queueObjects[indexB] = objectA
+        
+        let context = (queueOrder == .inOrder ? queueObjects : nil)
+        
+        return AMQueue(currentQueue: self, queueObjects: queueObjects, context: context)
+    }
+    
+    public func remove(forwardIndex: Int) -> AMQueue {
+        let removeIndex = queueIndex + forwardIndex + 1
+        guard removeIndex < queueObjects.endIndex else { return self }
+        var queueObjects = queueObjects
+        var context = context
+        
+        let removedObject = queueObjects.remove(at: removeIndex)
+        
+        if queueOrder == .inOrder {
+            context.remove(at: removeIndex)
+        } else if let contextIndex = context.firstIndex(of: removedObject) {
+            context.remove(at: contextIndex)
+        }
+        
+        return AMQueue(currentQueue: self, queueObjects: queueObjects, context: context)
+    }
+    
     public func addNext(_ song: Song) -> AMQueue {
         var queue = queueObjects
         var context = context
         let queueObject = QueueObject(object: song)
         
-        queue.insert(queueObject, at: nextSongIndex)
+        let insertIndex = (forwardRolloverWillOccur ? queue.endIndex : nextSongIndex)
+        queue.insert(queueObject, at: insertIndex)
         
         if queueOrder == .inOrder {
-            context.insert(queueObject, at: nextSongIndex)
+            context.insert(queueObject, at: insertIndex)
         } else {
             context.insert(queueObject, at: contextIndex + 1)
         }
@@ -169,12 +206,14 @@ public final class AMQueue: MediaQueue {
         , queueIndex: Int
         , context: [QueueObject]
         , queueOrder: MediaQueueOrder
+        , name: String
     ) {
         self.currentObject = currentObject
         self.queueObjects = queueObjects
         self.queueIndex = queueIndex
         self.context = context
         self.queueOrder = queueOrder
+        self.name = name
     }
     
     private convenience init(
@@ -191,6 +230,7 @@ public final class AMQueue: MediaQueue {
             , queueIndex: queueIndex ?? currentQueue.queueIndex
             , context: context ?? currentQueue.context
             , queueOrder: queueOrder ?? currentQueue.queueOrder
+            , name: currentQueue.name
         )
     }
     
@@ -203,6 +243,7 @@ public final class AMQueue: MediaQueue {
             , queueIndex: currentQueue.queueIndex
             , context: currentQueue.context
             , queueOrder: currentQueue.queueOrder
+            , name: currentQueue.name
         )
     }
     
@@ -210,6 +251,7 @@ public final class AMQueue: MediaQueue {
         song: Song
         , context: [Song]
         , queueOrder: MediaQueueOrder
+        , name: String = ""
     ) {
         let contextIndex = context.firstIndex(of: song) ?? 0
         let context = context.map { QueueObject(object: $0) }
@@ -220,6 +262,7 @@ public final class AMQueue: MediaQueue {
             , queueIndex: contextIndex
             , context: context
             , queueOrder: .inOrder
+            , name: name
         )
         
         if queueOrder == .shuffle { self.init(inOrderQueue.shuffled()) }

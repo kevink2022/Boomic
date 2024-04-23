@@ -9,14 +9,14 @@ import SwiftUI
 
 struct PlayerArtView: View {
     @Environment(\.player) private var player
-    @State private var forceUpdateToggle: Bool = false
+    let cornerRadius: CGFloat
+    
+    init(cornerRadius: CGFloat = C.albumCornerRadius) {
+        self.cornerRadius = cornerRadius
+    }
         
     var body: some View {
-        MediaArtView(player.art)
-            .clipShape(RoundedRectangle(cornerSize: CGSize(
-                width: C.albumCornerRadius,
-                height: C.albumCornerRadius
-            )))
+        MediaArtView(player.art, cornerRadius: cornerRadius)
             .id(artID())
     }
     

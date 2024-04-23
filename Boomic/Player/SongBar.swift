@@ -13,7 +13,7 @@ struct SongBar: View {
     
     var body: some View {
         HStack {
-            PlayerArtView()
+            PlayerArtView(cornerRadius: C.smallAlbumCornerRadius)
                 .frame(height: C.smallAlbumFrame)
             
             VStack(alignment: .leading) {

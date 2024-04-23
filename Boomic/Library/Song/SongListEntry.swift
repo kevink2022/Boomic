@@ -29,13 +29,8 @@ struct SongListEntry: View {
     
     var body: some View {
         HStack {
-            
             if showAlbumArt {
-                MediaArtView(song.art)
-                    .clipShape(RoundedRectangle(cornerSize: CGSize(
-                        width: C.smallAlbumCornerRadius,
-                        height: C.smallAlbumCornerRadius
-                    )))
+                MediaArtView(song.art, cornerRadius: C.smallAlbumCornerRadius)
                     .frame(height: C.smallAlbumFrame)
             }
             

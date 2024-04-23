@@ -21,11 +21,7 @@ struct AlbumScreen: View {
                 HStack {
                     Spacer(minLength: 70)
                     
-                    MediaArtView(album.art)
-                        .clipShape(RoundedRectangle(cornerSize: CGSize(
-                            width: C.albumCornerRadius,
-                            height: C.albumCornerRadius
-                        )))
+                    MediaArtView(album.art, cornerRadius: C.albumCornerRadius)
                     
                     Spacer(minLength: 70)
                 }
@@ -74,7 +70,7 @@ struct AlbumScreen: View {
                     ForEach(songs) { song in
                         Divider()
                         
-                        SongListButton(song: song, context: songs, showAlbumArt: false, showTrackNumber: true)
+                        SongListButton(song: song, context: songs, queueName: album.title, showAlbumArt: false, showTrackNumber: true)
                             .padding(7)
                     }
                     Divider()

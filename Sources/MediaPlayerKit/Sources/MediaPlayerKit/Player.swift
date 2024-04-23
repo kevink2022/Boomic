@@ -103,6 +103,13 @@ extension SongPlayer {
     public func addNext(_ song: Song) { queue = queue?.addNext(song) }
     public func addToEnd(_ song: Song) { queue = queue?.addToEnd(song) }
     
+    public func swap(_ forwardIndexA: Int, with forwardIndexB: Int) {
+        queue = queue?.swap(forwardIndexA, with: forwardIndexB)
+    }
+    public func remove(forwardIndex: Int) {
+        queue = queue?.remove(forwardIndex: forwardIndex)
+    }
+    
     private func play() {
         engine?.play()
         isPlaying = engine?.isPlaying ?? false
@@ -120,6 +127,16 @@ extension SongPlayer {
         case .repeatSong: resetSong(pause: false)
         case .oneSong: resetSong(pause: true)
         }
+    }
+    
+    public func setSong(_ song: Song, context: [Song], queueName: String = "Queue", autoPlay: Bool = true) {
+        setSong(song, autoPlay: autoPlay)
+        queue = AMQueue(song: song, context: context, queueOrder: queueOrder, name: queueName)
+    }
+    
+    public func setSong(_ song: Song, forwardQueueIndex: Int, autoPlay: Bool = true) {
+        setSong(song, autoPlay: autoPlay)
+        queue = queue?.advanceTo(forwardIndex: forwardQueueIndex)
     }
 }
 
@@ -143,16 +160,6 @@ extension SongPlayer {
         time = 0
         if autoPlay { play() }
         else { pause() }
-    }
-    
-    public func setSong(_ song: Song, context: [Song], autoPlay: Bool = true) {
-        setSong(song, autoPlay: autoPlay)
-        queue = AMQueue(song: song, context: context, queueOrder: queueOrder)
-    }
-    
-    public func setSong(_ song: Song, forwardQueueIndex: Int, autoPlay: Bool = true) {
-        setSong(song, autoPlay: autoPlay)
-        queue = queue?.advanceTo(forwardIndex: forwardQueueIndex)
     }
     
     private func resetSong(pause: Bool? = nil) {

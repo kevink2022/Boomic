@@ -14,11 +14,7 @@ struct AlbumGridEntry: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            MediaArtView(album.art)
-                .clipShape(RoundedRectangle(cornerSize: CGSize(
-                    width: C.albumCornerRadius,
-                    height: C.albumCornerRadius
-                )))
+            MediaArtView(album.art, cornerRadius: C.albumCornerRadius)
             
             Text(album.title)
                 .font(F.listTitle)
