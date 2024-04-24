@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+private typealias A = ViewConstants.Animations
+
 struct ContentView: View {
     @Environment(\.player) private var player
     @State var playerOffset: CGFloat = 800
@@ -29,7 +31,7 @@ struct ContentView: View {
             .onChange(of: player.fullscreen) {
                 if player.fullscreen == true {
                     playerOffset = 800
-                    withAnimation(.spring(duration: 0.2)) { playerOffset = 0 }
+                    withAnimation(A.showPlayer) { playerOffset = 0 }
                 }
             }
 
@@ -46,7 +48,7 @@ struct ContentView: View {
                             let velocity = value.predictedEndTranslation.height - value.translation.height
 
                             if playerOffset > 300 || velocity > 250 {
-                                withAnimation(.easeOut) {
+                                withAnimation(A.playerExit) {
                                     playerOffset = 1000
                                 } completion: {
                                     player.fullscreen = false

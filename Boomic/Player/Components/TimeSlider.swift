@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
+private typealias A = ViewConstants.Animations
+
 struct TimeSlider: View {
     @Environment(\.player) private var player
     @State var progress: CGFloat = 0
@@ -20,13 +24,13 @@ struct TimeSlider: View {
             GeometryReader { geometry in
                 ZStack(alignment: .bottomLeading) {
                     Rectangle()
-                        .opacity(0.15)
+                        .opacity(C.timeSliderOpacity)
                     Rectangle()
                         .frame(width: geometry.size.width * progressPlusOffset)
                 }
                 .gesture(DragGesture()
                     .onChanged { value in
-                        withAnimation(.easeOut(duration: 0.05)) { dragging = true }
+                        withAnimation(A.timeSliderExpansion) { dragging = true }
                         barOffset = value.translation.width / geometry.size.width
                     }
                     .onEnded { value in
@@ -36,13 +40,13 @@ struct TimeSlider: View {
                         Task {
                             // band-aid for progress bar showing preseek time
                             try? await Task.sleep(nanoseconds: 10_000_000)
-                            withAnimation(.easeOut(duration: 0.05)) { dragging = false }
+                            withAnimation(A.timeSliderExpansion) { dragging = false }
                         }
                     }
                 )
             }
-            .frame(height: dragging ? 15 : 10)
-            .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
+            .frame(height: dragging ? C.timeSliderExpandedHeight : C.timeSliderHeight)
+            .clipShape(RoundedRectangle(cornerSize: CGSize(width: C.timeSliderHeight, height: C.timeSliderHeight)))
             
             HStack {
                 Text(timePassed.formatted)
@@ -87,9 +91,6 @@ struct TimeSlider: View {
             return songDuration * (1 - progressPlusOffset)
         }
     }
-       
-    private typealias C = ViewConstants
-    private typealias F = ViewConstants.Fonts
 }
 
 #Preview {

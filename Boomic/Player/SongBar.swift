@@ -8,6 +8,9 @@
 import SwiftUI
 import Models
 
+private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
+
 struct SongBar: View {
     @Environment(\.player) private var player
     
@@ -32,11 +35,7 @@ struct SongBar: View {
             }
             .padding(.trailing, C.gridPadding)
         }
-        
     }
-    
-    private typealias C = ViewConstants
-    private typealias F = ViewConstants.Fonts
 }
 
 #Preview {

@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
+private typealias SI = ViewConstants.SystemImages
 
 struct LibraryScreen: View {
     
@@ -18,36 +21,31 @@ struct LibraryScreen: View {
                 NavigationLink {
                     AllSongsScreen()
                 } label: {
-                    LibraryGridEntry(title: "Songs", imageName: "music.quarternote.3")
+                    LibraryGridEntry(title: "Songs", imageName: SI.songs)
                 }
                 
                 NavigationLink {
                     AllAlbumsScreen()
                 } label: {
-                    LibraryGridEntry(title: "Albums", imageName: "opticaldisc")
+                    LibraryGridEntry(title: "Albums", imageName: SI.album)
                 }
                 
                 NavigationLink {
                     AllArtistsScreen()
                 } label: {
-                    LibraryGridEntry(title: "Artists", imageName: "music.mic")
+                    LibraryGridEntry(title: "Artists", imageName: SI.artist)
                 }
                 
                 Button {
                     Task { await repository.addSongs([]) }
                 } label: {
-                    LibraryGridEntry(title: "Add Songs", imageName: "plus.circle")
+                    LibraryGridEntry(title: "Add Songs", imageName: SI.addSongs)
                 }
             }
             .foregroundStyle(.primary)
             .padding(C.gridPadding)
-            
         }
-        
     }
-    
-    private typealias C = ViewConstants
-    private typealias F = ViewConstants.Fonts
 }
 
 #Preview {

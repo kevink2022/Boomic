@@ -7,15 +7,20 @@
 
 import SwiftUI
 
+private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
+private typealias A = ViewConstants.Animations
+private typealias SI = ViewConstants.SystemImages
+
 struct QueueControls: View {
     @Environment(\.player) private var player
     
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 15)
+            RoundedRectangle(cornerRadius: C.queueControlsBarCornerRadius)
                 .foregroundStyle(.foreground)
-                .opacity(0.1)
-                .frame(height: 50)
+                .opacity(C.queueControlsBarOpacity)
+                .frame(height: C.queueControlsBarHeight)
             
             HStack {
                 Spacer()
@@ -23,9 +28,9 @@ struct QueueControls: View {
                 Button {
                     player.fullscreen = false
                 } label: {
-                    Image(systemName: "number")
+                    Image(systemName: SI.tag)
                 }
-                .font(F.title)
+                .font(F.playerButton)
                                 
                 Spacer()
                 
@@ -33,13 +38,13 @@ struct QueueControls: View {
                     player.toggleRepeatState()
                 } label: {
                     switch player.repeatState {
-                    case .noRepeat: Image(systemName: "arrow.forward.to.line")
-                    case .repeatQueue: Image(systemName: "repeat")
-                    case .repeatSong: Image(systemName: "repeat.1")
-                    case .oneSong: Image(systemName: "1.circle")
+                    case .noRepeat: Image(systemName: SI.noRepeat)
+                    case .repeatQueue: Image(systemName: SI.repeatQueue)
+                    case .repeatSong: Image(systemName: SI.repeatSong)
+                    case .oneSong: Image(systemName: SI.oneSong)
                     }
                 }
-                .font(F.title)
+                .font(F.playerButton)
                 
                 Spacer()
                 
@@ -47,31 +52,28 @@ struct QueueControls: View {
                     player.toggleShuffle()
                 } label: {
                     switch player.queueOrder {
-                    case .inOrder: Image(systemName: "arrow.right")
-                    case .shuffle: Image(systemName: "shuffle")
+                    case .inOrder: Image(systemName: SI.inOrder)
+                    case .shuffle: Image(systemName: SI.shuffle)
                     }
                 }
-                .font(F.title)
+                .font(F.playerButton)
                 
                 Spacer()
                 
                 Button {
-                    withAnimation(.snappy(duration: 0.3)) {
+                    withAnimation(A.toggleQueue) {
                         player.queueView.toggle()
                     }
                 } label: {
-                    Image(systemName: "list.bullet")
+                    Image(systemName: SI.queue)
                 }
-                .font(F.title)
+                .font(F.playerButton)
                 
                 Spacer()
             }
             .foregroundStyle(.primary)
         }
     }
-    
-    private typealias C = ViewConstants
-    private typealias F = ViewConstants.Fonts
 }
 
 #Preview {

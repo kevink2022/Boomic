@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+private typealias C = ViewConstants
+
 struct PlayerArtView: View {
     @Environment(\.player) private var player
     let cornerRadius: CGFloat
@@ -19,8 +21,6 @@ struct PlayerArtView: View {
         MediaArtView(player.art, cornerRadius: cornerRadius)
             .id(artID())
     }
-    
-    private typealias C = ViewConstants
     
     private func artID() -> String {
         switch player.art {

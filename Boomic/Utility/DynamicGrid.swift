@@ -7,7 +7,12 @@
 
 import SwiftUI
 
-struct DynamicGrid<Content: View> : View{
+private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
+private typealias A = ViewConstants.Animations
+private typealias SI = ViewConstants.SystemImages
+
+struct DynamicGrid<Content: View>: View {
     let content: () -> Content
     let title: String
     let titleFont: Font
@@ -25,7 +30,6 @@ struct DynamicGrid<Content: View> : View{
     @State var columns: [GridItem] = Array(repeating: .init(.flexible()), count: 3)
     @State var showTitleButtons = false
     
-    let chevron = "chevron.left.circle"
     let minColumns = 2
     let maxColumns = 5
     
@@ -55,10 +59,10 @@ struct DynamicGrid<Content: View> : View{
                 Spacer()
                 
                 HStack {
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.15)) { showTitleButtons.toggle() }
+                    AnimatedButton(A.dynamicGridRevealButtons) {
+                        showTitleButtons.toggle()
                     } label: {
-                        Image(systemName: chevron)
+                        Image(systemName: SI.dynamicGridRevealControls)
                             .rotationEffect(showTitleButtons ? .degrees(180) : .zero)
                     }
                     
@@ -68,7 +72,7 @@ struct DynamicGrid<Content: View> : View{
                                 zoomOut()
                             }
                         } label: {
-                            Image(systemName: "minus.circle")
+                            Image(systemName: SI.dynamicGridZoomOut)
                         }
                         .disabled(!canZoomOut)
                         
@@ -77,7 +81,7 @@ struct DynamicGrid<Content: View> : View{
                                 zoomIn()
                             }
                         } label: {
-                            Image(systemName: "plus.circle")
+                            Image(systemName: SI.dynamicGridZoomIn)
                         }
                         .disabled(!canZoomIn)
                     }
@@ -89,12 +93,8 @@ struct DynamicGrid<Content: View> : View{
             LazyVGrid(columns: columns, alignment: .leading) {
                 content()
             }
-            
-        }        
+        }
     }
-    
-    typealias C = ViewConstants
-    typealias F = ViewConstants.Fonts
 }
 
 #Preview {

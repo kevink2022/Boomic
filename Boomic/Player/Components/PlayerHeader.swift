@@ -8,6 +8,10 @@
 import SwiftUI
 import Models
 
+private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
+private typealias SI = ViewConstants.SystemImages
+
 struct PlayerHeader: View {
     @Environment(\.player) private var player
 
@@ -20,8 +24,8 @@ struct PlayerHeader: View {
                 
                 Spacer()
             }
-            .padding(.top, 20)
-            .padding(.bottom, 10)
+            .padding(.top, C.playerTitlePaddingTop)
+            .padding(.bottom, C.playerTitlePaddingBottom)
             
             HStack {
                 
@@ -45,23 +49,20 @@ struct PlayerHeader: View {
                 Button {
                     player.togglePlayPause()
                 } label: {
-                    Image(systemName: "star.circle")
+                    Image(systemName: SI.rateCircle)
                 }
                 .font(F.title)
                 
                 Button {
                     player.togglePlayPause()
                 } label: {
-                    Image(systemName: "info.circle")
+                    Image(systemName: SI.infoCircle)
                 }
                 .font(F.title)
             }
         }
         .padding(.horizontal, C.gridPadding)
     }
-    
-    private typealias C = ViewConstants
-    private typealias F = ViewConstants.Fonts
 }
 
 #Preview {

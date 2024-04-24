@@ -8,6 +8,9 @@
 import SwiftUI
 import Models
 
+private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
+
 struct SongListEntry: View {
     let song: Song
     let showAlbumArt: Bool
@@ -37,7 +40,7 @@ struct SongListEntry: View {
             if showTrackNumber {
                 Text("\(song.trackNumber.map { String($0) } ?? "")")
                     .font(F.trackNumber)
-                    .frame(minWidth: 22, alignment: .leading)
+                    .frame(minWidth: C.songTrackNumberWidth, alignment: .leading)
 
             }
             
@@ -59,9 +62,6 @@ struct SongListEntry: View {
                 .font(F.listDuration)
         }
     }
-    
-    private typealias C = ViewConstants
-    private typealias F = ViewConstants.Fonts
 }
 
 #Preview {

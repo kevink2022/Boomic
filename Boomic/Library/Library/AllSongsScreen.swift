@@ -7,7 +7,9 @@
 
 import SwiftUI
 import Models
-import Database
+
+private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
 
 struct AllSongsScreen: View {
     @Environment(\.repository) private var repository
@@ -27,7 +29,7 @@ struct AllSongsScreen: View {
                 ForEach(songs) { song in
                     Divider()
                     SongListButton(song: song, context: songs, queueName: "All Songs")
-                        .padding(7)
+                        .padding(C.songListEntryPadding)
                 }
                 Divider()
             }
@@ -38,9 +40,6 @@ struct AllSongsScreen: View {
             songs = await repository.getSongs(for: nil)
         }
     }
-    
-    typealias C = ViewConstants
-    typealias F = ViewConstants.Fonts
 }
 
 #Preview {

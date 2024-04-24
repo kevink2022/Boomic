@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
+
 struct LibraryGridEntry: View {
     let title: String
     let imageName: String
@@ -17,13 +20,13 @@ struct LibraryGridEntry: View {
                 Image(systemName: imageName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .padding(20)
-                
+                    .padding(C.libraryGridObjectInternalPadding)
+                    
                 RoundedRectangle(cornerSize: CGSize(
                     width: C.albumCornerRadius,
                     height: C.albumCornerRadius
                 ))
-                .stroke(style: StrokeStyle(lineWidth: 5))
+                .stroke(style: StrokeStyle(lineWidth: C.libraryGridObjectStroke))
                 .aspectRatio(contentMode: .fit)
             }
             
@@ -32,11 +35,8 @@ struct LibraryGridEntry: View {
                 .lineLimit(1)
         }
         
-        .padding(.horizontal, 3)
+        .padding(.horizontal, C.libraryGridPadding)
     }
-    
-    private typealias C = ViewConstants
-    private typealias F = ViewConstants.Fonts
 }
 
 #Preview {

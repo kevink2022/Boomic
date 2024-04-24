@@ -9,6 +9,10 @@ import SwiftUI
 import Models
 import Database
 
+private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
+private typealias SI = ViewConstants.SystemImages
+
 struct AlbumScreen: View {
     @Environment(\.repository) private var repository
     let album: Album
@@ -19,11 +23,11 @@ struct AlbumScreen: View {
         ScrollView {
             VStack {
                 HStack {
-                    Spacer(minLength: 70)
+                    Spacer(minLength: C.albumScreenSpacers)
                     
                     MediaArtView(album.art, cornerRadius: C.albumCornerRadius)
                     
-                    Spacer(minLength: 70)
+                    Spacer(minLength: C.albumScreenSpacers)
                 }
                 
                 Text(album.title)
@@ -42,7 +46,7 @@ struct AlbumScreen: View {
                         
                     } label: {
                         HStack {
-                            Image(systemName: "play.fill")
+                            Image(systemName: SI.play)
                             Text("Play")
                         }
                     }
@@ -51,7 +55,7 @@ struct AlbumScreen: View {
                         
                     } label: {
                         HStack {
-                            Image(systemName: "shuffle")
+                            Image(systemName: SI.shuffle)
                             Text("Shuffle")
                         }
                     }
@@ -71,7 +75,7 @@ struct AlbumScreen: View {
                         Divider()
                         
                         SongListButton(song: song, context: songs, queueName: album.title, showAlbumArt: false, showTrackNumber: true)
-                            .padding(7)
+                            .padding(C.songListEntryPadding)
                     }
                     Divider()
                 }
@@ -91,9 +95,9 @@ struct AlbumScreen: View {
                     ForEach(artists) { artist in
                         ArtistGridLink(artist: artist)
                     }
-                    .frame(width: 120)
+                    .frame(width: C.artistHorizontalListEntryWidth)
                 }
-                .frame(height: 150)
+                .frame(height: C.artistHorizontalListEntryHeight)
                 .padding(C.gridPadding)
             }
         }
@@ -103,9 +107,6 @@ struct AlbumScreen: View {
             artists = await repository.getArtists(for: album.artists)
         }
     }
-    
-    private typealias C = ViewConstants
-    private typealias F = ViewConstants.Fonts
 }
 
 #Preview {

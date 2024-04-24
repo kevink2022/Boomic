@@ -13,35 +13,42 @@ public protocol Repository: Database {
 public final class RepositoryImpl: Repository {
     
     public let artLoader: MediaArtLoader
-    private let database: Database
     private let localFileInterface: MediaFileInterface
+       
+    private let queryEngine: QueryEngine
+    private let transactor: Transactor
+    private var dataBasis: DataBasis
     
     public init(
-        database: Database = CacheDatabase()
-        , localFileInterface: MediaFileInterface = LocalMediaFileInterface()
+        localFileInterface: MediaFileInterface = LocalMediaFileInterface()
         , artLoader: MediaArtLoader = MediaArtCache()
+        , queryEngine: QueryEngine = QueryEngine()
+        , transactor: Transactor = Transactor()
     ) {
-        self.database = database
         self.localFileInterface = localFileInterface
         self.artLoader = artLoader
+        
+        self.queryEngine = QueryEngine()
+        self.transactor = Transactor()
+        self.dataBasis = DataBasis(songs: [], albums: [], artists: [])
     }
     
-    public func getSongs(for ids: [UUID]?) -> [Models.Song] {
-        return database.getSongs(for: ids)
+    public func getSongs(for ids: [UUID]?) -> [Song] {
+        return queryEngine.getSongs(for: ids, from: dataBasis)
     }
     
-    public func getAlbums(for ids: [UUID]?) -> [Models.Album] {
-        return database.getAlbums(for: ids)
+    public func getAlbums(for ids: [UUID]?) -> [Album] {
+        return queryEngine.getAlbums(for: ids, from: dataBasis)
     }
     
-    public func getArtists(for ids: [UUID]?) -> [Models.Artist] {
-        return database.getArtists(for: ids)
+    public func getArtists(for ids: [UUID]?) -> [Artist] {
+        return queryEngine.getArtists(for: ids, from: dataBasis)
     }
     
-    public func addSongs(_ songs: [Models.Song]) async {
-        let existingSongs = database.getSongs(for: nil)
+    public func addSongs(_ songs: [Song]) async {
+        let existingSongs = queryEngine.getSongs(for: nil, from: dataBasis)
         guard let newSongs = try? await localFileInterface.newSongs(existing: existingSongs) else { return }
-        await database.addSongs(newSongs)
+        dataBasis = await transactor.addSongs(newSongs, to: dataBasis)
     }
     
     

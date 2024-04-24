@@ -8,6 +8,10 @@
 import SwiftUI
 import Models
 
+private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
+private typealias A = ViewConstants.Animations
+
 struct PlayerScreen: View {
     @Environment(\.player) private var player
     @Namespace private var namespace
@@ -18,9 +22,9 @@ struct PlayerScreen: View {
                 .ignoresSafeArea()
                 .overlay {
                     PlayerArtView()
-                        .blur(radius: 50)
-                        .scaleEffect(3)
-                        .opacity(0.2)
+                        .blur(radius: C.backgroundBlurRadius)
+                        .scaleEffect(C.backgroundBlurScaleEffect)
+                        .opacity(C.backgroundBlurOpacity)
                 }
             
             VStack {
@@ -58,12 +62,8 @@ struct PlayerScreen: View {
             }
             .padding(.horizontal, C.gridPadding)
         }
-        .animation(.snappy(duration: 0.2), value: player.song)
+        .animation(A.albumSnap, value: player.song)
     }
-    
-    private typealias C = ViewConstants
-    private typealias F = ViewConstants.Fonts
-
 }
 
 #Preview {

@@ -8,6 +8,8 @@
 import SwiftUI
 import Models
 
+private typealias SI = ViewConstants.SystemImages
+
 struct SongGoToMenu: View {
     @Environment(\.repository) private var repository
     let song: Song
@@ -18,7 +20,7 @@ struct SongGoToMenu: View {
                 NavigationLink {
                     ArtistScreen(artist: artist)
                 } label: {
-                    Label(artist.name, systemImage: "music.mic")
+                    Label(artist.name, systemImage: SI.artist)
                 }
             }
         }
@@ -28,7 +30,7 @@ struct SongGoToMenu: View {
                 NavigationLink {
                     AlbumScreen(album: album)
                 } label: {
-                    Label(album.title, systemImage: "opticaldisc")
+                    Label(album.title, systemImage: SI.album)
                 }
             }
         }

@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
+
 struct LargeButton<Label>: View where Label: View {
     let action: () -> Void
     let label: () -> Label
@@ -31,12 +34,7 @@ struct LargeButton<Label>: View where Label: View {
             }
         }
     }
-    
-    private typealias C = ViewConstants
-    private typealias F = ViewConstants.Fonts
 }
-    
-    
 
 #Preview {
     LargeButton {

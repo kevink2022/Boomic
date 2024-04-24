@@ -8,6 +8,10 @@
 import SwiftUI
 import Models
 
+private typealias F = ViewConstants.Fonts
+private typealias C = ViewConstants
+private typealias A = ViewConstants.Animations
+
 struct ArtistScreen: View {
     @Environment(\.repository) private var repository
     let artist: Artist
@@ -25,7 +29,7 @@ struct ArtistScreen: View {
             LazyVStack {
                 MediaArtView(artist.art)
                     .clipShape(Circle())
-                    .padding(.horizontal, 110)
+                    .padding(.horizontal, C.artistScreenHeaderPadding)
                 
                 Text(artist.name)
                     .font(F.title)
@@ -46,13 +50,13 @@ struct ArtistScreen: View {
                     ForEach(songs.prefix(showAllSongs ? songs.count : topSongCount)) { song in
                         Divider()
                         SongListButton(song: song, context: songs, queueName: artist.name)
-                            .padding(7)
+                            .padding(C.songListEntryPadding)
                     }
                     Divider()
                     
                     if topSongCount < songs.count {
                         Button {
-                            withAnimation(.easeOut(duration: 0.2)) { showAllSongs.toggle() }
+                            withAnimation(A.artistScreenShowAllSongs) { showAllSongs.toggle() }
                         } label: {
                             ZStack {
                                 Color(.clear)
@@ -80,10 +84,6 @@ struct ArtistScreen: View {
             albums = await repository.getAlbums(for: artist.albums)
         }
     }
-    
-    private typealias F = ViewConstants.Fonts
-    private typealias C = ViewConstants
-
 }
 
 #Preview {

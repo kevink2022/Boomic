@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
+
 struct QueueList: View {
     @Environment(\.player) private var player
     @State var listDisplay: QueueListDisplayMode = .duration
@@ -18,7 +21,7 @@ struct QueueList: View {
                 Text(player.queue?.name ?? "Queue")
                     .lineLimit(1)
                     .font(F.body)
-                    .opacity(0.5)
+                    .opacity(C.queueNameOpacity)
                 
                 Spacer()
                 
@@ -40,18 +43,15 @@ struct QueueList: View {
                         ForEach(queue.restOfQueue.indices, id: \.self) { index in
                             let song = queue.restOfQueue[index]
                             
-                            Button {
-                                player.setSong(song, forwardQueueIndex: index)
-
+                            QueueListButton(song: song, queueIndex: index, displayMode: $listDisplay) {
                                 withAnimation {
                                     value.scrollTo(0)
                                 }
-                            } label: {
-                                QueueListEntry(song: song, queueIndex: index, displayMode: $listDisplay)
                             }
                             .foregroundStyle(.primary)
                             .id(song)
                             .padding(C.gridPadding)
+                            
                         }
                     }
                 }}
@@ -59,9 +59,6 @@ struct QueueList: View {
             Divider()
         }
     }
-    
-    private typealias C = ViewConstants
-    private typealias F = ViewConstants.Fonts
 }
 
 #Preview {

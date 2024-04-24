@@ -16,15 +16,14 @@ import MediaPlayerKit
 
 
 // MARK: - Repositories
-func previewRepository() -> Repository { RepositoryImpl(database: GirlsApartmentDatabase() )}
+func previewRepository() -> Repository { RepositoryImpl() }
 
 func livePreviewRepository() -> Repository {
     
     let liveLibraryDirectory = URL(string: "/Users/kevinkelly/Music/Stuff")!
     
     let repo = RepositoryImpl(
-        database: CacheDatabase()
-        , localFileInterface: LocalMediaFileInterface(libraryDirectory: liveLibraryDirectory)
+        localFileInterface: LocalMediaFileInterface(libraryDirectory: liveLibraryDirectory)
     )
     
     return repo

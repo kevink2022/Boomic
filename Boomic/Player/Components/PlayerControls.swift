@@ -7,47 +7,47 @@
 
 import SwiftUI
 
+private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
+private typealias SI = ViewConstants.SystemImages
+
 struct PlayerControls: View {
     @Environment(\.player) private var player
     
     var body: some View {
         HStack {
-            
             Spacer()
             
             Button {
                 player.previous()
             } label: {
-                Image(systemName: "backward.fill")
+                Image(systemName: SI.backwardSkip)
             }
-            .font(F.title)
+            .font(F.playerButton)
             
             Spacer()
             
             Button {
                 player.togglePlayPause()
             } label: {
-                Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
+                Image(systemName: player.isPlaying ? SI.pause : SI.play)
             }
-            .font(.largeTitle)
-            .scaleEffect(1.3)
+            .font(F.playbackButton)
+            .scaleEffect(C.playbackButtonScaleEffect)
             
             Spacer()
             
             Button {
                 player.next()
             } label: {
-                Image(systemName: "forward.fill")
+                Image(systemName: SI.forwardSkip)
             }
-            .font(F.title)
+            .font(F.playerButton)
             
             Spacer()
         }
         .foregroundStyle(.primary)
     }
-    
-    private typealias C = ViewConstants
-    private typealias F = ViewConstants.Fonts
 }
 
 #Preview {

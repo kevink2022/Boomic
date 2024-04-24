@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+private typealias C = ViewConstants
+
 struct SongBarWrapper<Content: View> : View{
     @Environment(\.player) private var player
     
@@ -40,16 +42,14 @@ struct SongBarWrapper<Content: View> : View{
                 Color(.systemBackground)
                     .overlay {
                         PlayerArtView()
-                            .blur(radius: 50)
-                            .scaleEffect(3)
-                            .opacity(0.2)
+                            .blur(radius: C.backgroundBlurRadius)
+                            .scaleEffect(C.backgroundBlurScaleEffect)
+                            .opacity(C.backgroundBlurOpacity)
                     }
             }
             .clipped()
         }
     }
-    
-    private typealias C = ViewConstants
 }
 
 #Preview {

@@ -7,7 +7,9 @@
 
 import SwiftUI
 import Models
-import Database
+
+private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
 
 struct AllArtistsScreen: View {
     @Environment(\.repository) private var repository
@@ -37,9 +39,6 @@ struct AllArtistsScreen: View {
             artists = await repository.getArtists(for: nil)
         }
     }
-    
-    typealias C = ViewConstants
-    typealias F = ViewConstants.Fonts
 }
 
 #Preview {

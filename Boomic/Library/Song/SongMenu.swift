@@ -8,6 +8,8 @@
 import SwiftUI
 import Models
 
+private typealias SI = ViewConstants.SystemImages
+
 struct SongMenu: View {
     @Environment(\.player) private var player
     let song: Song
@@ -16,13 +18,13 @@ struct SongMenu: View {
         Button {
             player.addNext(song)
         } label: {
-            Label("Play Next", systemImage: "text.line.first.and.arrowtriangle.forward")
+            Label("Play Next", systemImage: SI.topOfQueue)
         }
         
         Button {
             player.addToEnd(song)
         } label: {
-            Label("Play Last", systemImage: "text.line.last.and.arrowtriangle.forward")
+            Label("Play Last", systemImage: SI.bottomOfQueue)
         }
         
         Divider()
@@ -31,16 +33,16 @@ struct SongMenu: View {
             Button {
                 
             } label: {
-                Label("Rate Song", systemImage: "star")
+                Label("Rate Song", systemImage: SI.rate)
             }
             
             Button {
                 
             } label: {
-                Label("Add to Playlist", systemImage: "text.append")
+                Label("Add to Playlist", systemImage: SI.addToPlaylist)
             }
         } label: {
-            Label("Edit Song", systemImage: "pencil.circle")
+            Label("Edit Song", systemImage: SI.edit)
         }
         
         Divider()
