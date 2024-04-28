@@ -35,7 +35,7 @@ private final class ModelCache {
 }
 
 
-public final class GirlsApartmentDatabase: Database {
+public final class GirlsApartmentDatabase {
     
     private var modelCache: ModelCache
     

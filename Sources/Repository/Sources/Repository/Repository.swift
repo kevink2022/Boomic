@@ -2,15 +2,13 @@
 // https://docs.swift.org/swift-book
 
 import Foundation
+import Combine
+
 import Models
 import Database
 import MediaFileKit
 
-public protocol Repository: Database {
-    var artLoader: MediaArtLoader { get }
-}
-
-public final class RepositoryImpl: Repository {
+public final class Repository {
     
     public let artLoader: MediaArtLoader
     private let localFileInterface: MediaFileInterface
@@ -18,6 +16,8 @@ public final class RepositoryImpl: Repository {
     private let queryEngine: QueryEngine
     private let transactor: Transactor
     private var dataBasis: DataBasis
+    
+    private var cancellables: Set<AnyCancellable> = []
     
     public init(
         localFileInterface: MediaFileInterface = LocalMediaFileInterface()
@@ -28,9 +28,15 @@ public final class RepositoryImpl: Repository {
         self.localFileInterface = localFileInterface
         self.artLoader = artLoader
         
-        self.queryEngine = QueryEngine()
-        self.transactor = Transactor()
+        self.queryEngine = queryEngine
+        self.transactor = transactor
         self.dataBasis = DataBasis(songs: [], albums: [], artists: [])
+        
+        transactor.publisher
+            .sink(receiveValue: { [weak self] newBasis in
+                self?.dataBasis = newBasis
+            })
+            .store(in: &cancellables)
     }
     
     public func getSongs(for ids: [UUID]?) -> [Song] {
@@ -47,9 +53,8 @@ public final class RepositoryImpl: Repository {
     
     public func addSongs(_ songs: [Song]) async {
         let existingSongs = queryEngine.getSongs(for: nil, from: dataBasis)
-        guard let newSongs = try? await localFileInterface.newSongs(existing: existingSongs) else { return }
-        dataBasis = await transactor.addSongs(newSongs, to: dataBasis)
+        guard let newSongs = try? await localFileInterface.newSongs(existing: existingSongs), !newSongs.isEmpty else { return }
+        
+        await transactor.addSongs(newSongs, to: dataBasis)
     }
-    
-    
 }

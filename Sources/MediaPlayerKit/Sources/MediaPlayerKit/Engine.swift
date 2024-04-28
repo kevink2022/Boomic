@@ -20,8 +20,8 @@ public final class AVEngine {
     public let source: URL?
     private let player: AVPlayer
     
-    public private(set) var timePublisher = PassthroughSubject<CMTime, Never>()
-    public private(set) var endOfSongPublisher = PassthroughSubject<Void, Never>()
+    public let timePublisher = PassthroughSubject<CMTime, Never>()
+    public let endOfSongPublisher = PassthroughSubject<Void, Never>()
     
     private var periodicTimeOberserToken: Any?
     private var boundaryTimeObserverToken: Any?

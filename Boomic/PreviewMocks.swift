@@ -16,13 +16,13 @@ import MediaPlayerKit
 
 
 // MARK: - Repositories
-func previewRepository() -> Repository { RepositoryImpl() }
+func previewRepository() -> Repository { Repository() }
 
 func livePreviewRepository() -> Repository {
     
     let liveLibraryDirectory = URL(string: "/Users/kevinkelly/Music/Stuff")!
     
-    let repo = RepositoryImpl(
+    let repo = Repository(
         localFileInterface: LocalMediaFileInterface(libraryDirectory: liveLibraryDirectory)
     )
     

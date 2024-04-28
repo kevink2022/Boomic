@@ -15,6 +15,9 @@ let package = Package(
             name: "Database",
             targets: ["Database"]),
         .library(
+            name: "Storage",
+            targets: ["Storage"]),
+        .library(
             name: "DatabaseMocks",
             targets: ["DatabaseMocks"]),
     ],
@@ -26,6 +29,9 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "Database",
+            dependencies: ["Models", "Storage"]),
+        .target(
+            name: "Storage",
             dependencies: ["Models"]),
         .target(
             name: "DatabaseMocks",
@@ -39,5 +45,8 @@ let package = Package(
                 "Database",
                 .product(name: "ModelsMocks", package: "Models")
             ]),
+        .testTarget(
+            name: "StorageTests",
+            dependencies: ["Storage"]),
     ]
 )

@@ -10,7 +10,7 @@ import Repository
 import MediaPlayerKit
 
 struct RepositoryEnvironmentKey: EnvironmentKey {
-    static let defaultValue: Repository = RepositoryImpl()
+    static let defaultValue: Repository = Repository()
 }
 
 struct PlayerEnvironmentKey: EnvironmentKey {

@@ -46,6 +46,13 @@
         "identifier" : "MediaPlayerKitTests",
         "name" : "MediaPlayerKitTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Sources\/Database",
+        "identifier" : "StorageTests",
+        "name" : "StorageTests"
+      }
     }
   ],
   "version" : 1
