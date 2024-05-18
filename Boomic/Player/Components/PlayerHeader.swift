@@ -14,6 +14,7 @@ private typealias SI = ViewConstants.SystemImages
 
 struct PlayerHeader: View {
     @Environment(\.player) private var player
+    @Environment(\.repository) private var repository
 
     var body: some View {
         VStack {
@@ -47,18 +48,24 @@ struct PlayerHeader: View {
                 Spacer()
                 
                 Button {
-                    player.togglePlayPause()
+                    if let song = player.song {
+                        let update = {
+                            if song.rating == nil { return SongUpdate(song: song, rating: 1) }
+                            else { return SongUpdate(song: song, erasing: [\.rating]) }
+                        }()
+                        Task{ await repository.updateSong(update) }
+                    }
                 } label: {
-                    Image(systemName: SI.rateCircle)
+                    Image(systemName: player.song?.rating == nil ? SI.unrated : SI.rated)
                 }
                 .font(F.title)
                 
-                Button {
-                    player.togglePlayPause()
-                } label: {
-                    Image(systemName: SI.infoCircle)
-                }
-                .font(F.title)
+//                Button {
+//                    player.togglePlayPause()
+//                } label: {
+//                    Image(systemName: SI.infoCircle)
+//                }
+//                .font(F.title)
             }
         }
         .padding(.horizontal, C.gridPadding)

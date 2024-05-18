@@ -12,7 +12,6 @@ private typealias F = ViewConstants.Fonts
 private typealias SI = ViewConstants.SystemImages
 
 struct LibraryScreen: View {
-    
     @Environment(\.repository) private var repository
     
     var body: some View {

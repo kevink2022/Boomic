@@ -8,6 +8,7 @@
 import SwiftUI
 
 private typealias C = ViewConstants
+private typealias A = ViewConstants.Animations
 
 struct SongBarWrapper<Content: View> : View{
     @Environment(\.player) private var player
@@ -33,6 +34,22 @@ struct SongBarWrapper<Content: View> : View{
                         .padding(C.gridPadding)
                 }
                 .foregroundStyle(.primary)
+                .highPriorityGesture(
+                    DragGesture().onEnded { value in
+                        let offset = value.translation.width
+                        let velocity = abs(value.predictedEndTranslation.width - value.translation.width)
+                        
+                        let velocityTrigger: CGFloat = 100
+                        let swipeLeft = offset > 0 && velocity > velocityTrigger
+                        let swipeRight = offset < 0 && velocity > velocityTrigger
+
+                        if swipeRight {
+                            withAnimation(A.standard) { player.next() }
+                        } else if swipeLeft {
+                            withAnimation(A.standard) { player.previous() }
+                        }
+                    }
+                )
                 
                 Divider()
             }

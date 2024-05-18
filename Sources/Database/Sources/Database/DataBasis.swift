@@ -35,6 +35,8 @@ public final class DataBasis {
         self.albumMap = albumMap ?? albums.reduce(into: [:]) { $0[$1.id] = $1 }
         self.artistMap = artistMap ?? artists.reduce(into: [:]) { $0[$1.id] = $1 }
     }
+    
+    public static let empty = DataBasis(songs: [], albums: [], artists: [])
 }
 
 // MARK: - ModelResolver -
@@ -56,6 +58,32 @@ public final class BasisResolver {
         self.currentBasis = currentBasis
     }
     
+    public func updateSong(_ update: SongUpdate) async -> DataBasis {
+        guard let original = currentBasis.songMap[update.id] else { return currentBasis }
+        
+        let newSong = Song(original, applying: update)
+        
+        var newMap = currentBasis.songMap
+        newMap[newSong.id] = newSong
+        
+        var newAlphabetical = currentBasis.allSongs
+        
+        if let alphabeticalIndex = currentBasis.allSongs.firstIndex(of: original) {
+            newAlphabetical[alphabeticalIndex] = newSong
+        }
+        
+        let newBasis = DataBasis(
+            songs: newAlphabetical
+            , albums: currentBasis.allAlbums
+            , artists: currentBasis.allArtists
+            , songMap: newMap
+            , albumMap: currentBasis.albumMap
+            , artistMap: currentBasis.artistMap
+        )
+        
+        return newBasis
+    }
+    
     public func addSongs(_ unlinkedSongs: [Song]) async -> DataBasis {
         
         async let albumTitleLinks_await = songsToTitleLinks(unlinkedSongs)
@@ -63,17 +91,18 @@ public final class BasisResolver {
         
         let (albumTitleLinks, artistNameLinks) = await (albumTitleLinks_await, artistNameLinks_await)
         
-        let linkedSongs = linkSongs(unlinkedSongs, albumTitles: albumTitleLinks, artistNames: artistNameLinks)
+        let linkedNewSongs = linkSongs(unlinkedSongs, albumTitles: albumTitleLinks, artistNames: artistNameLinks)
         
-        async let linkedAlbums_await = linkAlbums(albumTitleLinks, linkedSongs: linkedSongs)
-        async let linkedArtists_await = linkArtists(artistNameLinks, linkedSongs: linkedSongs)
+        async let linkedAlbums_await = linkAlbums(albumTitleLinks, linkedNewSongs: linkedNewSongs)
+        async let linkedArtists_await = linkArtists(artistNameLinks, linkedNewSongs: linkedNewSongs)
         
-        let (linkedAlbums, linkedArtists) = await (linkedAlbums_await, linkedArtists_await)
-        let tempBasis = DataBasis(songs: linkedSongs, albums: linkedAlbums, artists: linkedArtists)
+        let (linkedAffectedAlbums, linkedAffectedArtists) = await (linkedAlbums_await, linkedArtists_await)
         
-        async let newSongs_await = songDetails(linkedSongs, tempBasis)
-        async let newAlbums_await = albumDetails(linkedAlbums, tempBasis)
-        async let newArtists_await = artistDetails(linkedArtists, tempBasis)
+        let tempBasis = DataBasis(songs: linkedNewSongs, albums: linkedAffectedAlbums, artists: linkedAffectedArtists)
+        
+        async let newSongs_await = songsResolveDetails(linkedNewSongs, tempBasis)
+        async let newAlbums_await = albumsResolveDetails(linkedAffectedAlbums, tempBasis)
+        async let newArtists_await = artistsResolveDetails(linkedAffectedArtists, tempBasis)
         
         let (newSongs, newAlbums, newArtists) = await (newSongs_await, newAlbums_await, newArtists_await)
         
@@ -160,15 +189,15 @@ public final class BasisResolver {
         }
     }
     
-    private func linkAlbums(_ affectedAlbums: [String:UUID], linkedSongs: [Song]) -> [Album] {
+    private func linkAlbums(_ affectedAlbums: [String:UUID], linkedNewSongs: [Song]) -> [Album] {
         return affectedAlbums.map { title, albumID in
             
             let album = currentBasis.albumMap[albumID] ?? Album(id: albumID, title: title)
             
-            let linkedSongs = linkedSongs.filter { $0.albums.contains(album.id) }
+            let linkedSongsToAlbum = linkedNewSongs.filter { $0.albums.contains(album.id) }
             
-            let albumSongs = Array(linkedSongs.reduce(into: Set(album.songs)){ $0.insert($1.id ) })
-            let albumArtists = Array(linkedSongs.reduce(into: Set(album.artists)){ $0.formUnion($1.artists) })
+            let albumSongs = Array(linkedSongsToAlbum.reduce(into: Set(album.songs)){ $0.insert($1.id ) })
+            let albumArtists = Array(linkedSongsToAlbum.reduce(into: Set(album.artists)){ $0.formUnion($1.artists) })
             
             return Album(
                 id: album.id
@@ -179,15 +208,15 @@ public final class BasisResolver {
         }
     }
     
-    private func linkArtists(_ affectedArtists: [String:UUID], linkedSongs: [Song]) -> [Artist] {
+    private func linkArtists(_ affectedArtists: [String:UUID], linkedNewSongs: [Song]) -> [Artist] {
         return affectedArtists.map { name, artistID in
             
             let artist = currentBasis.artistMap[artistID] ?? Artist(id: artistID, name: name, songs: [], albums: [])
             
-            let linkedSongs = linkedSongs.filter { $0.artists.contains(artist.id) }
+            let linkedSongsToArtist = linkedNewSongs.filter { $0.artists.contains(artist.id) }
             
-            let artistSongs = Array(linkedSongs.reduce(into: Set(artist.songs)){ $0.insert($1.id ) })
-            let artistAlbums = Array(linkedSongs.reduce(into: Set(artist.albums)){ $0.formUnion($1.albums) })
+            let artistSongs = Array(linkedSongsToArtist.reduce(into: Set(artist.songs)){ $0.insert($1.id ) })
+            let artistAlbums = Array(linkedSongsToArtist.reduce(into: Set(artist.albums)){ $0.formUnion($1.albums) })
             
             return Artist(
                 id: artist.id
@@ -199,14 +228,13 @@ public final class BasisResolver {
     }
     
     // MARK: - Detail Resolution
-    private func songDetails(_ linkedSongs: [Song], _ tempBasis: DataBasis) -> [Song] {
+    private func songsResolveDetails(_ linkedSongs: [Song], _ tempBasis: DataBasis) -> [Song] {
         return linkedSongs.map { song in
 
             let albums = song.albums
                 .compactMap { tempBasis.albumMap[$0] ?? currentBasis.albumMap[$0] }
                 .sorted { Album.alphabeticalSort($0, $1) }
                 
-            
             let artists = song.artists
                 .compactMap { tempBasis.artistMap[$0] ?? currentBasis.artistMap[$0] }
                 .sorted { Artist.alphabeticalSort($0, $1) }
@@ -220,14 +248,13 @@ public final class BasisResolver {
         }
     }
     
-    private func albumDetails(_ linkedAlbums: [Album], _ tempBasis: DataBasis) -> [Album] {
+    private func albumsResolveDetails(_ linkedAlbums: [Album], _ tempBasis: DataBasis) -> [Album] {
         return linkedAlbums.map { album in
 
             let songs = album.songs
                 .compactMap { tempBasis.songMap[$0] ?? currentBasis.songMap[$0] }
                 .sorted { Song.discAndTrackNumberSort($0, $1) }
-                
-            
+                            
             let artists = album.artists
                 .compactMap { tempBasis.artistMap[$0] ?? currentBasis.artistMap[$0] }
                 .sorted { Artist.alphabeticalSort($0, $1) }
@@ -246,7 +273,7 @@ public final class BasisResolver {
         }
     }
     
-    private func artistDetails(_ linkedArtists: [Artist], _ tempBasis: DataBasis) -> [Artist] {
+    private func artistsResolveDetails(_ linkedArtists: [Artist], _ tempBasis: DataBasis) -> [Artist] {
         return linkedArtists.map { artist in
 
             let songs = artist.songs

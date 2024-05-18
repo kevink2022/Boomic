@@ -9,10 +9,17 @@ import SwiftUI
 
 struct SettingsScreen: View {
     var body: some View {
-        ZStack {
-            Color.clear
-            Text("SettingsScreen")
+        NavigationStack {
+            List {
+                NavigationLink {
+                    TransactionsList()
+                } label: {
+                    Text("Library Transactions")
+                }
+            }
         }
+        
+
     }
 }
 

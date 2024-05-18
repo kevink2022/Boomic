@@ -61,6 +61,7 @@ struct SongListEntry: View {
             Text(song.duration.formatted)
                 .font(F.listDuration)
         }
+        .frame(minHeight: C.songListEntryMinHeight)
     }
 }
 

@@ -33,7 +33,7 @@ struct SongMenu: View {
             Button {
                 
             } label: {
-                Label("Rate Song", systemImage: SI.rate)
+                Label("Rate Song", systemImage: SI.unrated)
             }
             
             Button {

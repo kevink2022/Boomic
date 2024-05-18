@@ -102,7 +102,8 @@ struct ViewConstants {
         
         static let edit = "pencit.circle"
         static let tag = "number"
-        static let rate = "star"
+        static let unrated = "star"
+        static let rated = "star.fill"
         static let rateCircle = "star.circle"
         static let infoCircle = "info.circle"
         static let addToPlaylist = "text.append"
@@ -134,8 +135,9 @@ struct ViewConstants {
     static let albumCornerRadius: CGFloat = 8
     
     static let songListEntryPadding: CGFloat = 7
+    static let songListEntryMinHeight: CGFloat = 30
     static let songTrackNumberWidth: CGFloat = 22
-    
+
     static let albumScreenSpacers: CGFloat = 70
     static let artistScreenHeaderPadding: CGFloat = 110
     
@@ -173,8 +175,33 @@ struct ViewConstants {
 
 }
 
+extension TimeInterval {
+    var formatted: String {
+        let totalSeconds = Int(self)
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let seconds = (totalSeconds % 3600) % 60
+
+        if hours > 0 {
+            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
+        } else {
+            return String(format: "%d:%02d", minutes, seconds)
+        }
+    }
+}
+
+extension Date {
+    var shortFormatted: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MM/dd/yy HH:mm"
+        return formatter.string(from: self)
+    }
+}
+
+
 #Preview {
     ContentView()
         .environment(\.repository, livePreviewRepository())
         .environment(\.player, previewPlayer())
 }
+

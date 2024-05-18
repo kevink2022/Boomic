@@ -22,7 +22,12 @@ public final class LogStore<Log: Loggable> {
         , namespace: String? = nil
         , inMemory: Bool = false
     ) {
-        self.storage = SimpleStore(key: key, cached: cached, namespace: namespace, inMemory: inMemory)
+        self.storage = SimpleStore(
+            key: key
+            , cached: cached
+            , namespace: namespace
+            , inMemory: inMemory
+        )
     }
     
     public func save(_ log: Log) async throws {
