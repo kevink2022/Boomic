@@ -208,7 +208,7 @@ final class LogStoreTests: XCTestCase {
         }
     }
     
-    func test_delete_logsSinceID() async {
+    func test_delete_logsIncludingID() async {
         
         do {
             let sut = initSut(key: "test_logs_7")
@@ -222,7 +222,33 @@ final class LogStoreTests: XCTestCase {
             XCTAssertEqual(beforeLogs.count, 4)
             XCTAssertEqual(beforeLogs[3].id, log1.id)
             
-            try await sut.delete(from: log3.id)
+            try await sut.delete(including: log3.id)
+            
+            let afterLogs = try await sut.load()
+            XCTAssertEqual(afterLogs.count, 2)
+            XCTAssertEqual(afterLogs[0].id, log2.id)
+            XCTAssertEqual(afterLogs[1].id, log1.id)
+            
+        } catch {
+            XCTFail("Error: \(error.localizedDescription)")
+        }
+    }
+    
+    func test_delete_logsAfterID() async {
+        
+        do {
+            let sut = initSut(key: "test_logs_7")
+            
+            try await sut.save(log1)
+            try await sut.save(log2)
+            try await sut.save(log3)
+            try await sut.save(log4)
+            
+            let beforeLogs = try await sut.load()
+            XCTAssertEqual(beforeLogs.count, 4)
+            XCTAssertEqual(beforeLogs[3].id, log1.id)
+            
+            try await sut.delete(after: log2.id)
             
             let afterLogs = try await sut.load()
             XCTAssertEqual(afterLogs.count, 2)

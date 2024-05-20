@@ -11,21 +11,21 @@ import MediaFileKit
 public final class Repository {
     
     public let artLoader: MediaArtLoader
-    private let localFileInterface: MediaFileInterface
+    private let fileInterface: FileInterface
        
     private let queryEngine: QueryEngine
-    private let transactor: Transactor
+    private let transactor: BoomicTransactor
     private var dataBasis: DataBasis
     
     private var cancellables: Set<AnyCancellable> = []
     
     public init(
-        localFileInterface: MediaFileInterface = LocalMediaFileInterface()
+        fileInterface: FileInterface = FileInterface(at: URL.documentsDirectory)
         , artLoader: MediaArtLoader = MediaArtCache()
         , queryEngine: QueryEngine = QueryEngine()
-        , transactor: Transactor = Transactor()
+        , transactor: BoomicTransactor = BoomicTransactor()
     ) {
-        self.localFileInterface = localFileInterface
+        self.fileInterface = fileInterface
         self.artLoader = artLoader
         
         self.dataBasis = .empty
@@ -58,8 +58,14 @@ extension Repository {
 // MARK: - Transactions
 extension Repository {
     public func addSongs(_ songs: [Song]) async {
-        let existingSongs = queryEngine.getSongs(for: nil, from: dataBasis)
-        guard let newSongs = try? await localFileInterface.newSongs(existing: existingSongs), !newSongs.isEmpty else { return }
+        let existingFiles = queryEngine.getSongs(for: nil, from: dataBasis).compactMap { song in
+            if case .local(let url) = song.source { return url }
+            return nil
+        }
+               
+        guard let newFiles = try? fileInterface.allFiles(of: Song.codecs, excluding: Set(existingFiles)) else { return }
+       
+        let newSongs = newFiles.map { Song(from: $0) }
         
         await transactor.addSongs(newSongs, to: dataBasis)
     }

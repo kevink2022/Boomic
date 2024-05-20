@@ -24,9 +24,19 @@ public class FileInterface {
         guard let enumerator = fileManager.enumerator(at: root, includingPropertiesForKeys: [.isHiddenKey])
         else { throw MediaFileInterfaceError.enumeratorInitFail(root) }
         
-        return enumerator.allObjects
-            .compactMap { $0 as? URL }
-            .filter { !(excluding?.contains($0) ?? false) }
-            .filter { extensions?.contains($0.pathExtension.lowercased()) ?? true }
+        let allURLs = enumerator.allObjects.compactMap { $0 as? URL }
+        
+        let allExtensionURLs = allURLs.filter { extensions?.contains($0.pathExtension.lowercased()) ?? true
+        }
+        
+        let allNewURLs = {
+            if let excluding = excluding, excluding.count > 1 {
+                return allExtensionURLs.filter{ !excluding.contains($0) }
+            } else {
+                return allExtensionURLs
+            }
+        }()
+        
+        return allNewURLs
     }
 }

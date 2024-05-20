@@ -2,125 +2,130 @@
 //  File.swift
 //  
 //
-//  Created by Kevin Kelly on 4/23/24.
+//  Created by Kevin Kelly on 5/18/24.
 //
 
 import Foundation
 import Combine
+import AsyncAlgorithms
 
-import Models
 import Storage
 
-
-public enum LibraryTransactionData: Codable {
-    case addSongs(songs: [Song])
-    case updateSong(update: SongUpdate)
-}
-
-public final class LibraryTransaction: Loggable {
+public final class Transaction<Data: Codable>: Loggable {
     public let id: UUID
     public let timestamp: Date
-    public let body: LibraryTransactionData
+    public let data: Data
     
-    init(
-        _ body: LibraryTransactionData
+    public init(
+        _ body: Data
         , id: UUID = UUID()
         , timestamp: Date = Date.now
     ) {
         self.id = id
         self.timestamp = timestamp
-        self.body = body
+        self.data = body
     }
 }
 
-public final class Transactor {
+public final class Transactor<TransactionData: Codable, Post> {
     
-    private let storage: LogStore<LibraryTransaction>
-    public let publisher = PassthroughSubject<DataBasis, Never>()
+    private let storage: LogStore<Transaction<TransactionData>>
+    private let coreCommit: (TransactionData, Post) -> (Post)
+    private let queue: AsyncChannel<() async -> ()>
+    private var base: Post
+    public let publisher: CurrentValueSubject<Post, Never>
     
-    public init(
-        key: String = "transactions"
-        , namespace: String? = nil
-        , cached: Bool = true
+    init (
+        basePost: Post
+        , key: String = "transactions-generic"
         , inMemory: Bool = false
+        , coreCommit: @escaping (TransactionData, Post) -> (Post)
     ) {
-        self.storage = LogStore(key: "transactions", cached: true, inMemory: false)
+        self.storage = LogStore<Transaction<TransactionData>>(key: key, inMemory: inMemory)
+        self.publisher = CurrentValueSubject<Post, Never>(basePost)
+        self.coreCommit = coreCommit
+        self.queue = AsyncChannel<() async -> ()>()
+        self.base = basePost
         
-        Task { await initBasis() }
-    }
-    
-    private func initBasis() async {
-        let tranactions = try? await storage.load()
-        
-        guard let tranactions = tranactions else { return }
-        
-        var basis = DataBasis(songs: [], albums: [], artists: [])
-        for tranaction in tranactions {
-            switch tranaction.body {
-            case .addSongs(songs: let songs):
-                basis = await BasisResolver(currentBasis: basis).addSongs(songs)
-            case .updateSong(update: let song):
-                break
+        Task {
+            if let tranactions = try? await storage.load() {
+                build(from: basePost, with: tranactions.map{ $0.data })
             }
+            await monitorQueue()
         }
-        
-        publisher.send(basis)
     }
     
-    private func commitTransaction(data: LibraryTransactionData, basisUpdate: @escaping () async -> DataBasis) async {
-        let transaction = LibraryTransaction(data)
+    private func build(from base: Post, with data: [TransactionData]) {
+        var post = base
+        for transaction in data {
+            post = (coreCommit(transaction, post))
+        }
+        publisher.send(post)
+    }
+    
+    private func commitAndSave(transaction data: TransactionData) async {
         let saveTask: Task<Void, Error>
-        let resolverTask: Task<DataBasis, Never>
+        let commitTask: Task<Post, Never>
         
         do {
-            saveTask = Task { try await storage.save(transaction) }
-            
-            resolverTask = Task { await basisUpdate() }
+            saveTask = Task { try await storage.save(Transaction(data)) }
+            commitTask = Task { coreCommit(data, publisher.value) }
             
             try await saveTask.value
-            let newBasis = await resolverTask.value
-            publisher.send(newBasis)
+            let newPost = await commitTask.value
+            publisher.send(newPost)
         } catch {
-            resolverTask.cancel()
+            commitTask.cancel()
         }
     }
     
-    public func addSongs(_ songs: [Song], to basis: DataBasis) async {
-        await commitTransaction(
-            data: .addSongs(songs: songs)
-            , basisUpdate: { await BasisResolver(currentBasis: basis).addSongs(songs) }
-        )
-    }
-    
-    public func updateSong(_ songUpdate: SongUpdate, on basis: DataBasis) async {
-        await commitTransaction(
-            data: .updateSong(update: songUpdate)
-            , basisUpdate: { await BasisResolver(currentBasis: basis).updateSong(songUpdate) }
-        )
-    }
-    
-    public func deleteLibraryData() async {
-        do {
-            try await storage.delete()
-            publisher.send(DataBasis.empty)
-        } catch {
-            
+    private func monitorQueue() async {
+        for await transaction in queue {
+            await transaction()
         }
     }
-}
+    
+    public func commit(transaction data: TransactionData) async {
+        await queue.send {
+            await self.commitAndSave(transaction: data)
+        }
+    }
+    
+    public func commit(generateTransaction: @escaping (Post) -> (TransactionData)) async {
+        await queue.send {
+            let transaction = generateTransaction(self.publisher.value)
+            await self.commitAndSave(transaction: transaction)
+        }
+    }
+    
+    public func viewTransactions(last count: Int? = nil) async -> [Transaction<TransactionData>] {
 
-// MARK: - Viewing Transactions
-extension Transactor {
-    public func getTransactions(last count: Int? = nil) async -> [LibraryTransaction] {
         return (try? await storage.load(last: count)) ?? []
     }
-}
+    
+    public func viewTransactions(since timestamp: Date) async -> [Transaction<TransactionData>] {
 
-extension LibraryTransactionData {
-    public var decode: String {
-        switch self {
-        case .addSongs(songs: _): "Add Songs"
-        case .updateSong(update: let songUpdate): "Update Song \(songUpdate.label)"
+        return (try? await storage.load(since: timestamp)) ?? []
+    }
+    
+    public func rollbackTo(after transaction: Transaction<TransactionData>) async {
+        await queue.send { [self] in
+            try? await storage.delete(after: transaction.id)
+            if let transactions = try? await storage.load() {
+                build(from: base, with: transactions.map{$0.data})
+            }
+        }
+    }
+    
+    public func rollbackTo(before transaction: Transaction<TransactionData>) async {
+        await queue.send { [self] in
+            try? await storage.delete(including: transaction.id)
+            if let transactions = try? await storage.load() {
+                build(from: base, with: transactions.map{$0.data})
+            }
         }
     }
 }
+
+
+

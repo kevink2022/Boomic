@@ -17,17 +17,17 @@ import MediaPlayerKit
 
 // MARK: - Repositories
 func previewRepository() -> Repository {
-    let transactor = Transactor(inMemory: true)
+    let transactor = BoomicTransactor(inMemory: true)
     return Repository(transactor: transactor)
 }
 
 func livePreviewRepository() -> Repository {
     
     let liveLibraryDirectory = URL(string: "/Users/kevinkelly/Music/Stuff")!
-    let transactor = Transactor(inMemory: true)
+    let transactor = BoomicTransactor(inMemory: true)
 
     let repo = Repository(
-        localFileInterface: LocalMediaFileInterface(libraryDirectory: liveLibraryDirectory)
+        fileInterface: FileInterface(at: liveLibraryDirectory)
         , transactor: transactor
     )
     

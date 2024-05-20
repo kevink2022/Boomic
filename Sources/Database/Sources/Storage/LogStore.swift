@@ -79,7 +79,7 @@ public final class LogStore<Log: Loggable> {
         else { try await storage.delete() }
     }
     
-    public func delete(from id: UUID) async throws {
+    public func delete(including id: UUID) async throws {
         guard let logs = try await storage.load() else { return }
         
         guard let index = logs.firstIndex(where: { $0.id == id }) else { return }
@@ -88,6 +88,18 @@ public final class LogStore<Log: Loggable> {
             try await storage.delete()
         } else {
             try await storage.save(Array(logs[index+1..<logs.count]))
+        }
+    }
+    
+    public func delete(after id: UUID) async throws {
+        guard let logs = try await storage.load() else { return }
+        
+        guard let index = logs.firstIndex(where: { $0.id == id }) else { return }
+        
+        if index == logs.count-1 {
+            try await storage.delete()
+        } else {
+            try await storage.save(Array(logs[index..<logs.count]))
         }
     }
     
