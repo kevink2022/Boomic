@@ -19,9 +19,9 @@ public final class Artist: Identifiable, Codable, Equatable {
     public init(
         id: UUID
         , name: String
+        , art: MediaArt? = nil
         , songs: [UUID]
         , albums: [UUID]
-        , art: MediaArt? = nil
     ) {
         self.id = id
         self.name = name

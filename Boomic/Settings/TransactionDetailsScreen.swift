@@ -12,9 +12,11 @@ private typealias C = ViewConstants
 private typealias F = ViewConstants.Fonts
 
 struct TransactionDetailsScreen: View {
-    let transaction: LibraryTransaction
+    /*let transaction: LibraryTransaction*/
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        Text("TransactionDetailsScreen")
+        /*
+         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading) {
                 Text(transaction.body.decode)
                     .font(F.sectionTitle)
@@ -50,6 +52,7 @@ struct TransactionDetailsScreen: View {
                 }
             }
         }
+         */
     }
 }
 

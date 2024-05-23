@@ -10,6 +10,7 @@ import Combine
 
 import Models
 import Storage
+import Database
 
 
 public enum LibraryTransactionData: Codable {
@@ -58,7 +59,7 @@ public final class BoomicTransactor {
         for tranaction in tranactions {
             switch tranaction.body {
             case .addSongs(songs: let songs):
-                basis = await BasisResolver(currentBasis: basis).addSongs(songs)
+                break // basis = await BasisResolver(currentBasis: basis).addSongs(songs)
             case .updateSong(update: let song):
                 break
             }
@@ -88,14 +89,14 @@ public final class BoomicTransactor {
     public func addSongs(_ songs: [Song], to basis: DataBasis) async {
         await commitTransaction(
             data: .addSongs(songs: songs)
-            , basisUpdate: { await BasisResolver(currentBasis: basis).addSongs(songs) }
+            , basisUpdate: { DataBasis.empty /*await BasisResolver(currentBasis: basis).addSongs(songs)*/ }
         )
     }
     
     public func updateSong(_ songUpdate: SongUpdate, on basis: DataBasis) async {
         await commitTransaction(
             data: .updateSong(update: songUpdate)
-            , basisUpdate: { await BasisResolver(currentBasis: basis).updateSong(songUpdate) }
+            , basisUpdate: { DataBasis.empty /*await BasisResolver(currentBasis: basis).updateSong(songUpdate)*/ }
         )
     }
     

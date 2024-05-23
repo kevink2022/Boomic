@@ -691,6 +691,10 @@ extension Artist {
     """
 }
 
+extension MediaArt {
+    public static let test: MediaArt = .local(url:  URL(string: "file:///fakepath/cover.jpg")!)
+}
+
 
 
 /*
