@@ -15,7 +15,7 @@ extension Album {
         
         return Album(
             id: self.id
-            , title: update.title
+            , title: update.newTitle ?? update.originalTitle
             , art: erasing.contains(\.art) ? nil : update.art ?? self.art
             , songs: update.songs ?? self.songs
             , artistName: erasing.contains(\.artistName) ? nil : update.artistName ?? self.artistName
@@ -27,8 +27,9 @@ extension Album {
 public final class AlbumUpdate: Codable, Identifiable, Hashable {
     public let albumID: UUID
     public var id: UUID { albumID }
-    public let title: String
+    public let originalTitle: String
     
+    public let newTitle: String?
     public let art: MediaArt?
     public let songs: [UUID]?
     public let artistName: String?
@@ -38,7 +39,8 @@ public final class AlbumUpdate: Codable, Identifiable, Hashable {
     
     private init(
         albumID: UUID
-        , title: String
+        , originalTitle: String
+        , newTitle: String? = nil
         , art: MediaArt? = nil
         , songs: [UUID]? = nil
         , artistName: String? = nil
@@ -46,7 +48,8 @@ public final class AlbumUpdate: Codable, Identifiable, Hashable {
         , erasing: Set<String>? = nil
     ) {
         self.albumID = albumID
-        self.title = title
+        self.originalTitle = originalTitle
+        self.newTitle = newTitle
         self.art = art
         self.songs = songs
         self.artistName = artistName
@@ -56,8 +59,9 @@ public final class AlbumUpdate: Codable, Identifiable, Hashable {
     
     enum CodingKeys: String, CodingKey {
         case albumID
-        case title
+        case originalTitle = "original_title"
         
+        case newTitle = "new_title"
         case art
         case songs
         case artistName = "artist_name"
@@ -76,23 +80,18 @@ public final class AlbumUpdate: Codable, Identifiable, Hashable {
 }
 
 extension AlbumUpdate {
-    private convenience init(
-        update: AlbumUpdate
-        , title: String? = nil
-        , art: MediaArt? = nil
-        , songs: [UUID]? = nil
-        , artistName: String? = nil
-        , artists: [UUID]? = nil
-        , erasing: Set<String>? = nil
-    ) {
-        self.init(
-            albumID: update.albumID
-            , title: title ?? update.title
-            , art: art ?? update.art
-            , songs: songs ?? update.songs
-            , artistName: artistName ?? update.artistName
-            , artists: artists ?? update.artists
-            , erasing: erasing ?? update.erasing
+    public func apply(update: AlbumUpdate) -> AlbumUpdate {
+        guard self.id == update.id else { return self }
+        
+        return AlbumUpdate(
+            albumID: update.id
+            , originalTitle: update.originalTitle
+            , newTitle: update.newTitle ?? self.newTitle
+            , art: update.art ?? self.art
+            , songs: update.songs ?? self.songs
+            , artistName: update.artistName ?? self.artistName
+            , artists: update.artists ?? self.artists
+            , erasing: update.erasing ?? self.erasing
         )
     }
     
@@ -106,7 +105,8 @@ extension AlbumUpdate {
     ) {
         self.init(
             albumID: album.id
-            , title: title ?? album.title
+            , originalTitle: album.title
+            , newTitle: title
             , art: art
             , songs: songs
             , artistName: artistName
@@ -120,7 +120,7 @@ extension AlbumUpdate {
     ) {
         self.init(
             albumID: album.id
-            , title: album.title
+            , originalTitle: album.title
             , erasing: AlbumUpdate.keyPathEncoding(erasing)
         )
     }

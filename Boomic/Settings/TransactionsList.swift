@@ -12,19 +12,17 @@ private typealias F = ViewConstants.Fonts
 
 struct TransactionsList: View {
     @Environment(\.repository) private var repository
-    /*@State var transactions: [Transaction] = []*/
+    @State var transactions: [DataTransaction<KeySet<LibraryTransaction>>] = []
     
     var body: some View {
         Text("TransactionsList")
-        
-        /*
-         List {
+
+        List {
             ForEach(transactions) { transaction in
                 NavigationLink {
                     TransactionDetailsScreen(transaction: transaction)
                 } label: {
                     VStack(alignment: .leading) {
-                        Text(transaction.body.decode)
                         Text(transaction.timestamp.shortFormatted)
                             .opacity(0.6)
                     }
@@ -44,7 +42,7 @@ struct TransactionsList: View {
         .task {
             transactions = await repository.getTransactions()
         }
-         */
+        
     }
 }
 

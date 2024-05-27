@@ -45,6 +45,27 @@ final class UpdateTests: XCTestCase {
         XCTAssertEqual(newSong.rating, nil)
     }
     
+    func test_song_mergeUpdates() {
+        let song = Song.aCagedPersona
+        let update1 = SongUpdate(song: song, title: "an uncaged persona")
+        let update2 = SongUpdate(song: song, rating: 5)
+        let sut = update1.apply(update: update2)
+        let newSong = song.apply(update: sut)
+        
+        XCTAssertEqual(newSong.title, "an uncaged persona")
+        XCTAssertEqual(newSong.rating, 5)
+    }
+    
+    func test_song_overwriteUpdates() {
+        let song = Song.aCagedPersona
+        let update1 = SongUpdate(song: song, title: "an uncaged persona")
+        let update2 = SongUpdate(song: song, title: "a very uncaged persona")
+        let sut = update1.apply(update: update2)
+        let newSong = song.apply(update: sut)
+        
+        XCTAssertEqual(newSong.title, "a very uncaged persona")
+    }
+    
     func test_album_updateField() {
         let album = Album.girlsApartment
         let sut = AlbumUpdate(album: album, artistName: "Reimu")
@@ -86,6 +107,27 @@ final class UpdateTests: XCTestCase {
         XCTAssertEqual(newAlbum.art, nil)
     }
     
+    func test_album_mergeUpdates() {
+        let album = Album.girlsApartment
+        let update1 = AlbumUpdate(album: album, title: "Reimu's Apartment")
+        let update2 = AlbumUpdate(album: album, artistName: "Reimu")
+        let sut = update1.apply(update: update2)
+        let newAlbum = album.apply(update: sut)
+        
+        XCTAssertEqual(newAlbum.title, "Reimu's Apartment")
+        XCTAssertEqual(newAlbum.artistName, "Reimu")
+    }
+    
+    func test_album_overwriteUpdates() {
+        let album = Album.girlsApartment
+        let update1 = AlbumUpdate(album: album, title: "Reimu's Apartment")
+        let update2 = AlbumUpdate(album: album, title: "Reimu's Mansion")
+        let sut = update1.apply(update: update2)
+        let newAlbum = album.apply(update: sut)
+        
+        XCTAssertEqual(newAlbum.title, "Reimu's Mansion")
+    }
+    
     func test_artist_updateField() {
         let artist = Artist.synth
         let sut = ArtistUpdate(artist: artist, art: .test)
@@ -119,4 +161,25 @@ final class UpdateTests: XCTestCase {
     /*func test_artist_eraseMultipleFields() {
     
     }*/
+    
+    func test_artist_mergeUpdates() {
+        let artist = Artist.synth
+        let update1 = ArtistUpdate(artist: artist, name: "SaXi")
+        let update2 = ArtistUpdate(artist: artist, art: .test)
+        let sut = update1.apply(update: update2)
+        let newArtist = artist.apply(update: sut)
+        
+        XCTAssertEqual(newArtist.name, "SaXi")
+        XCTAssertEqual(newArtist.art, .test)
+    }
+    
+    func test_artist_overwriteUpdates() {
+        let artist = Artist.synth
+        let update1 = ArtistUpdate(artist: artist, name: "SaXi")
+        let update2 = ArtistUpdate(artist: artist, name: "sAxI")
+        let sut = update1.apply(update: update2)
+        let newArtist = artist.apply(update: sut)
+        
+        XCTAssertEqual(newArtist.name, "sAxI")
+    }
 }

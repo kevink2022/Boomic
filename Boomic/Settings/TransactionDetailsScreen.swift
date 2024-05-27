@@ -12,20 +12,46 @@ private typealias C = ViewConstants
 private typealias F = ViewConstants.Fonts
 
 struct TransactionDetailsScreen: View {
-    /*let transaction: LibraryTransaction*/
+    let transaction: DataTransaction<KeySet<LibraryTransaction>>
     var body: some View {
         Text("TransactionDetailsScreen")
-        /*
+        
          VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading) {
-                Text(transaction.body.decode)
-                    .font(F.sectionTitle)
+//                Text(transaction.body.decode)
+//                    .font(F.sectionTitle)
                 Text(transaction.timestamp.shortFormatted)
                     .font(F.body)
             }
             .padding(20)
+             
+             List {
+                 ForEach(transaction.data.values) { transaction in
+                     switch transaction {
+                     case .addSong(let model):
+                         Text("Add Song: \(model.label)")
+                     case .addAlbum(let model):
+                         Text("Add Album: \(model.title)")
+                     case .addArtist(let model):
+                         Text("Add Artist: \(model.name)")
+                     case .updateSong(let model):
+                         Text("Update Song:\(model.label)")
+                     case .updateAlbum(let model):
+                         Text("Update Album: \(model.newTitle ?? model.originalTitle)")
+                     case .updateArtist(let model):
+                         Text("Update Artist: \(model.newName ?? model.originalName)")
+                     case .deleteSong(let model):
+                         Text("Delete Song:\(model)")
+                     case .deleteAlbum(let model):
+                         Text("Delete Album: \(model)")
+                     case .deleteArtist(let model):
+                         Text("Delete Artist: \(model)")
+                     }
+                 }
+             }
             
-            switch transaction.body {
+             
+            /*switch transaction.data {
             case .addSongs(let songs):
                 List{ ForEach(songs){ song in
                     Text(song.source.label)
@@ -50,9 +76,8 @@ struct TransactionDetailsScreen: View {
                         }
                     }
                 }
-            }
+            }*/
         }
-         */
     }
 }
 

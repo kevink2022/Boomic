@@ -14,8 +14,8 @@ public final class Repository {
     private let fileInterface: FileInterface
        
     private let queryEngine: QueryEngine
-    private let transactor: BoomicTransactor
-    private var dataBasis: DataBasis
+    private let transactor: Transactor<KeySet<LibraryTransaction>, DataBasis>
+    private var dataBasis: DataBasis { transactor.publisher.value }
     
     private var cancellables: Set<AnyCancellable> = []
     
@@ -23,20 +23,18 @@ public final class Repository {
         fileInterface: FileInterface = FileInterface(at: URL.documentsDirectory)
         , artLoader: MediaArtLoader = MediaArtCache()
         , queryEngine: QueryEngine = QueryEngine()
-        , transactor: BoomicTransactor = BoomicTransactor()
+        , transactor: Transactor<KeySet<LibraryTransaction>, DataBasis> = Transactor<KeySet<LibraryTransaction>, DataBasis>(
+            basePost: DataBasis.empty
+            , key: "transactor"
+            , inMemory: true
+            , coreCommit: { transaction, basis in await BasisResolver(currentBasis: basis).apply(transaction: transaction)}
+        )
     ) {
         self.fileInterface = fileInterface
         self.artLoader = artLoader
         
-        self.dataBasis = .empty
         self.queryEngine = queryEngine
         self.transactor = transactor
-        
-        transactor.publisher
-            .sink(receiveValue: { [weak self] newBasis in
-                self?.dataBasis = newBasis
-            })
-            .store(in: &cancellables)
     }
 }
 
@@ -67,18 +65,24 @@ extension Repository {
        
         let newSongs = newFiles.map { Song(from: $0) }
         
-        await transactor.addSongs(newSongs, to: dataBasis)
+        await transactor.commit { basis in
+            return await BasisResolver(currentBasis: basis).addSongs(newSongs)
+        }
     }
     
     public func updateSong(_ songUpdate: SongUpdate) async {
-        await transactor.updateSong(songUpdate, on: dataBasis)
+        await transactor.commit { basis in
+            return await BasisResolver(currentBasis: basis).updateSong(songUpdate)
+        }
     }
     
-    public func getTransactions(last count: Int? = nil) async -> [LibraryTransaction] {
-        return await transactor.getTransactions(last: count)
+    public func getTransactions(last count: Int? = nil) async -> [DataTransaction<KeySet<LibraryTransaction>>] {
+        return await transactor.viewTransactions(last: count)
     }
     
     public func deleteLibraryData() async {
-        await transactor.deleteLibraryData()
+        if let lastTransaction = await transactor.viewTransactions().last {
+            await transactor.rollbackTo(before: lastTransaction)
+        }
     }
 }

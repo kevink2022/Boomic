@@ -17,14 +17,24 @@ import MediaPlayerKit
 
 // MARK: - Repositories
 func previewRepository() -> Repository {
-    let transactor = BoomicTransactor(inMemory: true)
+    let transactor = Transactor<KeySet<LibraryTransaction>, DataBasis>(
+        basePost: DataBasis.empty
+        , key: "transactor-preview"
+        , inMemory: true
+        , coreCommit: { transaction, basis in await BasisResolver(currentBasis: basis).apply(transaction: transaction)}
+    )
     return Repository(transactor: transactor)
 }
 
 func livePreviewRepository() -> Repository {
     
     let liveLibraryDirectory = URL(string: "/Users/kevinkelly/Music/Stuff")!
-    let transactor = BoomicTransactor(inMemory: true)
+    let transactor = Transactor<KeySet<LibraryTransaction>, DataBasis>(
+        basePost: DataBasis.empty
+        , key: "transactor-preview"
+        , inMemory: true
+        , coreCommit: { transaction, basis in await BasisResolver(currentBasis: basis).apply(transaction: transaction)}
+    )
 
     let repo = Repository(
         fileInterface: FileInterface(at: liveLibraryDirectory)

@@ -106,32 +106,22 @@ public final class SongUpdate: Identifiable, Codable, Hashable {
 }
 
 extension SongUpdate {
-    private convenience init(
-        update: SongUpdate
-        , title: String? = nil
-        , trackNumber: Int? = nil
-        , discNumber: Int? = nil
-        , art: MediaArt? = nil
-        , artistName: String? = nil
-        , artists: [UUID]? = nil
-        , albumTitle: String? = nil
-        , albums: [UUID]? = nil
-        , rating: Int? = nil
-        , erasing: Set<String>? = nil
-    ) {
-        self.init(
+    public func apply(update: SongUpdate) -> SongUpdate {
+        guard self.id == update.id else { return self }
+        
+        return SongUpdate(
             songID: update.id
             , source: update.source
-            , title: title ?? update.title
-            , trackNumber: trackNumber ?? update.trackNumber
-            , discNumber: discNumber ?? update.discNumber
-            , art: art ?? update.art
-            , artistName: artistName ?? update.artistName
-            , artists: artists ?? update.artists
-            , albumTitle: albumTitle ?? update.albumTitle
-            , albums: albums ?? update.albums
-            , rating: rating ?? update.rating
-            , erasing: erasing ?? update.erasing
+            , title: update.title ?? self.title
+            , trackNumber: update.trackNumber ?? self.trackNumber
+            , discNumber: update.discNumber ?? self.discNumber
+            , art: update.art ?? self.art
+            , artistName: update.artistName ?? self.artistName
+            , artists: update.artists ?? self.artists
+            , albumTitle: update.albumTitle ?? self.albumTitle
+            , albums: update.albums ?? self.albums
+            , rating: update.rating ?? self.rating
+            , erasing: update.erasing ?? self.erasing
         )
     }
     

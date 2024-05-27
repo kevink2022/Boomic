@@ -20,8 +20,8 @@ public final class Artist: Identifiable, Codable, Equatable {
         id: UUID
         , name: String
         , art: MediaArt? = nil
-        , songs: [UUID]
-        , albums: [UUID]
+        , songs: [UUID] = []
+        , albums: [UUID] = []
     ) {
         self.id = id
         self.name = name

@@ -15,7 +15,7 @@ extension Artist {
         
         return Artist(
             id: self.id
-            , name: update.name
+            , name: update.newName ?? update.originalName
             , art: erasing.contains(\.art) ? nil : update.art ?? self.art
             , songs: update.songs ?? self.songs
             , albums: update.albums ?? self.albums
@@ -26,8 +26,9 @@ extension Artist {
 public final class ArtistUpdate: Codable, Identifiable, Hashable {
     public let artistID: UUID
     public var id: UUID { artistID }
-    public let name: String
+    public let originalName: String
     
+    public let newName: String?
     public let songs: [UUID]?
     public let albums: [UUID]?
     
@@ -37,14 +38,16 @@ public final class ArtistUpdate: Codable, Identifiable, Hashable {
     
     private init(
         artistID: UUID
-        , name: String
+        , originalName: String
+        , newName: String? = nil
         , art: MediaArt? = nil
         , songs: [UUID]? = nil
         , albums: [UUID]? = nil
         , erasing: Set<String>? = nil
     ) {
         self.artistID = artistID
-        self.name = name
+        self.originalName = originalName
+        self.newName = newName
         self.songs = songs
         self.albums = albums
         self.art = art
@@ -53,8 +56,9 @@ public final class ArtistUpdate: Codable, Identifiable, Hashable {
     
     enum CodingKeys: String, CodingKey {
         case artistID
-        case name
+        case originalName = "original_name"
         
+        case newName = "new_name"
         case songs
         case albums
         case art
@@ -72,21 +76,17 @@ public final class ArtistUpdate: Codable, Identifiable, Hashable {
 }
 
 extension ArtistUpdate {
-    private convenience init(
-        update: ArtistUpdate
-        , name: String? = nil
-        , art: MediaArt? = nil
-        , songs: [UUID]? = nil
-        , albums: [UUID]? = nil
-        , erasing: Set<String>? = nil
-    ) {
-        self.init(
-            artistID: update.artistID
-            , name: name ?? update.name
-            , art: art ?? update.art
-            , songs: songs ?? update.songs
-            , albums: albums ?? update.albums
-            , erasing: erasing ?? update.erasing
+    public func apply(update: ArtistUpdate) -> ArtistUpdate {
+        guard self.id == update.id else { return self }
+        
+        return ArtistUpdate(
+            artistID: self.artistID
+            , originalName: self.originalName
+            , newName: update.newName ?? self.newName
+            , art: update.art ?? self.art
+            , songs:  update.songs ?? self.songs
+            , albums: update.albums ?? self.albums
+            , erasing: update.erasing ?? self.erasing
         )
     }
     
@@ -100,7 +100,8 @@ extension ArtistUpdate {
     ) {
         self.init(
             artistID: artist.id
-            , name: name ?? artist.name
+            , originalName: artist.name
+            , newName: name
             , art: art
             , songs: songs 
             , albums: albums
@@ -114,7 +115,7 @@ extension ArtistUpdate {
     ) {
         self.init(
             artistID: artist.id
-            , name: artist.name
+            , originalName: artist.name
             , erasing: ArtistUpdate.keyPathEncoding(erasing)
         )
     }
