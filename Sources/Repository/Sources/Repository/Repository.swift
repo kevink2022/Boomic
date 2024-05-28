@@ -51,6 +51,10 @@ extension Repository {
     public func getArtists(for ids: [UUID]?) -> [Artist] {
         return queryEngine.getArtists(for: ids, from: dataBasis)
     }
+    
+    public func getQuery() -> Query {
+        return Query(basisPublisher: transactor.publisher)
+    }
 }
 
 // MARK: - Transactions

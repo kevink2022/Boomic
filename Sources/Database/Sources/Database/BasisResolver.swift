@@ -12,12 +12,12 @@ public final class BasisResolver {
     
     private let currentBasis: DataBasis
     
-    private lazy var albumTitles: [String:UUID] = {
+    private lazy var currentAlbumTitles: [String:UUID] = {
         currentBasis.allAlbums
             .reduce(into: [String:UUID]()) { dict, album in dict[album.title] = album.id }
     }()
     
-    private lazy var artistNames: [String:UUID] = {
+    private lazy var currentArtistNames: [String:UUID] = {
         currentBasis.allArtists
             .reduce(into: [String:UUID]()) { dict, artist in dict[artist.name] = artist.id }
     }()
@@ -224,6 +224,18 @@ public final class BasisResolver {
         )
     }
     
+    public func deleteSong(_ songID: UUID) async -> KeySet<LibraryTransaction> {
+        guard let song = currentBasis.songMap[songID] else { return KeySet() }
+        
+//        let artists = song.artists
+//            .compactMap { currentBasis.artistMap[$0] }
+//            .map { artist in
+//                let remainingSongs =
+//            }
+        
+        return KeySet()
+    }
+    
     public func updateSong(_ update: SongUpdate) async -> KeySet<LibraryTransaction> {
         guard let original = currentBasis.songMap[update.id] else { return KeySet() }
         /*
@@ -259,78 +271,144 @@ public final class BasisResolver {
     public func addSongs(_ unlinkedSongs: [Song]) async -> KeySet<LibraryTransaction> {
         guard unlinkedSongs.count > 0 else { return KeySet() }
         
-        do {
-            async let albumTitleLinks_await = songsToTitleLinks(unlinkedSongs)
-            async let artistNameLinks_await = songsToNameLinks(unlinkedSongs)
-            
-            let (albumTitleLinks, artistNameLinks) = await (albumTitleLinks_await, artistNameLinks_await)
-            
-            let (linkedNewSongs, newSongsTransaction) = linkNewSongs(unlinkedSongs, albumTitles: albumTitleLinks, artistNames: artistNameLinks)
-            
-            async let linkedAlbums_await = linkNewAlbums(albumTitleLinks, linkedNewSongs: linkedNewSongs)
-            async let linkedArtists_await = linkNewArtists(artistNameLinks, linkedNewSongs: linkedNewSongs)
-            
-            let (
-                (existingAlbumsTransaction, newAlbumsTransaction)
-                , (existingArtistsTransaction, newArtistsTransaction)
-            ) = await (linkedAlbums_await, linkedArtists_await)
-            
-            let existingTransaction = try LibraryTransaction.flatten([existingAlbumsTransaction, existingArtistsTransaction])
-            let newLinksTransaction = try LibraryTransaction.flatten([newSongsTransaction, newAlbumsTransaction, newArtistsTransaction])
-            let linkedBasisTransaction = try LibraryTransaction.flatten([existingTransaction, newLinksTransaction])
-            
-            let newLinksBasis = await self.apply(transaction: linkedBasisTransaction, to: DataBasis.empty)
-            
-            async let newSongs_await = songsResolveDetails(newLinksBasis)
-            async let newAlbums_await = albumsResolveDetails(newLinksBasis)
-            async let newArtists_await = artistsResolveDetails(newLinksBasis)
-            
-            let (songDetailsTransaction, albumDetailsTransaction, artistDetailsTransaction) = await (newSongs_await, newAlbums_await, newArtists_await)
-            
-            let detailsTransaction = try LibraryTransaction.flatten([songDetailsTransaction, albumDetailsTransaction, artistDetailsTransaction])
-            let finalTransaction = try LibraryTransaction.flatten([newLinksTransaction, detailsTransaction])
-            
-            return finalTransaction
-        } 
+        var transaction = KeySet<LibraryTransaction>()
+        unlinkedSongs.forEach{ transaction.insert(.addSong($0)) }
         
-        catch {
+        do {
+            transaction = try await updateLinks(unlinkedSongTransaction: transaction)
+        } catch {
+            print("error: \(error.localizedDescription)")
             return KeySet()
         }
+        
+        return transaction
+    }
+    
+    private func updateLinks(unlinkedSongTransaction: KeySet<LibraryTransaction>, updateAlbums: Bool = true, updateArtists: Bool = true) async throws -> KeySet<LibraryTransaction> {
+        let songs = unlinkedSongTransaction.filter { $0.model == .song }
+        
+        async let albumTitleLinks_await = songsToTitleLinks(songs)
+        async let artistNameLinks_await = songsToNameLinks(songs)
+        
+        let (albumTitleLinks, artistNameLinks) = await (albumTitleLinks_await, artistNameLinks_await)
+        
+        let songsLinkTransaction = linkNewSongs(songs, albumTitles: albumTitleLinks, artistNames: artistNameLinks)
+        
+        async let linkedAlbums_await = linkNewAlbums(albumTitleLinks, songLinkTransaction: songsLinkTransaction)
+        async let linkedArtists_await = linkNewArtists(artistNameLinks, songLinkTransaction: songsLinkTransaction)
+        
+        let (
+            (existingAlbumsTransaction, newAlbumsTransaction)
+            , (existingArtistsTransaction, newArtistsTransaction)
+        ) = await (linkedAlbums_await, linkedArtists_await)
+        
+        let buildTransaction = try LibraryTransaction.flatten([existingAlbumsTransaction, existingArtistsTransaction])
+        let newLinksTransaction = try LibraryTransaction.flatten([unlinkedSongTransaction, songsLinkTransaction, newAlbumsTransaction, newArtistsTransaction])
+        let linkedBasisTransaction = try LibraryTransaction.flatten([buildTransaction, newLinksTransaction])
+        
+        let newLinksBasis = await self.apply(transaction: linkedBasisTransaction, to: DataBasis.empty)
+        
+        async let newSongs_await = songsResolveDetails(newLinksBasis)
+        async let newAlbums_await = albumsResolveDetails(newLinksBasis)
+        async let newArtists_await = artistsResolveDetails(newLinksBasis)
+        
+        let (songDetailsTransaction, albumDetailsTransaction, artistDetailsTransaction) = await (newSongs_await, newAlbums_await, newArtists_await)
+        
+        let detailsTransaction = try LibraryTransaction.flatten([songDetailsTransaction, albumDetailsTransaction, artistDetailsTransaction])
+        let finalTransaction = try LibraryTransaction.flatten([newLinksTransaction, detailsTransaction])
+        
+        return finalTransaction
     }
     
     // MARK: - String Maps
-    private func songsToTitleLinks(_ songs: [Song]) -> [String:UUID] {
-        return songs.reduce(into: [String:UUID]()) { dict, song in
-            
-            guard let songAlbumTitle = song.albumTitle else { return }
-            
-            if let albumID = albumTitles[songAlbumTitle] {
-                dict[songAlbumTitle] = albumID
-            } else {
-                dict[songAlbumTitle] = UUID()
+    private func songsToTitleLinks(_ songTransaction: KeySet<LibraryTransaction>) -> [String:UUID] {
+        var affectedAlbums = [String:UUID]()
+        
+         songTransaction.forEach { songTransaction in
+             guard let albumTitles = {
+                 switch songTransaction {
+                 case .addSong(let song):
+                     if let title = song.albumTitle { return Set([title]) }
+                 
+                 case .updateSong(let update):
+                     let songTitle = currentBasis.songMap[update.id]?.title
+                     let updateTitle = update.title
+                     return Set([songTitle, updateTitle].compactMap{ $0 })
+                     
+                 case .deleteSong(let id):
+                     if let title = currentBasis.songMap[id]?.albumTitle { return Set([title]) }
+                    
+                 default: return nil
+                 }
+                 return nil
+            }() else { return }
+             
+            albumTitles.forEach { title in
+                parseAlbums(title).forEach { title in
+                    if let albumID = currentAlbumTitles[title] {
+                        affectedAlbums[title] = albumID
+                    } else {
+                        affectedAlbums[title] = UUID()
+                    }
+                }
             }
         }
+        
+        return affectedAlbums
     }
     
-    private func songsToNameLinks(_ songs: [Song]) -> [String:UUID] {
-        return songs.reduce(into: [String:UUID]()) { dict, song in
+    private func songsToNameLinks(_ songTransaction: KeySet<LibraryTransaction>) -> [String:UUID] {
+        var affectedArtists = [String:UUID]()
+        
+         songTransaction.forEach { songTransaction in
+             guard let artistNames = {
+                 switch songTransaction {
+                 case .addSong(let song):
+                     if let name = song.artistName { return Set([name]) }
+                 
+                 case .updateSong(let update):
+                     let songTitle = currentBasis.songMap[update.id]?.artistName
+                     let updateTitle = update.artistName
+                     return Set([songTitle, updateTitle].compactMap{ $0 })
+                     
+                 case .deleteSong(let id):
+                     if let name = currentBasis.songMap[id]?.artistName { return Set([name]) }
+                    
+                 default: return nil
+                 }
+                 return nil
+            }() else { return }
             
-            guard let songArtistName = song.artistName else { return }
-            
-            if let artistID = artistNames[songArtistName] {
-                dict[songArtistName] = artistID
-            } else {
-                dict[songArtistName] = UUID()
+            artistNames.forEach { name in
+                parseArtists(name).forEach { name in
+                    if let artistID = currentArtistNames[name] {
+                        affectedArtists[name] = artistID
+                    } else {
+                        affectedArtists[name] = UUID()
+                    }
+                }
             }
         }
+        
+        return affectedArtists
+    }
+    
+    private func songFromTransaction(_ songTransaction: LibraryTransaction, excludeDelete: Bool = false) -> Song? {
+        switch songTransaction {
+        case .addSong(let song): return song
+        case .updateSong(let update): if let song = currentBasis.songMap[update.id] { return song.apply(update: update) }
+        case .deleteSong(let id): return excludeDelete ? nil : currentBasis.songMap[id]
+        default: return nil
+        }
+        return nil
     }
     
     // MARK: - Naive Linking
-    private func linkNewSongs(_ unlinkedSongs: [Song], albumTitles: [String:UUID], artistNames: [String:UUID]) -> ([Song], KeySet<LibraryTransaction>) {
-        var transactions = KeySet<LibraryTransaction>()
-        var newSongs = [Song]()
+    private func linkNewSongs(_ songTransactions: KeySet<LibraryTransaction>, albumTitles: [String:UUID], artistNames: [String:UUID]) -> KeySet<LibraryTransaction> {
+        var linkUpdatesTransaction = KeySet<LibraryTransaction>()
         
-        for song in unlinkedSongs {
+        songTransactions.forEach { transaction in
+            guard let song = songFromTransaction(transaction, excludeDelete: true) else { return }
 
             let albums: [UUID]? = {
                 if let albumTitle = song.albumTitle { return parseAlbums(albumTitle).compactMap{ albumTitles[$0] } }
@@ -343,15 +421,13 @@ public final class BasisResolver {
             }()
             
             let linkUpdate = SongUpdate(song: song, artists: artists, albums: albums)
-            let linkedSong = song.apply(update: linkUpdate)
-            newSongs.append(linkedSong)
-            transactions.insert(.addSong(linkedSong))
+            linkUpdatesTransaction.insert(.updateSong(linkUpdate))
         }
         
-        return (newSongs, transactions)
+        return linkUpdatesTransaction
     }
     
-    private func linkNewAlbums(_ affectedAlbums: [String:UUID], linkedNewSongs: [Song]) -> (KeySet<LibraryTransaction>, KeySet<LibraryTransaction>) {
+    private func linkNewAlbums(_ affectedAlbums: [String:UUID], songLinkTransaction: KeySet<LibraryTransaction>) -> (KeySet<LibraryTransaction>, KeySet<LibraryTransaction>) {
         var baseTransactions = KeySet<LibraryTransaction>()
         var newTransactions = KeySet<LibraryTransaction>()
         
@@ -362,10 +438,16 @@ public final class BasisResolver {
                 else { return (Album(id: albumID, title: albumTitle), false) }
             }()
             
-            let linkedSongsToAlbum = linkedNewSongs.filter { $0.albums.contains(album.id) }
+            let songUpdates = songLinkTransaction.values
+                .compactMap { if case .updateSong(let update) = $0 { return update } else { return nil } }
+                .filter { update in update.albums?.contains(album.id) ?? false }
             
-            let albumSongs = Array(linkedSongsToAlbum.reduce(into: Set(album.songs)){ $0.insert($1.id ) })
-            let albumArtists = Array(linkedSongsToAlbum.reduce(into: Set(album.artists)){ $0.formUnion($1.artists) })
+            let albumSongs = Array(songUpdates.reduce(into: Set(album.songs)){ albumSongs, song in
+                albumSongs.insert(song.id)
+            })
+            let albumArtists = Array(songUpdates.reduce(into: Set(album.artists)){ albumArtists, song in
+                if let songArtists = song.artists { albumArtists.formUnion(songArtists) }
+            })
             
             let linkUpdate = AlbumUpdate(album: album, songs: albumSongs, artists: albumArtists)
             
@@ -380,7 +462,7 @@ public final class BasisResolver {
         return (baseTransactions, newTransactions)
     }
     
-    private func linkNewArtists(_ affectedArtists: [String:UUID], linkedNewSongs: [Song]) -> (KeySet<LibraryTransaction>, KeySet<LibraryTransaction>) {
+    private func linkNewArtists(_ affectedArtists: [String:UUID], songLinkTransaction: KeySet<LibraryTransaction>) -> (KeySet<LibraryTransaction>, KeySet<LibraryTransaction>) {
         var baseTransactions = KeySet<LibraryTransaction>()
         var newTransactions = KeySet<LibraryTransaction>()
         
@@ -391,10 +473,16 @@ public final class BasisResolver {
                 else { return (Artist(id: artistID, name: artistName), false) }
             }()
             
-            let linkedSongsToArtist = linkedNewSongs.filter { $0.artists.contains(artist.id) }
+            let songUpdates = songLinkTransaction.values
+                .compactMap { if case .updateSong(let update) = $0 { return update } else { return nil } }
+                .filter { update in update.artists?.contains(artist.id) ?? false }
             
-            let artistSongs = Array(linkedSongsToArtist.reduce(into: Set(artist.songs)){ $0.insert($1.id ) })
-            let artistAlbums = Array(linkedSongsToArtist.reduce(into: Set(artist.albums)){ $0.formUnion($1.albums) })
+            let artistSongs = Array(songUpdates.reduce(into: Set(artist.songs)){ artistSongs, song in
+                artistSongs.insert(song.id)
+            })
+            let artistAlbums = Array(songUpdates.reduce(into: Set(artist.albums)){ artistAlbums, song in
+                if let songAlbums = song.albums { artistAlbums.formUnion(songAlbums) }
+            })
             
             let linkUpdate = ArtistUpdate(artist: artist, songs: artistSongs, albums: artistAlbums)
             
@@ -485,12 +573,12 @@ public final class BasisResolver {
     }
     
     // MARK: - Parsers
-    /// these will likely be moved long term.
+    /// Used to seperate artists like 'A feat. B' to two seperate A and B artists
     private func parseArtists(_ artistName: String) -> [String] {
-        return [artistName]
+        [artistName]
     }
     
     private func parseAlbums(_ albumTitle: String) -> [String] {
-        return [albumTitle]
+        [albumTitle]
     }
 }
