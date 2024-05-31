@@ -77,6 +77,26 @@ public final class AlbumUpdate: Codable, Identifiable, Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
+    
+    public func willModify(_ album: Album) -> Bool {
+        guard self.id == album.id else { return false }
+        
+        if let newTitle = self.newTitle, newTitle != album.title { return true }
+        else if let art = self.art, art != album.art { return true }
+        else if let artistName = self.artistName, artistName != album.artistName { return true }
+        else if let songs = self.songs, songs != album.songs { return true }
+        else if let artistName = self.artistName, artistName != album.artistName { return true }
+        else if let artists = self.artists, artists != album.artists { return true }
+        else { return erasingWillModify(album) }
+    }
+
+    private func erasingWillModify(_ album: Album) -> Bool {
+        let erasing = Self.keyPathDecoding(self.erasing) ?? Set<PartialKeyPath<Album>>()
+        
+        if erasing.contains(\.art), album.art != nil { return true }
+        else if erasing.contains(\.artistName), album.artistName != nil { return true }
+        else { return false }
+    }
 }
 
 extension AlbumUpdate {
@@ -121,7 +141,7 @@ extension AlbumUpdate {
         self.init(
             albumID: album.id
             , originalTitle: album.title
-            , erasing: AlbumUpdate.keyPathEncoding(erasing)
+            , erasing: Self.keyPathEncoding(erasing)
         )
     }
 }

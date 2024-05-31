@@ -73,6 +73,23 @@ public final class ArtistUpdate: Codable, Identifiable, Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
+    
+    public func willModify(_ artist: Artist) -> Bool {
+        guard self.id == artist.id else { return false }
+        
+        if let newName = self.newName, newName != artist.name { return true }
+        else if let art = self.art, art != artist.art { return true }
+        else if let songs = self.songs, songs != artist.songs { return true }
+        else if let albums = self.albums, albums != artist.albums { return true }
+        else { return erasingWillModify(artist) }
+    }
+
+    private func erasingWillModify(_ artist: Artist) -> Bool {
+        let erasing = Self.keyPathDecoding(self.erasing) ?? Set<PartialKeyPath<Artist>>()
+        
+        if erasing.contains(\.art), artist.art != nil { return true }
+        else { return false }
+    }
 }
 
 extension ArtistUpdate {
@@ -116,7 +133,7 @@ extension ArtistUpdate {
         self.init(
             artistID: artist.id
             , originalName: artist.name
-            , erasing: ArtistUpdate.keyPathEncoding(erasing)
+            , erasing: Self.keyPathEncoding(erasing)
         )
     }
 }

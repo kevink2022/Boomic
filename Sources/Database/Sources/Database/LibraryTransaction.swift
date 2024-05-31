@@ -183,3 +183,38 @@ extension LibraryTransaction {
         case illegalArgument
     }
 }
+
+extension LibraryTransaction {
+    public func willModify(_ basis: DataBasis) -> Bool {
+        switch self {
+        case .updateSong(let update): return update.willModify(basis)
+        case .updateAlbum(let update): return update.willModify(basis)
+        case .updateArtist(let update): return update.willModify(basis)
+        case .deleteSong(let id): return basis.songMap[id] != nil
+        case .deleteAlbum(let id): return basis.albumMap[id] != nil
+        case .deleteArtist(let id): return basis.artistMap[id] != nil
+        default: return true
+        }
+    }
+}
+
+extension SongUpdate {
+    public func willModify(_ basis: DataBasis) -> Bool {
+        guard let song = basis.songMap[self.songID] else { return false }
+        return self.willModify(song)
+    }
+}
+
+extension AlbumUpdate {
+    public func willModify(_ basis: DataBasis) -> Bool {
+        guard let album = basis.albumMap[self.albumID] else { return false }
+        return self.willModify(album)
+    }
+}
+
+extension ArtistUpdate {
+    public func willModify(_ basis: DataBasis) -> Bool {
+        guard let artist = basis.artistMap[self.artistID] else { return false }
+        return self.willModify(artist)
+    }
+}

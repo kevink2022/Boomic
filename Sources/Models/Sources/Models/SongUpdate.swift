@@ -103,6 +103,34 @@ public final class SongUpdate: Identifiable, Codable, Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
+    
+    public func willModify(_ song: Song) -> Bool {
+        guard self.id == song.id else { return false }
+        
+        if let title = self.title, title != song.title { return true }
+        else if let trackNumber = self.trackNumber, trackNumber != song.trackNumber { return true }
+        else if let discNumber = self.discNumber, discNumber != song.discNumber { return true }
+        else if let art = self.art, art != song.art { return true }
+        else  if let artistName = self.artistName, artistName != song.artistName { return true }
+        else if let artists = self.artists, artists != song.artists { return true }
+        else if let albumTitle = self.albumTitle, albumTitle != song.albumTitle { return true }
+        else if let albums = self.albums, albums != song.albums { return true }
+        else if let rating = self.rating, rating != song.rating { return true }
+        else { return erasingWillModify(song) }
+    }
+    
+    private func erasingWillModify(_ song: Song) -> Bool {
+        let erasing = Self.keyPathDecoding(self.erasing) ?? Set<PartialKeyPath<Song>>()
+        
+        if erasing.contains(\.title), song.title != nil { return true }
+        else if erasing.contains(\.trackNumber), song.trackNumber != nil { return true }
+        else if erasing.contains(\.discNumber) , song.discNumber != nil { return true }
+        else if erasing.contains(\.art), song.art != nil { return true }
+        else if erasing.contains(\.artistName), song.artistName != nil { return true }
+        else if erasing.contains(\.albumTitle), song.albumTitle != nil { return true }
+        else if erasing.contains(\.rating), song.rating != nil { return true }
+        else { return false }
+    }
 }
 
 extension SongUpdate {
@@ -160,7 +188,7 @@ extension SongUpdate {
         self.init(
             songID: song.id
             , source: song.source
-            , erasing: SongUpdate.keyPathEncoding(erasing)
+            , erasing: Self.keyPathEncoding(erasing)
         )
     }
 }
