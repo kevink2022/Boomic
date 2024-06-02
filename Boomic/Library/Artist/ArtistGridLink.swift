@@ -9,11 +9,12 @@ import SwiftUI
 import Models
 
 struct ArtistGridLink: View {
+    @Environment(\.navigator) private var navigator
     let artist: Artist
     
     var body: some View {
-        NavigationLink {
-            ArtistScreen(artist: artist)
+        Button {
+            navigator.library.append(artist)
         } label: {
             ArtistGridEntry(artist: artist)
         }
@@ -23,4 +24,5 @@ struct ArtistGridLink: View {
 
 #Preview {
     ArtistGridLink(artist: previewArtist())
+        .environment(\.navigator, previewNavigator())
 }

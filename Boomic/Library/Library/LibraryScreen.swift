@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Models
 
 private typealias C = ViewConstants
 private typealias F = ViewConstants.Fonts
@@ -13,24 +14,28 @@ private typealias SI = ViewConstants.SystemImages
 
 struct LibraryScreen: View {
     @Environment(\.repository) private var repository
+    @Environment(\.navigator) private var navigator
     
-    var body: some View {
-        NavigationStack {
+    var body: some View { 
+        @Bindable var navigator = navigator
+        
+        NavigationStack(path: $navigator.library) {
             DynamicGrid(title: "Library", titleFont: F.screenTitle) {
-                NavigationLink {
-                    AllSongsScreen()
+                Button {
+                    navigator.library.append(LibraryNavigation.songs)
+                    
                 } label: {
                     LibraryGridEntry(title: "Songs", imageName: SI.songs)
                 }
                 
-                NavigationLink {
-                    AllAlbumsScreen()
+                Button {
+                    navigator.library.append(LibraryNavigation.albums)
                 } label: {
                     LibraryGridEntry(title: "Albums", imageName: SI.album)
                 }
                 
-                NavigationLink {
-                    AllArtistsScreen()
+                Button {
+                    navigator.library.append(LibraryNavigation.artists)
                 } label: {
                     LibraryGridEntry(title: "Artists", imageName: SI.artist)
                 }
@@ -43,6 +48,20 @@ struct LibraryScreen: View {
             }
             .foregroundStyle(.primary)
             .padding(C.gridPadding)
+            
+            .navigationDestination(for: LibraryNavigation.self) { menu in
+                switch menu {
+                case .songs: AllSongsScreen()
+                case .albums: AllAlbumsScreen()
+                case .artists: AllArtistsScreen()
+                }
+            }
+            .navigationDestination(for: Album.self) { album in
+                AlbumScreen(album: album)
+            }
+            .navigationDestination(for: Artist.self) { artist in
+                ArtistScreen(artist: artist)
+            }
         }
     }
 }
@@ -50,4 +69,5 @@ struct LibraryScreen: View {
 #Preview {
     LibraryScreen()
         .environment(\.repository, livePreviewRepository())
+        .environment(\.navigator, Navigator())
 }

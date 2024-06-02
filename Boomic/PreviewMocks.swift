@@ -15,6 +15,9 @@ import Repository
 import MediaPlayerKit
 
 
+func previewNavigator() -> Navigator { return Navigator() }
+
+
 // MARK: - Repositories
 func previewRepository() -> Repository {
     let transactor = Transactor<KeySet<LibraryTransaction>, DataBasis>(

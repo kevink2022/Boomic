@@ -24,7 +24,6 @@ public final class SongPlayer {
     public private(set) var isPlaying: Bool
     public private(set) var time: TimeInterval { didSet { updatePlaybackTime() } }
     
-    public var fullscreen: Bool = false
     public var queueView: Bool = false
     
     private var engine: AVEngine? { didSet { setupTimeSubscribers() } }

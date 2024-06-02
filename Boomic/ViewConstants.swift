@@ -208,5 +208,6 @@ extension Date {
     ContentView()
         .environment(\.repository, livePreviewRepository())
         .environment(\.player, previewPlayer())
+        .environment(\.navigator, previewNavigator())
 }
 

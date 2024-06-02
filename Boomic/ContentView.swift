@@ -10,51 +10,53 @@ import SwiftUI
 private typealias A = ViewConstants.Animations
 
 struct ContentView: View {
+    @Environment(\.navigator) private var navigator
     @Environment(\.player) private var player
-    @State var playerOffset: CGFloat = 800
     
-    var body: some View {
+    var body: some View { 
+        @Bindable var navigator = navigator
+        
         ZStack {
-            TabView {
+            TabView(selection: $navigator.tab){
                 SongBarWrapper { LibraryScreen() }
                     .tabItem { Label("Home", systemImage: "music.note.house") }
+                    .tag(TabNavigation.home)
                 
                 SongBarWrapper { SettingsScreen() }
                     .tabItem { Label("Settings", systemImage: "gear") }
+                    .tag(TabNavigation.settings)
                 
                 SongBarWrapper { MixerScreen() }
                     .tabItem { Label("Mixer", systemImage: "slider.vertical.3") }
+                    .tag(TabNavigation.mixer)
                 
                 SongBarWrapper { SearchScreen() }
                     .tabItem { Label("Search", systemImage: "magnifyingglass") }
+                    .tag(TabNavigation.search)
             }
-            .onChange(of: player.fullscreen) {
-                if player.fullscreen == true {
-                    playerOffset = 800
-                    withAnimation(A.showPlayer) { playerOffset = 0 }
+            .onChange(of: navigator.playerFullscreen) {
+                if navigator.playerFullscreen == true {
+                    navigator.playerOffset = 800
+                    withAnimation(A.showPlayer) { navigator.playerOffset = 0 }
                 }
             }
 
-            if player.fullscreen {
+            if navigator.playerFullscreen {
                 PlayerScreen()
-                    .offset(y: playerOffset)
+                    .offset(y: navigator.playerOffset)
                     .gesture(DragGesture()
                         .onChanged { value in
                             if value.translation.height > 0 {
-                                playerOffset = value.translation.height
+                                navigator.playerOffset = value.translation.height
                             }
                         }
                         .onEnded { value in
                             let velocity = value.predictedEndTranslation.height - value.translation.height
 
-                            if playerOffset > 300 || velocity > 250 {
-                                withAnimation(A.playerExit) {
-                                    playerOffset = 1000
-                                } completion: {
-                                    player.fullscreen = false
-                                }
+                            if navigator.playerOffset > 300 || velocity > 250 {
+                                navigator.closePlayer()
                             } else {
-                                withAnimation(.easeOut) { playerOffset = 0 }
+                                withAnimation(.easeOut) { navigator.playerOffset = 0 }
                             }
                         }
                     )
@@ -67,6 +69,7 @@ struct ContentView: View {
     ContentView()
         .environment(\.repository, livePreviewRepository())
         .environment(\.player, previewPlayer())
+        .environment(\.navigator, previewNavigator())
 }
 
 

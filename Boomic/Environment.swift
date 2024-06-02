@@ -17,6 +17,10 @@ struct PlayerEnvironmentKey: EnvironmentKey {
     static let defaultValue: SongPlayer = SongPlayer()
 }
 
+struct NavigatorEnvironmentKey: EnvironmentKey {
+    static let defaultValue: Navigator = Navigator()
+}
+
 extension EnvironmentValues {
     var repository: Repository {
         get { self[RepositoryEnvironmentKey.self] }
@@ -26,6 +30,11 @@ extension EnvironmentValues {
     var player: SongPlayer {
         get { self[PlayerEnvironmentKey.self] }
         set { self[PlayerEnvironmentKey.self] = newValue }
+    }
+    
+    var navigator: Navigator {
+        get { self[NavigatorEnvironmentKey.self] }
+        set { self[NavigatorEnvironmentKey.self] = newValue }
     }
 }
 

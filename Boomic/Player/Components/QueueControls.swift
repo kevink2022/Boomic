@@ -26,7 +26,7 @@ struct QueueControls: View {
                 Spacer()
                 
                 Button {
-                    player.fullscreen = false
+                    
                 } label: {
                     Image(systemName: SI.tag)
                 }

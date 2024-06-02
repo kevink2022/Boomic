@@ -10,7 +10,8 @@ import SwiftUI
 private typealias C = ViewConstants
 private typealias A = ViewConstants.Animations
 
-struct SongBarWrapper<Content: View> : View{
+struct SongBarWrapper<Content: View> : View {
+    @Environment(\.navigator) private var navigator
     @Environment(\.player) private var player
     
     let content: () -> Content
@@ -28,7 +29,7 @@ struct SongBarWrapper<Content: View> : View{
                 Divider()
                 
                 Button {
-                    player.fullscreen = true
+                    navigator.openPlayer()
                 } label: {
                     SongBar()
                         .padding(C.gridPadding)
@@ -72,4 +73,5 @@ struct SongBarWrapper<Content: View> : View{
 #Preview {
     SongBarWrapper { LibraryScreen() }
         .environment(\.player, previewPlayer())
+        .environment(\.navigator, previewNavigator())
 }

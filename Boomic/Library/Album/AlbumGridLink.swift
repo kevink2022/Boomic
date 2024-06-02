@@ -10,11 +10,12 @@ import Models
 
 
 struct AlbumGridLink: View {
+    @Environment(\.navigator) private var navigator
     let album: Album
     
     var body: some View {
-        NavigationLink {
-            AlbumScreen(album: album)
+        Button {
+            navigator.library.append(album)
         } label: {
             AlbumGridEntry(album: album)
         }
@@ -24,4 +25,5 @@ struct AlbumGridLink: View {
 
 #Preview {
     AlbumGridLink(album: previewAlbum())
+        .environment(\.navigator, previewNavigator())
 }
