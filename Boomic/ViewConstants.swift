@@ -129,6 +129,11 @@ struct ViewConstants {
         static let dynamicGridRevealControls = "chevron.left.circle"
         static let dynamicGridZoomIn = add
         static let dynamicGridZoomOut = remove
+        
+        static let afterTransaction = "clock.arrow.circlepath"
+        static let beforeTransaction = "clock.arrow.2.circlepath"
+        
+        static let delete = "trash"
     }
     
     static let gridPadding: CGFloat = 8

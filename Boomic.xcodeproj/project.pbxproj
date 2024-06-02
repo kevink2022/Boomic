@@ -29,6 +29,8 @@
 		4F853B722BA8926500721E59 /* AlbumGridLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F853B712BA8926500721E59 /* AlbumGridLink.swift */; };
 		4F853B782BAA22D100721E59 /* DynamicGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F853B772BAA22D100721E59 /* DynamicGrid.swift */; };
 		4F853B7C2BAE30B400721E59 /* MediaFileKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4F853B7B2BAE30B400721E59 /* MediaFileKit */; };
+		4F93BBBC2C0A585A0076B4F2 /* TransactionOptionsMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F93BBBB2C0A585A0076B4F2 /* TransactionOptionsMenu.swift */; };
+		4F93BBBF2C0C3FCA0076B4F2 /* Navigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F93BBBE2C0C3FCA0076B4F2 /* Navigator.swift */; };
 		4F9A33182BD898CA005A2EBD /* AnimatedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9A33172BD898CA005A2EBD /* AnimatedButton.swift */; };
 		4F9A331A2BDF4FBD005A2EBD /* TransactionsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9A33192BDF4FBD005A2EBD /* TransactionsList.swift */; };
 		4F9A331C2BDF584D005A2EBD /* TransactionDetailsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9A331B2BDF584D005A2EBD /* TransactionDetailsScreen.swift */; };
@@ -108,6 +110,8 @@
 		4F853B712BA8926500721E59 /* AlbumGridLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumGridLink.swift; sourceTree = "<group>"; };
 		4F853B772BAA22D100721E59 /* DynamicGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicGrid.swift; sourceTree = "<group>"; };
 		4F853B792BAA8B5900721E59 /* MediaFileKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MediaFileKit; sourceTree = "<group>"; };
+		4F93BBBB2C0A585A0076B4F2 /* TransactionOptionsMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionOptionsMenu.swift; sourceTree = "<group>"; };
+		4F93BBBE2C0C3FCA0076B4F2 /* Navigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigator.swift; sourceTree = "<group>"; };
 		4F9A33172BD898CA005A2EBD /* AnimatedButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedButton.swift; sourceTree = "<group>"; };
 		4F9A33192BDF4FBD005A2EBD /* TransactionsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsList.swift; sourceTree = "<group>"; };
 		4F9A331B2BDF584D005A2EBD /* TransactionDetailsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetailsScreen.swift; sourceTree = "<group>"; };
@@ -196,6 +200,7 @@
 		4F04DCB72B74727D006114B3 /* Boomic */ = {
 			isa = PBXGroup;
 			children = (
+				4F93BBBD2C0C3FB10076B4F2 /* Navigation */,
 				4FD48D302BBBD7F300D06055 /* Info.plist */,
 				4FD48D102BB9298F00D06055 /* Search */,
 				4FD48D0F2BB9294400D06055 /* Settings */,
@@ -276,6 +281,14 @@
 			path = Utility;
 			sourceTree = "<group>";
 		};
+		4F93BBBD2C0C3FB10076B4F2 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				4F93BBBE2C0C3FCA0076B4F2 /* Navigator.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
 		4FB41E1E2BA6289000270496 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -352,6 +365,7 @@
 				4FD48D112BB929A200D06055 /* SettingsScreen.swift */,
 				4F9A33192BDF4FBD005A2EBD /* TransactionsList.swift */,
 				4F9A331B2BDF584D005A2EBD /* TransactionDetailsScreen.swift */,
+				4F93BBBB2C0A585A0076B4F2 /* TransactionOptionsMenu.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -559,9 +573,11 @@
 				4FEE48802BCB376D00F5BC86 /* PlayerHeader.swift in Sources */,
 				4F539D6B2BD4B7E400E12A40 /* SongGoToMenu.swift in Sources */,
 				4F853B5F2BA7632E00721E59 /* ArtistGridEntry.swift in Sources */,
+				4F93BBBC2C0A585A0076B4F2 /* TransactionOptionsMenu.swift in Sources */,
 				4FD48D182BB92DBB00D06055 /* SongBar.swift in Sources */,
 				4F853B702BA8920800721E59 /* ArtistGridLink.swift in Sources */,
 				4F853B722BA8926500721E59 /* AlbumGridLink.swift in Sources */,
+				4F93BBBF2C0C3FCA0076B4F2 /* Navigator.swift in Sources */,
 				4F9A33182BD898CA005A2EBD /* AnimatedButton.swift in Sources */,
 				4FEE48782BC3B1F500F5BC86 /* TimeSlider.swift in Sources */,
 			);

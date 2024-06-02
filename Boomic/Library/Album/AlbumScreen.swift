@@ -15,9 +15,17 @@ private typealias SI = ViewConstants.SystemImages
 
 struct AlbumScreen: View {
     @Environment(\.repository) private var repository
-    let album: Album
-    @State private var songs: [Song] = []
-    @State private var artists: [Artist] = []
+    private let baseAlbum: Album
+    @State private var query = Query()
+    private var album: Album { query.albums.first ?? baseAlbum }
+    private var songs: [Song] { query.songs }
+    private var artists: [Artist] { query.artists }
+    
+    init(album: Album) {
+        self.baseAlbum = album
+//        query.forAlbum(album)
+//        repository.addQuery(query)
+    }
     
     var body: some View {
         ScrollView {
@@ -103,8 +111,10 @@ struct AlbumScreen: View {
         }
         
         .task {
-            songs = await repository.getSongs(for: album.songs)
-            artists = await repository.getArtists(for: album.artists)
+            query.forAlbum(album)
+            repository.addQuery(query)
+//            songs = await repository.getSongs(for: album.songs)
+//            artists = await repository.getArtists(for: album.artists)
         }
     }
 }

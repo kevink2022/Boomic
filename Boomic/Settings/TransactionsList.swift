@@ -27,6 +27,9 @@ struct TransactionsList: View {
                             .opacity(0.6)
                     }
                 }
+                .contextMenu {
+                    TransactionOptionsMenu(transaction: transaction)
+                }
             }
             
             Button(role: .destructive) {

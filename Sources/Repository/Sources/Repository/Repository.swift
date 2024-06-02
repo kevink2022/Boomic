@@ -52,8 +52,8 @@ extension Repository {
         return queryEngine.getArtists(for: ids, from: dataBasis)
     }
     
-    public func getQuery() -> Query {
-        return Query(basisPublisher: transactor.publisher)
+    public func addQuery(_ query: Query) {
+        query.addBasis(publisher: transactor.publisher)
     }
 }
 
@@ -80,6 +80,12 @@ extension Repository {
         }
     }
     
+    public func deleteSong(_ song: Song) async {
+        await transactor.commit { basis in
+            return await BasisResolver(currentBasis: basis).deleteSong(song)
+        }
+    }
+    
     public func getTransactions(last count: Int? = nil) async -> [DataTransaction<KeySet<LibraryTransaction>>] {
         return await transactor.viewTransactions(last: count)
     }
@@ -88,5 +94,13 @@ extension Repository {
         if let lastTransaction = await transactor.viewTransactions().last {
             await transactor.rollbackTo(before: lastTransaction)
         }
+    }
+    
+    public func rollbackTo(after transaction: DataTransaction<KeySet<LibraryTransaction>>) async {
+        await transactor.rollbackTo(after: transaction)
+    }
+    
+    public func rollbackTo(before transaction: DataTransaction<KeySet<LibraryTransaction>>) async {
+        await transactor.rollbackTo(before: transaction)
     }
 }
