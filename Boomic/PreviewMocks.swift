@@ -15,60 +15,56 @@ import Repository
 import MediaPlayerKit
 
 
-func previewNavigator() -> Navigator { return Navigator() }
-
-
-// MARK: - Repositories
-func previewRepository() -> Repository {
-    let transactor = Transactor<KeySet<LibraryTransaction>, DataBasis>(
-        basePost: DataBasis.empty
-        , key: "transactor-preview"
-        , inMemory: true
-        , coreCommit: { transaction, basis in await BasisResolver(currentBasis: basis).apply(transaction: transaction)}
-    )
-    return Repository(transactor: transactor)
-}
-
-func livePreviewRepository() -> Repository {
+internal class PreviewMocks {
     
-    let liveLibraryDirectory = URL(string: "/Users/kevinkelly/Music/Stuff")!
-    let transactor = Transactor<KeySet<LibraryTransaction>, DataBasis>(
-        basePost: DataBasis.empty
-        , key: "transactor-preview"
-        , inMemory: true
-        , coreCommit: { transaction, basis in await BasisResolver(currentBasis: basis).apply(transaction: transaction)}
-    )
-
-    let repo = Repository(
-        fileInterface: FileInterface(at: liveLibraryDirectory)
-        , transactor: transactor
+    static let shared = PreviewMocks()
+    
+    private let sharedRepo = Repository(
+        fileInterface: FileInterface(at: URL(string: "/Users/kevinkelly/Music/Stuff")!)
+        , transactor: Transactor<KeySet<LibraryTransaction>, DataBasis>(
+            basePost: DataBasis.empty
+            , key: "transactor-preview"
+            , inMemory: true
+            , coreCommit: { transaction, basis in await BasisResolver(currentBasis: basis).apply(transaction: transaction)}
+        )
     )
     
-    return repo
+    public func previewNavigator() -> Navigator { return Navigator() }
+
+    // MARK: - Repositories
+    public func previewRepository() -> Repository {
+        return sharedRepo
+    }
+
+    public func livePreviewRepository() -> Repository {
+        return sharedRepo
+    }
+
+    // MARK: - Players
+    public func previewPlayer() -> SongPlayer { SongPlayer(repository: sharedRepo) }
+
+    public func previewPlayerWithSong() -> SongPlayer {
+        let player = SongPlayer()
+        
+        player.setSong(previewSong(), context: [PreviewMocks.shared.previewSong()], autoPlay: false)
+        
+        return player
+    }
+
+
+    // MARK: - Models
+    public func previewSong() -> Song { Song.aCagedPersona }
+
+    public func previewAlbum() -> Album { Album.girlsApartment }
+
+    public func previewArtist() -> Artist { Artist.synth }
+
+    public func previewArtists() -> [Artist] {
+        return GirlsApartmentDatabase().getArtists(for: nil)
+    }
+
 }
 
-// MARK: - Players
-func previewPlayer() -> SongPlayer { SongPlayer() }
-
-func previewPlayerWithSong() -> SongPlayer {
-    let player = SongPlayer()
-    
-    player.setSong(previewSong(), context: [previewSong()], autoPlay: false)
-    
-    return player
-}
-
-
-// MARK: - Models
-func previewSong() -> Song { Song.aCagedPersona }
-
-func previewAlbum() -> Album { Album.girlsApartment }
-
-func previewArtist() -> Artist { Artist.synth }
-
-func previewArtists() -> [Artist] {
-    return GirlsApartmentDatabase().getArtists(for: nil)
-}
 
 
 

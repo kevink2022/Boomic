@@ -43,5 +43,5 @@ struct AllArtistsScreen: View {
 
 #Preview {
     AllArtistsScreen()
-        .environment(\.repository, previewRepository())
+        .environment(\.repository, PreviewMocks.shared.previewRepository())
 }

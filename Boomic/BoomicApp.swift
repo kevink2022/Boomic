@@ -18,7 +18,7 @@ struct BoomicApp: App {
     init() {
         let artCache = MediaArtCache()
         let repository = Repository(artLoader: artCache)
-        let player = SongPlayer(artLoader: artCache)
+        let player = SongPlayer(repository: repository)
         
         self.repository = repository
         self.player = player

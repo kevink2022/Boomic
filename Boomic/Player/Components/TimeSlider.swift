@@ -95,5 +95,5 @@ struct TimeSlider: View {
 
 #Preview {
     TimeSlider()
-        .environment(previewPlayerWithSong())
+        .environment(PreviewMocks.shared.previewPlayerWithSong())
 }

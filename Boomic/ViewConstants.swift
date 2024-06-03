@@ -206,8 +206,8 @@ extension Date {
 
 #Preview {
     ContentView()
-        .environment(\.repository, livePreviewRepository())
-        .environment(\.player, previewPlayer())
-        .environment(\.navigator, previewNavigator())
+        .environment(\.repository, PreviewMocks.shared.livePreviewRepository())
+        .environment(\.player, PreviewMocks.shared.previewPlayer())
+        .environment(\.navigator, PreviewMocks.shared.previewNavigator())
 }
 

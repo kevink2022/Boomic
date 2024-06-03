@@ -120,8 +120,8 @@ struct AlbumScreen: View {
 }
 
 #Preview {
-    AlbumScreen(album: previewAlbum())
-        .environment(\.repository, previewRepository())
+    AlbumScreen(album: PreviewMocks.shared.previewAlbum())
+        .environment(\.repository, PreviewMocks.shared.previewRepository())
 }
 
 

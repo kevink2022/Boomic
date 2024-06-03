@@ -66,5 +66,5 @@ struct SongListEntry: View {
 }
 
 #Preview {
-    SongListEntry(song: previewSong(), showTrackNumber: true)
+    SongListEntry(song: PreviewMocks.shared.previewSong(), showTrackNumber: true)
 }

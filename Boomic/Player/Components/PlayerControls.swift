@@ -52,5 +52,5 @@ struct PlayerControls: View {
 
 #Preview {
     PlayerControls()
-        .environment(previewPlayerWithSong())
+        .environment(PreviewMocks.shared.previewPlayerWithSong())
 }

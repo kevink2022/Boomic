@@ -28,5 +28,5 @@ struct ArtistGridEntry: View {
 }
 
 #Preview {
-    ArtistGridEntry(artist: previewArtist())
+    ArtistGridEntry(artist: PreviewMocks.shared.previewArtist())
 }

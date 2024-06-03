@@ -40,5 +40,5 @@ struct SongBar: View {
 
 #Preview {
     SongBar()
-        .environment(\.player, previewPlayer())
+        .environment(\.player, PreviewMocks.shared.previewPlayer())
 }

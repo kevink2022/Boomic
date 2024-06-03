@@ -33,5 +33,5 @@ struct PlayerArtView: View {
 
 #Preview {
     PlayerArtView()
-        .environment(previewPlayerWithSong())
+        .environment(PreviewMocks.shared.previewPlayerWithSong())
 }

@@ -99,7 +99,7 @@ struct DynamicGrid<Content: View>: View {
 
 #Preview {
     DynamicGrid(title: "Albums") {
-        ForEach(previewArtists()) { artist in
+        ForEach(PreviewMocks.shared.previewArtists()) { artist in
             ArtistGridLink(artist: artist)
         }
     }

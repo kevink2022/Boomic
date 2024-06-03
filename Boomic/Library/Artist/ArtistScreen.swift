@@ -87,6 +87,6 @@ struct ArtistScreen: View {
 }
 
 #Preview {
-    ArtistScreen(artist: previewArtist())
-        .environment(\.repository, previewRepository())
+    ArtistScreen(artist: PreviewMocks.shared.previewArtist())
+        .environment(\.repository, PreviewMocks.shared.previewRepository())
 }

@@ -72,6 +72,6 @@ struct SongBarWrapper<Content: View> : View {
 
 #Preview {
     SongBarWrapper { LibraryScreen() }
-        .environment(\.player, previewPlayer())
-        .environment(\.navigator, previewNavigator())
+        .environment(\.player, PreviewMocks.shared.previewPlayer())
+        .environment(\.navigator, PreviewMocks.shared.previewNavigator())
 }

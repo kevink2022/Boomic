@@ -68,5 +68,5 @@ struct PlayerScreen: View {
 
 #Preview {
     PlayerScreen()
-        .environment(previewPlayerWithSong())
+        .environment(PreviewMocks.shared.previewPlayerWithSong())
 }

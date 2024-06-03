@@ -74,5 +74,5 @@ struct PlayerHeader: View {
 
 #Preview {
     PlayerHeader()
-        .environment(previewPlayerWithSong())
+        .environment(PreviewMocks.shared.previewPlayerWithSong())
 }

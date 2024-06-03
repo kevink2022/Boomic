@@ -34,6 +34,12 @@ struct ContentView: View {
                     .tabItem { Label("Search", systemImage: "magnifyingglass") }
                     .tag(TabNavigation.search)
             }
+            .onTapGesture(count: 2) {
+                switch navigator.tab {
+                case .home: navigator.library.removeLast(navigator.library.count)
+                default: break
+                }
+            }
             .onChange(of: navigator.playerFullscreen) {
                 if navigator.playerFullscreen == true {
                     navigator.playerOffset = 800
@@ -67,9 +73,9 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .environment(\.repository, livePreviewRepository())
-        .environment(\.player, previewPlayer())
-        .environment(\.navigator, previewNavigator())
+        .environment(\.repository, PreviewMocks.shared.previewRepository())
+        .environment(\.player, PreviewMocks.shared.previewPlayer())
+        .environment(\.navigator, PreviewMocks.shared.previewNavigator())
 }
 
 

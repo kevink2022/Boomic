@@ -12,29 +12,34 @@ import MediaPlayer
 
 import Models
 import MediaFileKit
+import Repository
 
 @Observable
 public final class SongPlayer {
     
+    // data
     public private(set) var song: Song?
     public private(set) var queue: MediaQueue?
-    public private(set) var queueOrder: MediaQueueOrder
-    public private(set) var repeatState: MediaQueueRepeat
     public private(set) var art: MediaArt?
+
+    // behavioral state
+    public private(set) var queueOrder: MediaQueueOrder // not derived from the queue itself?
+    public private(set) var repeatState: MediaQueueRepeat
     public private(set) var isPlaying: Bool
+    private var isPaused: Bool { !(engine?.isPlaying ?? true) }
     public private(set) var time: TimeInterval { didSet { updatePlaybackTime() } }
-    
+    private var engineStatus: EngineStatus
+
+    // view state
     public var queueView: Bool = false
     
+    // components
     private var engine: AVEngine? { didSet { setupTimeSubscribers() } }
-    private var engineStatus: EngineStatus
+    private let repository: Repository
     private var cancellables: Set<AnyCancellable> = []
-    
-    private var isPaused: Bool { !(engine?.isPlaying ?? true) }
-    private let artLoader: MediaArtLoader
        
     public init(
-        artLoader: MediaArtLoader = MediaArtCache(cacheLimit: 1)
+        repository: Repository = Repository(inMemory: true)
     ) {
         self.song = nil
         self.queue = nil
@@ -44,7 +49,7 @@ public final class SongPlayer {
         self.repeatState = .noRepeat
         self.isPlaying = false
         self.time = 0
-        self.artLoader = artLoader
+        self.repository = repository
         
 #if !os(macOS)
         do {
@@ -217,7 +222,7 @@ extension SongPlayer {
     }
     
     private func updateNowPlayingArt(with art: MediaArt) async {
-        guard let platformImage = await artLoader.loadPlatformImage(for: art) else { return }
+        guard let platformImage = await repository.artLoader.loadPlatformImage(for: art) else { return }
         
         let mpArt = MPMediaItemArtwork(boundsSize: platformImage.size) { size in
             return platformImage

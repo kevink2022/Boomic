@@ -78,5 +78,5 @@ struct QueueControls: View {
 
 #Preview {
     QueueControls()
-        .environment(previewPlayerWithSong())
+        .environment(PreviewMocks.shared.previewPlayerWithSong())
 }

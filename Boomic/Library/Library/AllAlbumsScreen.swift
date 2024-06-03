@@ -34,7 +34,7 @@ struct AllAlbumsScreen: View {
 
 #Preview {
     AllAlbumsScreen()
-        .environment(\.repository, previewRepository())
+        .environment(\.repository, PreviewMocks.shared.previewRepository())
 }
 
 

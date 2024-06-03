@@ -36,6 +36,17 @@ public final class Repository {
         self.queryEngine = queryEngine
         self.transactor = transactor
     }
+    
+    public convenience init(inMemory: Bool = false) {
+        self.init(
+            transactor: Transactor<KeySet<LibraryTransaction>, DataBasis>(
+                basePost: DataBasis.empty
+                , key: "transactor"
+                , inMemory: inMemory
+                , coreCommit: { transaction, basis in await BasisResolver(currentBasis: basis).apply(transaction: transaction)}
+            )
+        )
+    }
 }
 
 // MARK: - Queries

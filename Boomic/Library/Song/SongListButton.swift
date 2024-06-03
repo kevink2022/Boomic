@@ -51,6 +51,6 @@ struct SongListButton: View {
 }
 
 #Preview {
-    SongListButton(song: previewSong(), context: [previewSong()])
-        .environment(\.player, previewPlayer())
+    SongListButton(song: PreviewMocks.shared.previewSong(), context: [PreviewMocks.shared.previewSong()])
+        .environment(\.player, PreviewMocks.shared.previewPlayer())
 }

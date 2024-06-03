@@ -43,5 +43,5 @@ struct SongGoToMenu: View {
 }
 
 #Preview {
-    SongGoToMenu(song: previewSong())
+    SongGoToMenu(song: PreviewMocks.shared.previewSong())
 }

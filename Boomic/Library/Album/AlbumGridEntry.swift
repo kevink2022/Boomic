@@ -32,7 +32,7 @@ struct AlbumGridEntry: View {
 }
 
 #Preview {
-    AlbumGridEntry(album: previewAlbum())
+    AlbumGridEntry(album: PreviewMocks.shared.previewAlbum())
 }
 
 

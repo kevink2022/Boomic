@@ -68,6 +68,6 @@ struct LibraryScreen: View {
 
 #Preview {
     LibraryScreen()
-        .environment(\.repository, livePreviewRepository())
+        .environment(\.repository, PreviewMocks.shared.previewRepository())
         .environment(\.navigator, Navigator())
 }

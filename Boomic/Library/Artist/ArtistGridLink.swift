@@ -23,6 +23,6 @@ struct ArtistGridLink: View {
 }
 
 #Preview {
-    ArtistGridLink(artist: previewArtist())
-        .environment(\.navigator, previewNavigator())
+    ArtistGridLink(artist: PreviewMocks.shared.previewArtist())
+        .environment(\.navigator, PreviewMocks.shared.previewNavigator())
 }

@@ -41,7 +41,7 @@ struct LibraryGridEntry: View {
 
 #Preview {
     LibraryScreen()
-        .environment(\.repository, previewRepository())
+        .environment(\.repository, PreviewMocks.shared.previewRepository())
 }
 
 

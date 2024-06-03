@@ -125,5 +125,5 @@ struct QueueListButton: View {
 }
 
 #Preview {
-    QueueListButton(song: previewSong(), queueIndex: 2, displayMode: .constant(.duration))
+    QueueListButton(song: PreviewMocks.shared.previewSong(), queueIndex: 2, displayMode: .constant(.duration))
 }

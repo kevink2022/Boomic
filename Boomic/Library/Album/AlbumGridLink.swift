@@ -24,6 +24,6 @@ struct AlbumGridLink: View {
 }
 
 #Preview {
-    AlbumGridLink(album: previewAlbum())
-        .environment(\.navigator, previewNavigator())
+    AlbumGridLink(album: PreviewMocks.shared.previewAlbum())
+        .environment(\.navigator, PreviewMocks.shared.previewNavigator())
 }
