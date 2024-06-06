@@ -9,6 +9,7 @@ import SwiftUI
 import Database
 
 private typealias F = ViewConstants.Fonts
+private typealias SI = ViewConstants.SystemImages
 
 struct TransactionsList: View {
     @Environment(\.repository) private var repository
@@ -28,7 +29,23 @@ struct TransactionsList: View {
                     }
                 }
                 .contextMenu {
-                    TransactionOptionsMenu(transaction: transaction)
+                    Button {
+                        Task { 
+                            await repository.rollbackTo(after: transaction)
+                            transactions = await repository.getTransactions()
+                        }
+                    } label: {
+                        Label("Rollback to After", systemImage: SI.afterTransaction)
+                    }
+                    
+                    Button {
+                        Task { 
+                            await repository.rollbackTo(before: transaction)
+                            transactions = await repository.getTransactions()
+                        }
+                    } label: {
+                        Label("Rollback to Before", systemImage: SI.beforeTransaction)
+                    }
                 }
             }
             

@@ -31,17 +31,17 @@ public final class SimpleStore<Model: Codable> {
         }
     }
     
-    func save(_ model: Model) async throws {
+    public func save(_ model: Model) async throws {
         try await discInterface.save(model, to: key)
         if cached { cachedValue = model }
     }
     
-    func load() async throws -> Model? {
+    public func load() async throws -> Model? {
         if let cachedValue = cachedValue { return cachedValue }
         return try await discInterface.load(from: key)
     }
     
-    func delete() async throws {
+    public func delete() async throws {
         try await discInterface.delete(key)
         if cached { cachedValue = nil }
     }

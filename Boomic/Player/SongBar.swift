@@ -31,7 +31,7 @@ struct SongBar: View {
                 player.togglePlayPause()
             } label: {
                 Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
-                    .font(.title3)
+                    .font(F.playerButton)
             }
             .padding(.trailing, C.gridPadding)
         }

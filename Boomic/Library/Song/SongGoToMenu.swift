@@ -20,7 +20,7 @@ struct SongGoToMenu: View {
             ForEach(repository.getArtists(for: song.artists)) { artist in
                 Button {
                     navigator.tab = .home
-                    navigator.library.append(artist)
+                    navigator.library.navigateTo(artist)
                     navigator.closePlayer()
                 } label: {
                     Label(artist.name, systemImage: SI.artist)
@@ -32,7 +32,7 @@ struct SongGoToMenu: View {
             ForEach(repository.getAlbums(for: song.albums)) { album in
                 Button {
                     navigator.tab = .home
-                    navigator.library.append(album)
+                    navigator.library.navigateTo(album)
                     navigator.closePlayer()
                 } label: {
                     Label(album.title, systemImage: SI.album)

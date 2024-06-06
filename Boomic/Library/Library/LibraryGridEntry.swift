@@ -11,7 +11,6 @@ private typealias C = ViewConstants
 private typealias F = ViewConstants.Fonts
 
 struct LibraryGridEntry: View {
-    let title: String
     let imageName: String
     
     var body: some View {
@@ -29,12 +28,7 @@ struct LibraryGridEntry: View {
                 .stroke(style: StrokeStyle(lineWidth: C.libraryGridObjectStroke))
                 .aspectRatio(contentMode: .fit)
             }
-            
-            Text(title)
-                .font(F.listTitle)
-                .lineLimit(1)
         }
-        
         .padding(.horizontal, C.libraryGridPadding)
     }
 }

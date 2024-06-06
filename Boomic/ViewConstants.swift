@@ -73,6 +73,12 @@ struct ViewConstants {
             , design: .default
             , weight: .bold
         )
+        
+        static let toolbarButton = Font.system(
+            .title2
+            , design: .default
+            , weight: .bold
+        )
     }
     
     struct Animations {
@@ -90,7 +96,11 @@ struct ViewConstants {
         static let songs = "music.quarternote.3"
         static let album = "opticaldisc"
         static let artist = "music.mic"
-        static let addSongs = add
+        
+        static let home = "music.note.house"
+        static let settings = "gear"
+        static let mixer = "slider.vertical.3"
+        static let search = "magnifyingglass"
         
         static let add = "plus.circle"
         static let remove = "minus.circle"
@@ -129,6 +139,8 @@ struct ViewConstants {
         static let dynamicGridRevealControls = "chevron.left.circle"
         static let dynamicGridZoomIn = add
         static let dynamicGridZoomOut = remove
+        static let dynamicGridShowLabel = "a.circle"
+        static let dynamicGridNegative = "slash.circle"
         
         static let afterTransaction = "clock.arrow.circlepath"
         static let beforeTransaction = "clock.arrow.2.circlepath"
@@ -177,6 +189,8 @@ struct ViewConstants {
     static let libraryGridObjectInternalPadding: CGFloat = 20
     static let libraryGridObjectStroke: CGFloat = 5
     static let libraryGridPadding: CGFloat = 3
+    
+    static let defaultAccent: Color = .purple
 
 }
 
@@ -209,5 +223,6 @@ extension Date {
         .environment(\.repository, PreviewMocks.shared.livePreviewRepository())
         .environment(\.player, PreviewMocks.shared.previewPlayer())
         .environment(\.navigator, PreviewMocks.shared.previewNavigator())
+        .environment(\.preferences, PreviewMocks.shared.previewPreferences())
 }
 

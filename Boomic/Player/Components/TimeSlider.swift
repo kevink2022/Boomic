@@ -74,7 +74,7 @@ struct TimeSlider: View {
         player.seek(to: progress * songDuration)
     }
     
-    private var songDuration: TimeInterval { (player.song?.duration ?? player.time) }
+    private var songDuration: TimeInterval { player.songDuration }
     
     private var timePassed: TimeInterval { 
         if !dragging {

@@ -17,10 +17,10 @@ struct AllSongsScreen: View {
     
     var body: some View {
         ScrollView {
-            
             HStack {
                 Text("Songs")
                     .font(F.screenTitle)
+                    .padding(.horizontal, C.gridPadding)
  
                 Spacer()
             }
@@ -29,7 +29,6 @@ struct AllSongsScreen: View {
                 ForEach(songs) { song in
                     Divider()
                     SongListButton(song: song, context: songs, queueName: "All Songs")
-                        .padding(C.songListEntryPadding)
                 }
                 Divider()
             }

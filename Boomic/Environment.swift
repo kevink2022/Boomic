@@ -21,6 +21,10 @@ struct NavigatorEnvironmentKey: EnvironmentKey {
     static let defaultValue: Navigator = Navigator()
 }
 
+struct PreferencesEnvironmentKey: EnvironmentKey {
+    static let defaultValue: Preferences = Preferences()
+}
+
 extension EnvironmentValues {
     var repository: Repository {
         get { self[RepositoryEnvironmentKey.self] }
@@ -35,6 +39,11 @@ extension EnvironmentValues {
     var navigator: Navigator {
         get { self[NavigatorEnvironmentKey.self] }
         set { self[NavigatorEnvironmentKey.self] = newValue }
+    }
+    
+    var preferences: Preferences {
+        get { self[PreferencesEnvironmentKey.self] }
+        set { self[PreferencesEnvironmentKey.self] = newValue }
     }
 }
 

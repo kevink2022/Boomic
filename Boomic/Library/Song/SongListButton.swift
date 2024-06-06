@@ -8,6 +8,8 @@
 import SwiftUI
 import Models
 
+private typealias C = ViewConstants
+
 struct SongListButton: View {
     @Environment(\.player) private var player
     let song: Song
@@ -44,6 +46,7 @@ struct SongListButton: View {
                 , showArtist: showArtist
                 , showTrackNumber: showTrackNumber
             )
+            .padding(C.songListEntryPadding)
         }
         .foregroundStyle(.primary)
         .contextMenu { SongMenu(song: song) }

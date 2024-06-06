@@ -28,6 +28,7 @@ public final class AVEngine {
 
     public var status: EngineStatus { player.engineStatus }
     public var isPlaying: Bool { player.isPlaying }
+    public var duration: TimeInterval? { player.currentItem?.duration as? Double }
     
     public init(
         player: AVPlayer = AVPlayer()

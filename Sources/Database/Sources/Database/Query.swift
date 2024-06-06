@@ -24,7 +24,15 @@ public final class Query {
     private var albumIDs: [UUID] = []
     private var artistIDs: [UUID] = []
     
-    public init() { }
+    public init(
+        songIDs: [UUID] = []
+        , albumIDs: [UUID] = []
+        , artistIDs: [UUID] = []
+    ) {
+        self.songIDs = songIDs
+        self.albumIDs = albumIDs
+        self.artistIDs = artistIDs
+    }
     
     public func addBasis(publisher: CurrentValueSubject<DataBasis, Never>) {
         publisher
@@ -41,6 +49,14 @@ extension Query {
         songIDs = album.songs
         albumIDs = [album.id]
         artistIDs = album.artists
+    }
+    
+    public static func forSong(_ song: Song) -> Query {
+        return Query(
+            songIDs: [song.id]
+            , albumIDs: song.albums
+            , artistIDs: song.artists
+        )
     }
 
 }

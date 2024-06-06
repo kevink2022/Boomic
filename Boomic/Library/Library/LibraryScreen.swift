@@ -15,38 +15,43 @@ private typealias SI = ViewConstants.SystemImages
 struct LibraryScreen: View {
     @Environment(\.repository) private var repository
     @Environment(\.navigator) private var navigator
+    @Environment(\.preferences) private var preferences
     
     var body: some View { 
         @Bindable var navigator = navigator
         
         NavigationStack(path: $navigator.library) {
-            DynamicGrid(title: "Library", titleFont: F.screenTitle) {
-                Button {
-                    navigator.library.append(LibraryNavigation.songs)
+            
+            GridList(
+                title: "Library"
+                , key: Preferences.GridKeys.library
+                , titleFont: F.screenTitle
+                , entries: preferences.libraryOrder.map({ libraryButton in
+                    switch libraryButton {
                     
-                } label: {
-                    LibraryGridEntry(title: "Songs", imageName: SI.songs)
-                }
-                
-                Button {
-                    navigator.library.append(LibraryNavigation.albums)
-                } label: {
-                    LibraryGridEntry(title: "Albums", imageName: SI.album)
-                }
-                
-                Button {
-                    navigator.library.append(LibraryNavigation.artists)
-                } label: {
-                    LibraryGridEntry(title: "Artists", imageName: SI.artist)
-                }
-                
-                Button {
-                    Task { await repository.addSongs([]) }
-                } label: {
-                    LibraryGridEntry(title: "Add Songs", imageName: SI.addSongs)
-                }
-            }
-            .foregroundStyle(.primary)
+                    case .songs:
+                        GridListEntry(
+                            label: "Songs"
+                            , action: { navigator.library.navigateTo(LibraryNavigation.songs) }
+                            , icon: { LibraryGridEntry(imageName: SI.songs) }
+                        )
+                    
+                    case .albums:
+                        GridListEntry(
+                            label: "Albums"
+                            , action: { navigator.library.navigateTo(LibraryNavigation.albums) }
+                            , icon: { LibraryGridEntry(imageName: SI.album) }
+                        )
+                    
+                    case .artists:
+                        GridListEntry(
+                            label: "Artists"
+                            , action: { navigator.library.navigateTo(LibraryNavigation.artists) }
+                            , icon: { LibraryGridEntry(imageName: SI.artist) }
+                        )
+                    }
+                })
+            )
             .padding(C.gridPadding)
             
             .navigationDestination(for: LibraryNavigation.self) { menu in

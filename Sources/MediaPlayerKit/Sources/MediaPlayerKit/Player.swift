@@ -11,17 +11,27 @@ import Combine
 import MediaPlayer
 
 import Models
-import MediaFileKit
 import Repository
+import Database
 
 @Observable
 public final class SongPlayer {
     
     // data
-    public private(set) var song: Song?
+    public var song: Song? { songQuery.songs.first ?? baseSong }
     public private(set) var queue: MediaQueue?
     public private(set) var art: MediaArt?
-
+    private var baseSong: Song? {
+        didSet {
+            if let song = baseSong {
+                songQuery = Query.forSong(song)
+                repository.addQuery(songQuery)
+            }
+        }
+    }
+    private var songQuery: Query
+    public var songDuration: TimeInterval { engine?.duration ?? song?.duration ?? 0 }
+    
     // behavioral state
     public private(set) var queueOrder: MediaQueueOrder // not derived from the queue itself?
     public private(set) var repeatState: MediaQueueRepeat
@@ -41,7 +51,9 @@ public final class SongPlayer {
     public init(
         repository: Repository = Repository(inMemory: true)
     ) {
-        self.song = nil
+        //self.song = nil
+        self.baseSong = nil
+        self.songQuery = Query()
         self.queue = nil
         self.engine = nil
         self.engineStatus = .idle
@@ -149,7 +161,7 @@ extension SongPlayer {
 extension SongPlayer {
     
     private func setSong(_ song: Song, autoPlay: Bool = true) {
-        self.song = song
+        self.baseSong = song
         self.art = song.art
         
         engine = {

@@ -13,6 +13,7 @@ private typealias F = ViewConstants.Fonts
 
 struct AllArtistsScreen: View {
     @Environment(\.repository) private var repository
+    @Environment(\.navigator) private var navigator
     @State private var artists: [Artist] = []
     
     // dynamic grid
@@ -27,13 +28,25 @@ struct AllArtistsScreen: View {
     
     var body: some View {
         ScrollView {
-            DynamicGrid(title: "Artists", titleFont: F.screenTitle) {
-                ForEach(artists) { artist in
-                    ArtistGridLink(artist: artist)
-                }
-            }
+            GridList(
+                title: "Artists"
+                , key: Preferences.GridKeys.allArtists
+                , titleFont: F.screenTitle
+                , buttonsInToolbar: true
+                , entries: artists.map({ artist in
+                    GridListEntry(
+                        label: artist.name
+                        , action: { navigator.library.navigateTo(artist) }
+                        , icon: { 
+                            MediaArtView(artist.art)
+                                .clipShape(Circle())
+                        }
+                    )
+                })
+            )
+            .padding(.horizontal, C.gridPadding)
         }
-        .padding(.horizontal, C.gridPadding)
+        
         
         .task {
             artists = await repository.getArtists(for: nil)

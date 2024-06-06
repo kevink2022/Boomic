@@ -26,7 +26,7 @@ public final class Repository {
         , transactor: Transactor<KeySet<LibraryTransaction>, DataBasis> = Transactor<KeySet<LibraryTransaction>, DataBasis>(
             basePost: DataBasis.empty
             , key: "transactor"
-            , inMemory: true
+            , inMemory: false
             , coreCommit: { transaction, basis in await BasisResolver(currentBasis: basis).apply(transaction: transaction)}
         )
     ) {

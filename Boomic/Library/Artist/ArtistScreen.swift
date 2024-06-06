@@ -13,6 +13,7 @@ private typealias C = ViewConstants
 private typealias A = ViewConstants.Animations
 
 struct ArtistScreen: View {
+    @Environment(\.navigator) private var navigator
     @Environment(\.repository) private var repository
     let artist: Artist
     @State private var songs: [Song] = []
@@ -50,7 +51,6 @@ struct ArtistScreen: View {
                     ForEach(songs.prefix(showAllSongs ? songs.count : topSongCount)) { song in
                         Divider()
                         SongListButton(song: song, context: songs, queueName: artist.name)
-                            .padding(C.songListEntryPadding)
                     }
                     Divider()
                     
@@ -69,11 +69,21 @@ struct ArtistScreen: View {
                     Divider()
                 }
                 
-                DynamicGrid(title: "Albums") {
-                    ForEach(albums) { album in
-                        AlbumGridLink(album: album)
-                    }
-                }
+                GridList(
+                    title: "Albums"
+                    , key: Preferences.GridKeys.artistAlbums
+                    , titleFont: F.screenTitle
+                    , entries: albums.map({ album in
+                        GridListEntry(
+                            label: album.title
+                            , subLabel: album.artistName ?? "Unknown Artist"
+                            , action: { navigator.library.navigateTo(album) }
+                            , icon: {
+                                MediaArtView(album.art, cornerRadius: C.albumCornerRadius)
+                            }
+                        )
+                    })
+                )
                 .padding(.top)
             }
             .padding(C.gridPadding)

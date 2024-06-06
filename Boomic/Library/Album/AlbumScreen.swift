@@ -15,6 +15,7 @@ private typealias SI = ViewConstants.SystemImages
 
 struct AlbumScreen: View {
     @Environment(\.repository) private var repository
+    @Environment(\.player) private var player
     private let baseAlbum: Album
     @State private var query = Query()
     private var album: Album { query.albums.first ?? baseAlbum }
@@ -51,7 +52,10 @@ struct AlbumScreen: View {
                 
                 HStack {
                     LargeButton {
-                        
+                        if let song = songs.first {
+                            player.setSong(song, context: songs, queueName: album.title)
+                            if player.queueOrder == .shuffle { player.toggleShuffle() }
+                        }
                     } label: {
                         HStack {
                             Image(systemName: SI.play)
@@ -60,7 +64,10 @@ struct AlbumScreen: View {
                     }
                     
                     LargeButton {
-                        
+                        if let song = songs.randomElement() {
+                            player.setSong(song, context: songs, queueName: album.title)
+                            if player.queueOrder == .inOrder { player.toggleShuffle() }
+                        }
                     } label: {
                         HStack {
                             Image(systemName: SI.shuffle)
@@ -83,7 +90,6 @@ struct AlbumScreen: View {
                         Divider()
                         
                         SongListButton(song: song, context: songs, queueName: album.title, showAlbumArt: false, showTrackNumber: true)
-                            .padding(C.songListEntryPadding)
                     }
                     Divider()
                 }
@@ -122,6 +128,7 @@ struct AlbumScreen: View {
 #Preview {
     AlbumScreen(album: PreviewMocks.shared.previewAlbum())
         .environment(\.repository, PreviewMocks.shared.previewRepository())
+        .environment(\.player, PreviewMocks.shared.previewPlayer())
 }
 
 

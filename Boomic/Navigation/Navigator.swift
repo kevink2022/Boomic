@@ -14,7 +14,16 @@ public final class Navigator {
     
     public var library = NavigationPath()
     
-    public var tab = TabNavigation.home
+    public var tab = TabNavigation.home {
+        willSet {
+            if tab == newValue {
+                switch tab {
+                case .home: library.toRoot()
+                default: break
+                }
+            }
+        }
+    }
     
     public var playerOffset: CGFloat = 800
     public var playerFullscreen = false
@@ -33,14 +42,24 @@ public final class Navigator {
     }
 }
 
-public enum LibraryNavigation : String, CaseIterable, Identifiable, Hashable {
+extension NavigationPath {
+    mutating func toRoot() {
+        self.removeLast(self.count)
+    }
+    
+    mutating func navigateTo(_ value: any Hashable) {
+        self.append(value)
+    }
+}
+
+public enum LibraryNavigation : String, CaseIterable, Identifiable, Hashable, Codable {
    
     case songs, albums, artists
     
     public var id : String { self.rawValue }
 }
 
-public enum TabNavigation : String, CaseIterable, Identifiable, Hashable {
+public enum TabNavigation : String, CaseIterable, Identifiable, Hashable, Codable {
    
     case home, settings, mixer, search
     

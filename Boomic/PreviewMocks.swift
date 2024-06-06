@@ -20,7 +20,7 @@ internal class PreviewMocks {
     static let shared = PreviewMocks()
     
     private let sharedRepo = Repository(
-        fileInterface: FileInterface(at: URL(string: "/Users/kevinkelly/Music/Stuff")!)
+        fileInterface: FileInterface(at: URL(string: "/Users/kevinkelly/Music/uploads")!)
         , transactor: Transactor<KeySet<LibraryTransaction>, DataBasis>(
             basePost: DataBasis.empty
             , key: "transactor-preview"
@@ -30,6 +30,8 @@ internal class PreviewMocks {
     )
     
     public func previewNavigator() -> Navigator { return Navigator() }
+    
+    public func previewPreferences() -> Preferences { return Preferences(inMemory: true) }
 
     // MARK: - Repositories
     public func previewRepository() -> Repository {
