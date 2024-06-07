@@ -20,7 +20,7 @@ struct QueueList: View {
             HStack {
                 Text(player.queue?.name ?? "Queue")
                     .lineLimit(1)
-                    .font(F.body)
+                    .font(F.listEntryTitle)
                     .opacity(C.queueNameOpacity)
                 
                 Spacer()

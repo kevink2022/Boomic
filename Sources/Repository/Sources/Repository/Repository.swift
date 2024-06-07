@@ -14,7 +14,7 @@ public final class Repository {
     private let fileInterface: FileInterface
        
     private let queryEngine: QueryEngine
-    private let transactor: Transactor<KeySet<LibraryTransaction>, DataBasis>
+    private let transactor: Transactor<LibraryTransaction, DataBasis>
     private var dataBasis: DataBasis { transactor.publisher.value }
     
     private var cancellables: Set<AnyCancellable> = []
@@ -23,7 +23,7 @@ public final class Repository {
         fileInterface: FileInterface = FileInterface(at: URL.documentsDirectory)
         , artLoader: MediaArtLoader = MediaArtCache()
         , queryEngine: QueryEngine = QueryEngine()
-        , transactor: Transactor<KeySet<LibraryTransaction>, DataBasis> = Transactor<KeySet<LibraryTransaction>, DataBasis>(
+        , transactor: Transactor<LibraryTransaction, DataBasis> = Transactor<LibraryTransaction, DataBasis>(
             basePost: DataBasis.empty
             , key: "transactor"
             , inMemory: false
@@ -39,7 +39,7 @@ public final class Repository {
     
     public convenience init(inMemory: Bool = false) {
         self.init(
-            transactor: Transactor<KeySet<LibraryTransaction>, DataBasis>(
+            transactor: Transactor<LibraryTransaction, DataBasis>(
                 basePost: DataBasis.empty
                 , key: "transactor"
                 , inMemory: inMemory
@@ -97,7 +97,7 @@ extension Repository {
         }
     }
     
-    public func getTransactions(last count: Int? = nil) async -> [DataTransaction<KeySet<LibraryTransaction>>] {
+    public func getTransactions(last count: Int? = nil) async -> [DataTransaction<LibraryTransaction>] {
         return await transactor.viewTransactions(last: count)
     }
     
@@ -107,11 +107,11 @@ extension Repository {
         }
     }
     
-    public func rollbackTo(after transaction: DataTransaction<KeySet<LibraryTransaction>>) async {
+    public func rollbackTo(after transaction: DataTransaction<LibraryTransaction>) async {
         await transactor.rollbackTo(after: transaction)
     }
     
-    public func rollbackTo(before transaction: DataTransaction<KeySet<LibraryTransaction>>) async {
+    public func rollbackTo(before transaction: DataTransaction<LibraryTransaction>) async {
         await transactor.rollbackTo(before: transaction)
     }
 }

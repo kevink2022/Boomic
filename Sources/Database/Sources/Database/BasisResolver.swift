@@ -26,13 +26,15 @@ public final class BasisResolver {
         self.currentBasis = currentBasis
     }
     
-    public func apply(transaction: KeySet<LibraryTransaction>, to basis: DataBasis? = nil) async -> DataBasis {
+    public func apply(transaction: LibraryTransaction, to basis: DataBasis? = nil) async -> DataBasis {
+        
+        let assertions = transaction.assertions
         
         var basis = basis ?? currentBasis
         
-        basis = await applyDelete(transaction, to: basis)
-        basis = await applyUpdate(transaction, to: basis)
-        basis = await applyAdd(transaction, to: basis)
+        basis = await applyDelete(assertions, to: basis)
+        basis = await applyUpdate(assertions, to: basis)
+        basis = await applyAdd(assertions, to: basis)
         
         let mappedBasis = basis
         /// TODO: create 'SortedSets' that are ordered array sets, then maintain along with basis
@@ -59,9 +61,8 @@ public final class BasisResolver {
     }
     
     
-    private func applyAdd(_ transaction: KeySet<LibraryTransaction>, to basis: DataBasis) async -> DataBasis {
-       
-        let adds = transaction.filter { $0.operation == .add }
+    private func applyAdd(_ assertions: KeySet<Assertion>, to basis: DataBasis) async -> DataBasis {
+        let adds = assertions.filter { $0.operation == .add }
         guard adds.count > 0 else { return basis }
         
         async let newSongMap_await = {
@@ -113,9 +114,8 @@ public final class BasisResolver {
         )
     }
     
-    private func applyUpdate(_ transaction: KeySet<LibraryTransaction>, to basis: DataBasis) async -> DataBasis {
-        
-        let updates = transaction.filter { $0.operation == .update }
+    private func applyUpdate(_ assertions: KeySet<Assertion>, to basis: DataBasis) async -> DataBasis {
+        let updates = assertions.filter { $0.operation == .update }
         guard updates.count > 0 else { return basis }
         
         async let newSongMap_await = {
@@ -170,9 +170,8 @@ public final class BasisResolver {
         )
     }
     
-    private func applyDelete(_ transaction: KeySet<LibraryTransaction>, to basis: DataBasis) async -> DataBasis {
-        
-        let deletes = transaction.filter { $0.operation == .delete }
+    private func applyDelete(_ assertions: KeySet<Assertion>, to basis: DataBasis) async -> DataBasis {
+        let deletes = assertions.filter { $0.operation == .delete }
         guard deletes.count > 0 else { return basis }
         
         async let newSongMap_await = {
@@ -224,176 +223,147 @@ public final class BasisResolver {
         )
     }
     
-    public func updateAlbum(_ update: AlbumUpdate) async -> KeySet<LibraryTransaction> {
-        guard let album = currentBasis.albumMap[update.id] else { return KeySet() }
+    public func updateAlbum(_ update: AlbumUpdate) async -> LibraryTransaction {
+        guard let album = currentBasis.albumMap[update.id] else { return .empty }
+        let label = "Update Album: \(album.title)"
         
-        var transaction = KeySet<LibraryTransaction>()
-        let albumUpdateTransaction = KeySet<LibraryTransaction>().inserting(.updateAlbum(update))
+        var songUpdateAssertions = KeySet<Assertion>()
+        let albumUpdateAssertion = KeySet<Assertion>().inserting(.updateAlbum(update))
         
         if update.newTitle == nil {
-            return albumUpdateTransaction
+            return albumUpdateAssertion.asTransaction(label: label, level: .normal)
         } else {
-            do {
-                album.songs.forEach {
-                    if let song = currentBasis.songMap[$0] {
-                        let songUpdate = SongUpdate(song: song, albumTitle: update.newTitle)
-                        transaction.insert(.updateSong(songUpdate))
-                    }
+            album.songs.forEach {
+                if let song = currentBasis.songMap[$0] {
+                    let songUpdate = SongUpdate(song: song, albumTitle: update.newTitle)
+                    songUpdateAssertions.insert(.updateSong(songUpdate))
                 }
-                let updateBasis = await self.apply(transaction: albumUpdateTransaction)
-                let linkTransaction = try await BasisResolver(currentBasis: updateBasis).updateLinks(transaction)
-                return try LibraryTransaction.flatten([albumUpdateTransaction, linkTransaction])
-            } catch {
-                print("error: \(error.localizedDescription)")
-                return KeySet()
             }
+            let updateBasis = await self.apply(transaction: albumUpdateAssertion.asTransaction())
+            let linkAssertions = await BasisResolver(currentBasis: updateBasis).updateLinks(songUpdateAssertions)
+            let finalAssertions = Assertion.flatten([albumUpdateAssertion, linkAssertions])
+            return finalAssertions.asTransaction(label: label, level: .significant)
         }
     }
     
-    public func updateArtist(_ update: ArtistUpdate) async -> KeySet<LibraryTransaction> {
-        guard let artist = currentBasis.artistMap[update.id] else { return KeySet() }
+    public func updateArtist(_ update: ArtistUpdate) async -> LibraryTransaction {
+        guard let artist = currentBasis.artistMap[update.id] else { return .empty }
+        let label = "Update Artist: \(artist.name)"
         
-        var transaction = KeySet<LibraryTransaction>()
-        let artistUpdateTransaction = KeySet<LibraryTransaction>().inserting(.updateArtist(update))
+        var songUpdateAssertions = KeySet<Assertion>()
+        let artistUpdateAssertion = KeySet<Assertion>().inserting(.updateArtist(update))
         
         if update.newName == nil {
-            return artistUpdateTransaction
+            return artistUpdateAssertion.asTransaction(label: label, level: .normal)
         } else {
-            do {
-                artist.songs.forEach {
-                    if let song = currentBasis.songMap[$0] {
-                        let songUpdate = SongUpdate(song: song, artistName: update.newName)
-                        transaction.insert(.updateSong(songUpdate))
-                    }
+            artist.songs.forEach {
+                if let song = currentBasis.songMap[$0] {
+                    let songUpdate = SongUpdate(song: song, artistName: update.newName)
+                    songUpdateAssertions.insert(.updateSong(songUpdate))
                 }
-                let updateBasis = await self.apply(transaction: artistUpdateTransaction)
-                let linkTransaction = try await BasisResolver(currentBasis: updateBasis).updateLinks(transaction)
-                return try LibraryTransaction.flatten([artistUpdateTransaction, linkTransaction])
-            } catch {
-                print("error: \(error.localizedDescription)")
-                return KeySet()
             }
+            let updateBasis = await self.apply(transaction: artistUpdateAssertion.asTransaction())
+            let linkAssertions = await BasisResolver(currentBasis: updateBasis).updateLinks(songUpdateAssertions)
+            let finalAssertions = Assertion.flatten([artistUpdateAssertion, linkAssertions])
+            return finalAssertions.asTransaction(label: label, level: .significant)
         }
     }
     
-    public func deleteAlbum(_ album: Album) async -> KeySet<LibraryTransaction> { 
-        guard let album = currentBasis.albumMap[album.id] else { return KeySet() }
+    public func deleteAlbum(_ album: Album) async -> LibraryTransaction {
+        guard let album = currentBasis.albumMap[album.id] else { return .empty }
         
-        var transaction = KeySet<LibraryTransaction>()
-        album.songs.forEach { transaction.insert(.deleteSong($0)) }
+        var assertions = KeySet<Assertion>()
+        album.songs.forEach { assertions.insert(.deleteSong($0)) }
         
-        do {
-            transaction = try await updateLinks(transaction)
-            return transaction
-        } catch {
-            print("error: \(error.localizedDescription)")
-            return KeySet()
-        }
+        assertions = await updateLinks(assertions)
+        return assertions.asTransaction(label: "Delete Album: \(album.title)", level: .significant)
     }
     
-    public func deleteArtist(_ artist: Artist) async -> KeySet<LibraryTransaction> {
-        guard let artist = currentBasis.artistMap[artist.id] else { return KeySet() }
+    public func deleteArtist(_ artist: Artist) async -> LibraryTransaction {
+        guard let artist = currentBasis.artistMap[artist.id] else { return .empty }
         
-        var transaction = KeySet<LibraryTransaction>()
-        artist.songs.forEach { transaction.insert(.deleteSong($0)) }
+        var assertions = KeySet<Assertion>()
+        artist.songs.forEach { assertions.insert(.deleteSong($0)) }
         
-        do {
-            transaction = try await updateLinks(transaction)
-            return transaction
-        } catch {
-            print("error: \(error.localizedDescription)")
-            return KeySet()
-        }
+        assertions = await updateLinks(assertions)
+        return assertions.asTransaction(label: "Delete Artist: \(artist.name)", level: .significant)
     }
     
-    public func deleteSong(_ song: Song) async -> KeySet<LibraryTransaction> {
-        guard let song = currentBasis.songMap[song.id] else { return KeySet() }
+    public func deleteSong(_ song: Song) async -> LibraryTransaction {
+        guard let song = currentBasis.songMap[song.id] else { return .empty }
         
-        var transaction = KeySet<LibraryTransaction>()
-        transaction.insert(.deleteSong(song.id))
+        var assertions = KeySet<Assertion>()
+        assertions.insert(.deleteSong(song.id))
         
-        do {
-            transaction = try await updateLinks(transaction)
-            return transaction
-        } catch {
-            print("error: \(error.localizedDescription)")
-            return KeySet()
-        }
+        assertions = await updateLinks(assertions)
+        return assertions.asTransaction(label: "Delete Song: \(song.label)", level: .significant)
+
     }
     
-    public func updateSong(_ update: SongUpdate) async -> KeySet<LibraryTransaction> {
-        guard currentBasis.songMap[update.id] != nil else { return KeySet() }
+    public func updateSong(_ update: SongUpdate) async -> LibraryTransaction {
+        guard let song = currentBasis.songMap[update.id] else { return .empty }
+        let label = "Update Song: \(song.label)"
         
-        var transaction = KeySet<LibraryTransaction>()
-        transaction.insert(.updateSong(update))
+        var assertions = KeySet<Assertion>()
+        assertions.insert(.updateSong(update))
         
         if update.artistName != nil || update.albumTitle != nil {
-            do {
-                transaction = try await updateLinks(transaction)
-                return transaction
-            } catch {
-                print("error: \(error.localizedDescription)")
-                return KeySet()
-            }
+            assertions = await updateLinks(assertions)
+            return assertions.asTransaction(label: label, level: .significant)
         }
 
-        return transaction
+        return assertions.asTransaction(label: label, level: .normal)
     }
     
-    public func addSongs(_ unlinkedSongs: [Song]) async -> KeySet<LibraryTransaction> {
-        guard unlinkedSongs.count > 0 else { return KeySet() }
+    public func addSongs(_ unlinkedSongs: [Song]) async -> LibraryTransaction {
+        guard unlinkedSongs.count > 0 else { return .empty }
         
-        var transaction = KeySet<LibraryTransaction>()
-        unlinkedSongs.forEach{ transaction.insert(.addSong($0)) }
+        var assertions = KeySet<Assertion>()
+        unlinkedSongs.forEach{ assertions.insert(.addSong($0)) }
         
-        do {
-            transaction = try await updateLinks(transaction)
-            return transaction
-        } catch {
-            print("error: \(error.localizedDescription)")
-            return KeySet()
-        }
+        assertions = await updateLinks(assertions)
+        return assertions.asTransaction(label: "Import Songs: \(unlinkedSongs.count) songs", level: .significant)
     }
     
-    fileprivate func updateLinks(_ unlinkedSongTransaction: KeySet<LibraryTransaction>) async throws -> KeySet<LibraryTransaction> {
-        let songs = unlinkedSongTransaction.filter { $0.model == .song }
+    fileprivate func updateLinks(_ songAssertions: KeySet<Assertion>) async -> KeySet<Assertion> {
+        let songs = songAssertions.filter { $0.model == .song }
         
         async let albumTitleLinks_await = songsToTitleLinks(songs)
         async let artistNameLinks_await = songsToNameLinks(songs)
         
         let (albumTitleLinks, artistNameLinks) = await (albumTitleLinks_await, artistNameLinks_await)
         
-        let songsLinkTransaction = linkNewSongs(songs, albumTitles: albumTitleLinks, artistNames: artistNameLinks)
-        let songsTransaction = try LibraryTransaction.flatten([unlinkedSongTransaction, songsLinkTransaction])
+        let songLinkingAssertions = linkNewSongs(songs, albumTitles: albumTitleLinks, artistNames: artistNameLinks)
+        let songLinksAppliedAssertions = Assertion.flatten([songAssertions, songLinkingAssertions])
         
-        async let linkedAlbums_await = linkNewAlbums(albumTitleLinks, songLinkTransaction: songsTransaction)
-        async let linkedArtists_await = linkNewArtists(artistNameLinks, songLinkTransaction: songsTransaction)
+        async let linkedAlbums_await = linkNewAlbums(albumTitleLinks, songLinkTransaction: songLinksAppliedAssertions)
+        async let linkedArtists_await = linkNewArtists(artistNameLinks, songLinkTransaction: songLinksAppliedAssertions)
         
         let (
-            (existingAlbumsTransaction, newAlbumsTransaction)
-            , (existingArtistsTransaction, newArtistsTransaction)
+            (existingAlbumsAssertions, newAlbumsAssertions)
+            , (existingArtistsAssertions, newArtistsAssertions)
         ) = await (linkedAlbums_await, linkedArtists_await)
         
-        let buildTransaction = try LibraryTransaction.flatten([existingAlbumsTransaction, existingArtistsTransaction])
-        let newLinksTransaction = try LibraryTransaction.flatten([unlinkedSongTransaction, songsLinkTransaction, newAlbumsTransaction, newArtistsTransaction])
-        let linkedBasisTransaction = try LibraryTransaction.flatten([buildTransaction, newLinksTransaction])
+        let buildDetailsBaseAssertion = Assertion.flatten([existingAlbumsAssertions, existingArtistsAssertions])
+        let newLinksAssertions = Assertion.flatten([songAssertions, songLinkingAssertions, newAlbumsAssertions, newArtistsAssertions])
+        let linkedUnorganizedAssertions = Assertion.flatten([buildDetailsBaseAssertion, newLinksAssertions])
         
-        let newLinksBasis = await self.apply(transaction: linkedBasisTransaction, to: DataBasis.empty)
+        let linkedUnorganizedBasis = await self.apply(transaction: linkedUnorganizedAssertions.asTransaction(), to: DataBasis.empty)
         
-        async let newSongs_await = songsResolveDetails(newLinksBasis)
-        async let newAlbums_await = albumsResolveDetails(newLinksBasis)
-        async let newArtists_await = artistsResolveDetails(newLinksBasis)
+        async let newSongs_await = songsResolveDetails(linkedUnorganizedBasis)
+        async let newAlbums_await = albumsResolveDetails(linkedUnorganizedBasis)
+        async let newArtists_await = artistsResolveDetails(linkedUnorganizedBasis)
         
         let (songDetailsTransaction, albumDetailsTransaction, artistDetailsTransaction) = await (newSongs_await, newAlbums_await, newArtists_await)
         
-        let detailsTransaction = try LibraryTransaction.flatten([songDetailsTransaction, albumDetailsTransaction, artistDetailsTransaction])
-        let finalTransaction = try LibraryTransaction.flatten([newLinksTransaction, detailsTransaction])
+        let resolveDetailsAssertions = Assertion.flatten([songDetailsTransaction, albumDetailsTransaction, artistDetailsTransaction])
+        let finalAssertions = Assertion.flatten([newLinksAssertions, resolveDetailsAssertions])
         
-        return finalTransaction.filter { $0.willModify(currentBasis) }
+        return finalAssertions.filter { $0.willModify(currentBasis) }
     }
     
     // MARK: - String Maps
-    private func songsToTitleLinks(_ songTransaction: KeySet<LibraryTransaction>) -> [String:UUID] {
+    private func songsToTitleLinks(_ songTransaction: KeySet<Assertion>) -> [String:UUID] {
         var affectedAlbums = [String:UUID]()
         
          songTransaction.forEach { songTransaction in
@@ -429,7 +399,7 @@ public final class BasisResolver {
         return affectedAlbums
     }
     
-    private func songsToNameLinks(_ songTransaction: KeySet<LibraryTransaction>) -> [String:UUID] {
+    private func songsToNameLinks(_ songTransaction: KeySet<Assertion>) -> [String:UUID] {
         var affectedArtists = [String:UUID]()
         
          songTransaction.forEach { songTransaction in
@@ -465,7 +435,7 @@ public final class BasisResolver {
         return affectedArtists
     }
     
-    private func songFromTransaction(_ songTransaction: LibraryTransaction, excludeDelete: Bool = false) -> Song? {
+    private func songFromTransaction(_ songTransaction: Assertion, excludeDelete: Bool = false) -> Song? {
         switch songTransaction {
         case .addSong(let song): return song
         case .updateSong(let update): if let song = currentBasis.songMap[update.id] { return song.apply(update: update) }
@@ -476,8 +446,8 @@ public final class BasisResolver {
     }
     
     // MARK: - Naive Linking
-    private func linkNewSongs(_ songTransactions: KeySet<LibraryTransaction>, albumTitles: [String:UUID], artistNames: [String:UUID]) -> KeySet<LibraryTransaction> {
-        var linkUpdatesTransaction = KeySet<LibraryTransaction>()
+    private func linkNewSongs(_ songTransactions: KeySet<Assertion>, albumTitles: [String:UUID], artistNames: [String:UUID]) -> KeySet<Assertion> {
+        var linkUpdatesTransaction = KeySet<Assertion>()
         
         songTransactions.forEach { transaction in
             guard let song = songFromTransaction(transaction, excludeDelete: true) else { return }
@@ -504,7 +474,7 @@ public final class BasisResolver {
         let albumIDs: [UUID]
         let artistIDs: [UUID]
         
-        public static func fromTransaction(_ transaction: LibraryTransaction) -> Link? {
+        public static func fromTransaction(_ transaction: Assertion) -> Link? {
             switch transaction {
             case .addSong(let song): return Link(songID: song.id, albumIDs: song.albums, artistIDs: song.artists)
             case .updateSong(let update): return Link(songID: update.id, albumIDs: update.albums ?? [], artistIDs: update.artists ?? [])
@@ -513,9 +483,9 @@ public final class BasisResolver {
         }
     }
     
-    private func linkNewAlbums(_ affectedAlbums: [String:UUID], songLinkTransaction: KeySet<LibraryTransaction>) -> (KeySet<LibraryTransaction>, KeySet<LibraryTransaction>) {
-        var baseTransactions = KeySet<LibraryTransaction>()
-        var newTransactions = KeySet<LibraryTransaction>()
+    private func linkNewAlbums(_ affectedAlbums: [String:UUID], songLinkTransaction: KeySet<Assertion>) -> (KeySet<Assertion>, KeySet<Assertion>) {
+        var baseTransactions = KeySet<Assertion>()
+        var newTransactions = KeySet<Assertion>()
         
         let links = songLinkTransaction.values.compactMap { Link.fromTransaction($0) }
         
@@ -563,9 +533,9 @@ public final class BasisResolver {
         return (baseTransactions, newTransactions)
     }
     
-    private func linkNewArtists(_ affectedArtists: [String:UUID], songLinkTransaction: KeySet<LibraryTransaction>) -> (KeySet<LibraryTransaction>, KeySet<LibraryTransaction>) {
-        var baseTransactions = KeySet<LibraryTransaction>()
-        var newTransactions = KeySet<LibraryTransaction>()
+    private func linkNewArtists(_ affectedArtists: [String:UUID], songLinkTransaction: KeySet<Assertion>) -> (KeySet<Assertion>, KeySet<Assertion>) {
+        var baseTransactions = KeySet<Assertion>()
+        var newTransactions = KeySet<Assertion>()
         
         let links = songLinkTransaction.values.compactMap { Link.fromTransaction($0) }
         
@@ -615,8 +585,8 @@ public final class BasisResolver {
     }
     
     // MARK: - Detail Resolution
-    private func songsResolveDetails(_ linkedBasis: DataBasis) -> KeySet<LibraryTransaction> {
-        var detailsTransaction = KeySet<LibraryTransaction>()
+    private func songsResolveDetails(_ linkedBasis: DataBasis) -> KeySet<Assertion> {
+        var detailsTransaction = KeySet<Assertion>()
         
         for song in linkedBasis.allSongs {
             let albums = song.albums
@@ -637,8 +607,8 @@ public final class BasisResolver {
         return detailsTransaction
     }
     
-    private func albumsResolveDetails(_ linkedBasis: DataBasis) -> KeySet<LibraryTransaction> {
-        var detailsTransaction = KeySet<LibraryTransaction>()
+    private func albumsResolveDetails(_ linkedBasis: DataBasis) -> KeySet<Assertion> {
+        var detailsTransaction = KeySet<Assertion>()
         
         for album in linkedBasis.allAlbums {
 
@@ -673,8 +643,8 @@ public final class BasisResolver {
         return detailsTransaction
     }
     
-    private func artistsResolveDetails(_ linkedBasis: DataBasis) -> KeySet<LibraryTransaction> {
-        var detailsTransaction = KeySet<LibraryTransaction>()
+    private func artistsResolveDetails(_ linkedBasis: DataBasis) -> KeySet<Assertion> {
+        var detailsTransaction = KeySet<Assertion>()
         
         for artist in linkedBasis.allArtists {
 

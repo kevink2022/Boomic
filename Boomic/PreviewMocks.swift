@@ -20,14 +20,18 @@ internal class PreviewMocks {
     static let shared = PreviewMocks()
     
     private let sharedRepo = Repository(
-        fileInterface: FileInterface(at: URL(string: "/Users/kevinkelly/Music/uploads")!)
-        , transactor: Transactor<KeySet<LibraryTransaction>, DataBasis>(
+        fileInterface: FileInterface(at: URL(string: "/Users/kevinkelly/Music/Stuff")!)
+        , transactor: Transactor<LibraryTransaction, DataBasis>(
             basePost: DataBasis.empty
             , key: "transactor-preview"
             , inMemory: true
             , coreCommit: { transaction, basis in await BasisResolver(currentBasis: basis).apply(transaction: transaction)}
         )
     )
+    
+    init() {
+        Task { await sharedRepo.addSongs([]) }
+    }
     
     public func previewNavigator() -> Navigator { return Navigator() }
     

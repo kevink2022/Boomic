@@ -46,7 +46,7 @@ struct SongListEntry: View {
             
             VStack(alignment: .leading) {
                 Text(song.label)
-                    .font(F.body)
+                    .font(F.listEntryTitle)
                     .lineLimit(1)
                 
                 if showArtist, let artist = song.artistName {

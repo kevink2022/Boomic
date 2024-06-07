@@ -75,10 +75,10 @@ final class DatabaseTests: XCTestCase {
         
         let transaction = await sut.addSongs(unlinkedSongs)
         
-        XCTAssertEqual(transaction.filter({ $0.model == .song }).count, songs.count)
-        XCTAssertEqual(transaction.filter({ $0.model == .album }).count, albums.count)
-        XCTAssertEqual(transaction.filter({ $0.model == .artist }).count, artists.count)
-        XCTAssertEqual(transaction.filter({ $0.operation == .add }).count, songs.count + albums.count + artists.count)
+        XCTAssertEqual(transaction.assertions.filter({ $0.model == .song }).count, songs.count)
+        XCTAssertEqual(transaction.assertions.filter({ $0.model == .album }).count, albums.count)
+        XCTAssertEqual(transaction.assertions.filter({ $0.model == .artist }).count, artists.count)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, songs.count + albums.count + artists.count)
     }
     
     func test_emptyAddTransaction() async {
@@ -117,10 +117,10 @@ final class DatabaseTests: XCTestCase {
         let ga2_transaction = await sut.addSongs(ga2_songs)
         let ga2_basis = await sut.apply(transaction: ga2_transaction)
         
-        XCTAssertEqual(ga2_transaction.filter({ $0.model == .song }).count, ga2_songs.count)
-        XCTAssertEqual(ga2_transaction.filter({ $0.model == .album }).count, 1)
-        XCTAssertEqual(ga2_transaction.filter({ $0.model == .artist && $0.operation == .add }).count, 2)
-        XCTAssertEqual(ga2_transaction.filter({ $0.model == .artist && $0.operation == .update }).count, 4)
+        XCTAssertEqual(ga2_transaction.assertions.filter({ $0.model == .song }).count, ga2_songs.count)
+        XCTAssertEqual(ga2_transaction.assertions.filter({ $0.model == .album }).count, 1)
+        XCTAssertEqual(ga2_transaction.assertions.filter({ $0.model == .artist && $0.operation == .add }).count, 2)
+        XCTAssertEqual(ga2_transaction.assertions.filter({ $0.model == .artist && $0.operation == .update }).count, 4)
         
         XCTAssertEqual(ga2_basis.allSongs.count, songs.count)
         XCTAssertEqual(ga2_basis.allAlbums.count, albums.count)
@@ -145,10 +145,10 @@ final class DatabaseTests: XCTestCase {
         let evenTransaction = await sut.addSongs(evenSongs)
         let evenBasis = await sut.apply(transaction: evenTransaction)
         
-        XCTAssertEqual(evenTransaction.filter({ $0.model == .song && $0.operation == .add }).count, evenSongs.count)
-        XCTAssertEqual(evenTransaction.filter({ $0.model == .album && $0.operation == .update }).count, 2)
-        XCTAssertEqual(evenTransaction.filter({ $0.model == .artist && $0.operation == .add }).count, 1)
-        XCTAssertEqual(evenTransaction.filter({ $0.model == .artist && $0.operation == .update }).count, 5)
+        XCTAssertEqual(evenTransaction.assertions.filter({ $0.model == .song && $0.operation == .add }).count, evenSongs.count)
+        XCTAssertEqual(evenTransaction.assertions.filter({ $0.model == .album && $0.operation == .update }).count, 2)
+        XCTAssertEqual(evenTransaction.assertions.filter({ $0.model == .artist && $0.operation == .add }).count, 1)
+        XCTAssertEqual(evenTransaction.assertions.filter({ $0.model == .artist && $0.operation == .update }).count, 5)
         
         XCTAssertEqual(evenBasis.allSongs.count, songs.count)
         XCTAssertEqual(evenBasis.allAlbums.count, albums.count)
@@ -176,11 +176,11 @@ final class DatabaseTests: XCTestCase {
         let transaction = await sut.updateSong(update)
         let newBasis = await sut.apply(transaction: transaction)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .add }).count, 0)
-        XCTAssertEqual(transaction.filter({ $0.operation == .update }).count, 1)
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 1)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 0)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .update && $0.model == .song }).count, 1)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .song }).count, 1)
         
         compare(stable: expectedStableBasis, against: newBasis, test: #function)
     }
@@ -203,14 +203,14 @@ final class DatabaseTests: XCTestCase {
         let transaction = await sut.updateSong(update)
         let newBasis = await sut.apply(transaction: transaction)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .add }).count, 1)
-        XCTAssertEqual(transaction.filter({ $0.operation == .update }).count, 2)
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete }).count, 1)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 1)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 2)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 1)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .update && $0.model == .song }).count, 1) // update a caged persona
-        XCTAssertEqual(transaction.filter({ $0.operation == .add && $0.model == .artist }).count, 1) // add maximum
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete && $0.model == .artist }).count, 1) // delete minimum
-        XCTAssertEqual(transaction.filter({ $0.operation == .update && $0.model == .album }).count, 1) // update ga2 to link to max
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .song }).count, 1) // update a caged persona
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add && $0.model == .artist }).count, 1) // add maximum
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .artist }).count, 1) // delete minimum
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .album }).count, 1) // update ga2 to link to max
         
         compare(stable: expectedStableBasis, against: newBasis, test: #function)
     }
@@ -229,13 +229,13 @@ final class DatabaseTests: XCTestCase {
         let transaction = await sut.deleteSong(songToDelete)
         let newBasis = await sut.apply(transaction: transaction)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .add }).count, 0)
-        XCTAssertEqual(transaction.filter({ $0.operation == .update }).count, 2)
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete }).count, 1)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 2)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 1)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete && $0.model == .song }).count, 1) // delete a caged persona
-        XCTAssertEqual(transaction.filter({ $0.operation == .update && $0.model == .album }).count, 1) // update its album
-        XCTAssertEqual(transaction.filter({ $0.operation == .update && $0.model == .artist }).count, 1) // update its artist
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .song }).count, 1) // delete a caged persona
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .album }).count, 1) // update its album
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .artist }).count, 1) // update its artist
         
         compare(stable: expectedStableBasis, against: newBasis, test: #function)
     }
@@ -252,11 +252,11 @@ final class DatabaseTests: XCTestCase {
         guard let updatedAlbum = newBasis.albumMap[albumToUpdate.id]
         else { XCTFail("Updated model not found"); return }
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .add }).count, 0)
-        XCTAssertEqual(transaction.filter({ $0.operation == .update }).count, 1)
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 1)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 0)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .update && $0.model == .album }).count, 1) // update girls apartment
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .album }).count, 1) // update girls apartment
         
         XCTAssertEqual(updatedAlbum.artistName, "Various Touhou Girls")
     }
@@ -279,13 +279,13 @@ final class DatabaseTests: XCTestCase {
         let transaction = await sut.updateAlbum(update)
         let newBasis = await sut.apply(transaction: transaction)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .add }).count, 0)
-        XCTAssertEqual(transaction.filter({ $0.operation == .update }).count, 15)
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 15)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 0)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .update && $0.model == .album }).count, 1) // update girls apartment
-        XCTAssertEqual(transaction.filter({ $0.operation == .update && $0.model == .song }).count, 10) // update girls apartment songs
-        XCTAssertEqual(transaction.filter({ $0.operation == .update && $0.model == .artist }).count, 4) // artists albums sorted alphbetically, update sorting
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .album }).count, 1) // update girls apartment
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .song }).count, 10) // update girls apartment songs
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .artist }).count, 4) // artists albums sorted alphbetically, update sorting
         
         XCTAssertEqual(newBasis.albumMap[albumToUpdate.id]?.id, albumToUpdate.id)
         
@@ -306,14 +306,14 @@ final class DatabaseTests: XCTestCase {
         let transaction = await sut.deleteAlbum(albumToDelete)
         let newBasis = await sut.apply(transaction: transaction)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .add }).count, 0)
-        XCTAssertEqual(transaction.filter({ $0.operation == .update }).count, 4)
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete }).count, 12)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 4)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 12)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete && $0.model == .album }).count, 1) // delete girls apartment
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete && $0.model == .song }).count, 10) // delete girls apartment songs
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete && $0.model == .artist }).count, 1) // delete girls apartment only artist (tli-synth)
-        XCTAssertEqual(transaction.filter({ $0.operation == .update && $0.model == .artist }).count, 4) // update artists on both albums
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .album }).count, 1) // delete girls apartment
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .song }).count, 10) // delete girls apartment songs
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .artist }).count, 1) // delete girls apartment only artist (tli-synth)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .artist }).count, 4) // update artists on both albums
         
         compare(stable: expectedStableBasis, against: newBasis, test: #function)
     }
@@ -330,11 +330,11 @@ final class DatabaseTests: XCTestCase {
         guard let updatedArtist = newBasis.artistMap[artistToUpdate.id]
         else { XCTFail("Updated model not found"); return }
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .add }).count, 0)
-        XCTAssertEqual(transaction.filter({ $0.operation == .update }).count, 1)
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 1)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 0)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .update && $0.model == .artist }).count, 1) // update flap+frog
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .artist }).count, 1) // update flap+frog
         
         XCTAssertEqual(updatedArtist.art, MediaArt.test)
     }
@@ -357,13 +357,13 @@ final class DatabaseTests: XCTestCase {
         let transaction = await sut.updateArtist(update)
         let newBasis = await sut.apply(transaction: transaction)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .add }).count, 0)
-        XCTAssertEqual(transaction.filter({ $0.operation == .update }).count, 7)
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 7)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 0)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .update && $0.model == .artist }).count, 1) // update flap+frog
-        XCTAssertEqual(transaction.filter({ $0.operation == .update && $0.model == .song }).count, 4) // update flap+frog songs
-        XCTAssertEqual(transaction.filter({ $0.operation == .update && $0.model == .album }).count, 2) // album artists sorting update
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .artist }).count, 1) // update flap+frog
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .song }).count, 4) // update flap+frog songs
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .album }).count, 2) // album artists sorting update
         
         compare(stable: expectedStableBasis, against: newBasis, test: #function)
     }
@@ -382,13 +382,13 @@ final class DatabaseTests: XCTestCase {
         let transaction = await sut.deleteArtist(artistToUpdate)
         let newBasis = await sut.apply(transaction: transaction)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .add }).count, 0)
-        XCTAssertEqual(transaction.filter({ $0.operation == .update }).count, 2)
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete }).count, 5)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 2)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 5)
         
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete && $0.model == .artist }).count, 1) // delete flap+frog
-        XCTAssertEqual(transaction.filter({ $0.operation == .delete && $0.model == .song }).count, 4) // delete flap+frog songs
-        XCTAssertEqual(transaction.filter({ $0.operation == .update && $0.model == .album }).count, 2) // update flap+frog albums
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .artist }).count, 1) // delete flap+frog
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .song }).count, 4) // delete flap+frog songs
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .album }).count, 2) // update flap+frog albums
         
         compare(stable: expectedStableBasis, against: newBasis, test: #function)
     }

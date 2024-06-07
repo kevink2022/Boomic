@@ -42,7 +42,6 @@
 		4F93BBCB2C1031B60076B4F2 /* TabOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F93BBCA2C1031B60076B4F2 /* TabOrder.swift */; };
 		4F9A33182BD898CA005A2EBD /* AnimatedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9A33172BD898CA005A2EBD /* AnimatedButton.swift */; };
 		4F9A331A2BDF4FBD005A2EBD /* TransactionsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9A33192BDF4FBD005A2EBD /* TransactionsList.swift */; };
-		4F9A331C2BDF584D005A2EBD /* TransactionDetailsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9A331B2BDF584D005A2EBD /* TransactionDetailsScreen.swift */; };
 		4FB41E192BA6228600270496 /* LibraryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E182BA6228600270496 /* LibraryScreen.swift */; };
 		4FB41E1B2BA6241900270496 /* LibraryNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E1A2BA6241900270496 /* LibraryNavigationView.swift */; };
 		4FB41E1D2BA6247E00270496 /* AllAlbumsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E1C2BA6247E00270496 /* AllAlbumsScreen.swift */; };
@@ -52,6 +51,7 @@
 		4FB41E262BA659E300270496 /* ViewConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E252BA659E300270496 /* ViewConstants.swift */; };
 		4FB41E282BA6637300270496 /* AlbumScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E272BA6637300270496 /* AlbumScreen.swift */; };
 		4FB41E2A2BA67EF200270496 /* SongListEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB41E292BA67EF200270496 /* SongListEntry.swift */; };
+		4FCDB59A2C12E5910016EF8C /* TransactionAssertionsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCDB5992C12E5910016EF8C /* TransactionAssertionsScreen.swift */; };
 		4FD48D0A2BB3E2B800D06055 /* Repository in Frameworks */ = {isa = PBXBuildFile; productRef = 4FD48D092BB3E2B800D06055 /* Repository */; };
 		4FD48D0C2BB88B0900D06055 /* MediaArtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD48D0B2BB88B0900D06055 /* MediaArtView.swift */; };
 		4FD48D122BB929A200D06055 /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD48D112BB929A200D06055 /* SettingsScreen.swift */; };
@@ -131,7 +131,6 @@
 		4F93BBCA2C1031B60076B4F2 /* TabOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabOrder.swift; sourceTree = "<group>"; };
 		4F9A33172BD898CA005A2EBD /* AnimatedButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedButton.swift; sourceTree = "<group>"; };
 		4F9A33192BDF4FBD005A2EBD /* TransactionsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsList.swift; sourceTree = "<group>"; };
-		4F9A331B2BDF584D005A2EBD /* TransactionDetailsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetailsScreen.swift; sourceTree = "<group>"; };
 		4FB41E182BA6228600270496 /* LibraryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryScreen.swift; sourceTree = "<group>"; };
 		4FB41E1A2BA6241900270496 /* LibraryNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryNavigationView.swift; sourceTree = "<group>"; };
 		4FB41E1C2BA6247E00270496 /* AllAlbumsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllAlbumsScreen.swift; sourceTree = "<group>"; };
@@ -140,6 +139,7 @@
 		4FB41E252BA659E300270496 /* ViewConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewConstants.swift; sourceTree = "<group>"; };
 		4FB41E272BA6637300270496 /* AlbumScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumScreen.swift; sourceTree = "<group>"; };
 		4FB41E292BA67EF200270496 /* SongListEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongListEntry.swift; sourceTree = "<group>"; };
+		4FCDB5992C12E5910016EF8C /* TransactionAssertionsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionAssertionsScreen.swift; sourceTree = "<group>"; };
 		4FD48D0B2BB88B0900D06055 /* MediaArtView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaArtView.swift; sourceTree = "<group>"; };
 		4FD48D112BB929A200D06055 /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
 		4FD48D132BB92CAA00D06055 /* SearchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchScreen.swift; sourceTree = "<group>"; };
@@ -323,7 +323,7 @@
 			isa = PBXGroup;
 			children = (
 				4F9A33192BDF4FBD005A2EBD /* TransactionsList.swift */,
-				4F9A331B2BDF584D005A2EBD /* TransactionDetailsScreen.swift */,
+				4FCDB5992C12E5910016EF8C /* TransactionAssertionsScreen.swift */,
 			);
 			path = Transactions;
 			sourceTree = "<group>";
@@ -598,7 +598,6 @@
 				4F04DCBB2B74727D006114B3 /* ContentView.swift in Sources */,
 				4F93BBC92C1031A70076B4F2 /* LibraryPanelOrder.swift in Sources */,
 				4FEE48842BCC756E00F5BC86 /* PlayerArtView.swift in Sources */,
-				4F9A331C2BDF584D005A2EBD /* TransactionDetailsScreen.swift in Sources */,
 				4FB41E222BA6444100270496 /* Environment.swift in Sources */,
 				4F019FA42C1143BD006E488A /* PlayerWrapper.swift in Sources */,
 				4FEE487C2BCB2DC300F5BC86 /* PlayerControls.swift in Sources */,
@@ -615,6 +614,7 @@
 				4F019FA22C114368006E488A /* TabsScreen.swift in Sources */,
 				4F019FAB2C1182C3006E488A /* GridListButtons.swift in Sources */,
 				4FD48D0C2BB88B0900D06055 /* MediaArtView.swift in Sources */,
+				4FCDB59A2C12E5910016EF8C /* TransactionAssertionsScreen.swift in Sources */,
 				4F853B782BAA22D100721E59 /* DynamicGrid.swift in Sources */,
 				4FD48D222BBA6CF900D06055 /* PlayerScreen.swift in Sources */,
 				4F9A331A2BDF4FBD005A2EBD /* TransactionsList.swift in Sources */,

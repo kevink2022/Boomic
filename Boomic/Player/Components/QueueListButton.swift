@@ -62,7 +62,7 @@ struct QueueListButton: View {
                 
                 VStack(alignment: .leading) {
                     Text(song.label)
-                        .font(F.body)
+                        .font(F.listEntryTitle)
                         .lineLimit(1)
                     
                     if let artist = song.artistName {

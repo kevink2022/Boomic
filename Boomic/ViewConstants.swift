@@ -52,10 +52,15 @@ struct ViewConstants {
             , design: .default
             , weight: .light
         )
-        static let body = Font.system(
+        static let listEntryTitle = Font.system(
             .body
             , design: .default
             , weight: .medium
+        )
+        static let body = Font.system(
+            .body
+            , design: .default
+            , weight: .regular
         )
         static let bold = Font.system(
             .body

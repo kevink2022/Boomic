@@ -13,17 +13,28 @@ private typealias SI = ViewConstants.SystemImages
 
 struct TransactionsList: View {
     @Environment(\.repository) private var repository
-    @State var transactions: [DataTransaction<KeySet<LibraryTransaction>>] = []
+    @State private var transactions: [DataTransaction<LibraryTransaction>] = []
+    @State private var viewOnlySignificant = true
     
     var body: some View {
-        Text("TransactionsList")
-
         List {
-            ForEach(transactions) { transaction in
+            Section {
+                Picker("Filter List", selection: $viewOnlySignificant) {
+                    Text("Significant").tag(true)
+                    Text("All").tag(false)
+                }
+                .pickerStyle(.segmented)
+            }
+            
+            ForEach(
+                transactions.filter { !viewOnlySignificant || $0.data.level == .significant }
+            ) { transaction in
                 NavigationLink {
-                    TransactionDetailsScreen(transaction: transaction)
+                    TransactionAssertionsScreen(transaction: transaction)
                 } label: {
                     VStack(alignment: .leading) {
+                        Text(transaction.data.label)
+                            .font(transaction.data.level == .significant ? F.listEntryTitle : F.body)
                         Text(transaction.timestamp.shortFormatted)
                             .opacity(0.6)
                     }
@@ -32,7 +43,7 @@ struct TransactionsList: View {
                     Button {
                         Task { 
                             await repository.rollbackTo(after: transaction)
-                            transactions = await repository.getTransactions()
+                            await loadTransactions()
                         }
                     } label: {
                         Label("Rollback to After", systemImage: SI.afterTransaction)
@@ -41,28 +52,24 @@ struct TransactionsList: View {
                     Button {
                         Task { 
                             await repository.rollbackTo(before: transaction)
-                            transactions = await repository.getTransactions()
+                            await loadTransactions()
                         }
                     } label: {
                         Label("Rollback to Before", systemImage: SI.beforeTransaction)
                     }
                 }
             }
-            
-            Button(role: .destructive) {
-                Task { 
-                    await repository.deleteLibraryData()
-                    transactions = await repository.getTransactions()
-                }
-            } label: {
-                Text("Delete Library")
-            }
-            
         }
         .task {
-            transactions = await repository.getTransactions()
+            await loadTransactions()
         }
-        
+        .refreshable {
+            await loadTransactions()
+        }
+    }
+    
+    private func loadTransactions() async {
+        transactions = await repository.getTransactions()
     }
 }
 

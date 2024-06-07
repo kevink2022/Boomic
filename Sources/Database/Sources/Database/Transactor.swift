@@ -48,7 +48,7 @@ public final class Transactor<TransactionData: Codable, Post> {
         self.base = basePost
         
         Task {
-            if let tranactions = try? await storage.load() {
+            if let tranactions = try? await storage.load().reversed() {
                 await build(from: basePost, with: tranactions.map{ $0.data })
             }
             await monitorQueue()
@@ -111,7 +111,7 @@ public final class Transactor<TransactionData: Codable, Post> {
     public func rollbackTo(after transaction: DataTransaction<TransactionData>) async {
         await queue.send { [self] in
             try? await storage.delete(after: transaction.id)
-            if let transactions = try? await storage.load() {
+            if let transactions = try? await storage.load().reversed() {
                 await build(from: base, with: transactions.map{$0.data})
             }
         }
@@ -120,7 +120,7 @@ public final class Transactor<TransactionData: Codable, Post> {
     public func rollbackTo(before transaction: DataTransaction<TransactionData>) async {
         await queue.send { [self] in
             try? await storage.delete(including: transaction.id)
-            if let transactions = try? await storage.load() {
+            if let transactions = try? await storage.load().reversed() {
                 await build(from: base, with: transactions.map{$0.data})
             }
         }
