@@ -7,6 +7,7 @@ import Combine
 import Models
 import Database
 import MediaFileKit
+import Storage
 
 public final class Repository {
     
@@ -70,14 +71,14 @@ extension Repository {
 
 // MARK: - Transactions
 extension Repository {
-    public func addSongs(_ songs: [Song]) async {
+    public func importSongs() async {
         let existingFiles = queryEngine.getSongs(for: nil, from: dataBasis).compactMap { song in
             if case .local(let url) = song.source { return url }
             return nil
         }
-               
+        
         guard let newFiles = try? fileInterface.allFiles(of: Song.codecs, excluding: Set(existingFiles)) else { return }
-       
+        
         let newSongs = newFiles.map { Song(from: $0) }
         
         await transactor.commit { basis in
@@ -96,7 +97,10 @@ extension Repository {
             return await BasisResolver(currentBasis: basis).deleteSong(song)
         }
     }
-    
+}
+
+// MARK: - Library Management
+extension Repository {
     public func getTransactions(last count: Int? = nil) async -> [DataTransaction<LibraryTransaction>] {
         return await transactor.viewTransactions(last: count)
     }
@@ -113,5 +117,20 @@ extension Repository {
     
     public func rollbackTo(before transaction: DataTransaction<LibraryTransaction>) async {
         await transactor.rollbackTo(before: transaction)
+    }
+    
+    
+    public func libraryFilesSizeAndAllocatedSize() async -> (String, String) {
+        guard let (size, allocatedSize) = try? fileInterface.sizeAndAllocatedSize() else {
+            return ("Error Retrieving Data", "Error Retrieving Data")
+        }
+        return (size.fileSize, allocatedSize.fileSize)
+    }
+    
+    public func libraryDataSizeAndAllocatedSize() async -> (String, String) {
+        guard let (size, allocatedSize) = try? await transactor.sizeAndAllocatedSize() else {
+            return ("Error Retrieving Data", "Error Retrieving Data")
+        }
+        return (size.fileSize, allocatedSize.fileSize)
     }
 }

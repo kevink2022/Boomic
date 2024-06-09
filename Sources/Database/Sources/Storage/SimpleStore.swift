@@ -45,4 +45,8 @@ public final class SimpleStore<Model: Codable> {
         try await discInterface.delete(key)
         if cached { cachedValue = nil }
     }
+    
+    public func sizeAndAllocatedSize() async throws -> (Bytes, Bytes) {
+        return try await discInterface.sizeAndAllocatedSize(key)
+    }
 }

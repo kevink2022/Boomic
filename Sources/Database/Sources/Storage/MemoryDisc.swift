@@ -55,4 +55,16 @@ public final class MemoryDiscInterface<Model: Codable>: DiscInterface<Model> {
     public override func delete(_ key: String) async throws {
         await disc.delete(key, in: namespace)
     }
+    
+    public override func size(_ key: String) async throws -> Bytes {
+        return 0
+    }
+    
+    public override func allocatedSize(_ key: String) async throws -> Bytes {
+        return 0
+    }
+    
+    public override func sizeAndAllocatedSize(_ key: String) async throws -> (Bytes, Bytes) {
+        return (0, 0)
+    }
 }

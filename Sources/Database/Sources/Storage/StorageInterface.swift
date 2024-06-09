@@ -7,6 +7,8 @@
 
 import Foundation
 
+public typealias Bytes = Int64
+
 public class DiscInterface<Model: Codable> {
     
     func save(_ model: Model, to key: String) async throws {
@@ -18,6 +20,15 @@ public class DiscInterface<Model: Codable> {
     func delete(_ key: String) async throws {
         throw DiscInterfaceError.mustOverride
     }
+    func size(_ key: String) async throws -> Bytes {
+        throw DiscInterfaceError.mustOverride
+    }
+    func allocatedSize(_ key: String) async throws -> Bytes {
+        throw DiscInterfaceError.mustOverride
+    }
+    func sizeAndAllocatedSize(_ key: String) async throws -> (Bytes, Bytes) {
+        throw DiscInterfaceError.mustOverride
+    }
 }
 
 public enum DiscInterfaceError: LocalizedError {
@@ -27,5 +38,44 @@ public enum DiscInterfaceError: LocalizedError {
         switch self {
         case .mustOverride: "This function must be overridden to be used."
         }
+    }
+}
+
+extension Int64 {
+    public var fileSize: String {
+        let formatter = ByteCountFormatter()
+        formatter.allowedUnits = [.useKB, .useMB, .useGB]
+        formatter.countStyle = .decimal
+        formatter.formattingContext = .standalone
+        formatter.allowsNonnumericFormatting = false
+        return formatter.string(fromByteCount: self)
+    }
+}
+
+extension URL {
+    public func fileSize() throws -> Bytes {
+        let resourceValues = try self.resourceValues(forKeys: [
+            .isRegularFileKey,
+            .fileSizeKey,
+            .totalFileSizeKey,
+        ])
+
+        guard resourceValues.isRegularFile ?? false else { return 0 }
+        return Int64(resourceValues.totalFileSize ?? resourceValues.fileSize ?? 0)
+    }
+    
+    public func fileAllocatedSize() throws -> Bytes {
+        let resourceValues = try self.resourceValues(forKeys: [
+            .isRegularFileKey,
+            .fileAllocatedSizeKey,
+            .totalFileAllocatedSizeKey,
+        ])
+
+        guard resourceValues.isRegularFile ?? false else { return 0 }
+        return Int64(resourceValues.totalFileAllocatedSize ?? resourceValues.fileAllocatedSize ?? 0)
+    }
+    
+    public func fileSizeAndAllocatedSize() throws -> (Bytes, Bytes) {
+        return (try self.fileSize(), try self.fileAllocatedSize())
     }
 }

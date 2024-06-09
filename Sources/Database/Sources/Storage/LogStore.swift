@@ -110,4 +110,8 @@ public final class LogStore<Log: Loggable> {
         
         try await storage.save(Array(logs[index..<logs.count]))
     }
+    
+    public func sizeAndAllocatedSize() async throws -> (Bytes, Bytes) {
+        return try await storage.sizeAndAllocatedSize()
+    }
 }

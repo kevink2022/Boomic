@@ -28,3 +28,24 @@ extension MediaSource {
         }
     }
 }
+
+public struct AppPath: Codable, Equatable {
+    public let relative: String
+    
+    static let root: URL = URL.homeDirectory
+    
+    public init(relativePath: String) {
+        self.relative = relativePath
+    }
+    
+    init(url: URL) {
+        let absolutePath = url.absoluteString
+        
+        guard absolutePath.hasPrefix(AppPath.root.absoluteString) else { self.relative = ""; return }
+        self.relative = String(absolutePath.dropFirst(AppPath.root.absoluteString.count))
+    }
+    
+    public var url: URL {
+        return AppPath.root.appending(path: self.relative)
+    }
+}

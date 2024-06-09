@@ -15,7 +15,7 @@ struct SettingsScreen: View {
             List {
                 Section {
                     Button {
-                        Task { await repository.addSongs([]) }
+                        Task { await repository.importSongs() }
                     } label: {
                         Text("Import Songs")
                     }
@@ -23,9 +23,15 @@ struct SettingsScreen: View {
                 
                 Section("Libary Data") {
                     NavigationLink {
+                        LibraryData()
+                    } label: {
+                        Text("Manage Library Data")
+                    }
+                    
+                    NavigationLink {
                         TransactionsList()
                     } label: {
-                        Text("Library Transactions")
+                        Text("Library Change History")
                     }
                 }
                 
@@ -48,29 +54,8 @@ struct SettingsScreen: View {
                         Text("Library Panel Order")
                     }
                 }
-                
-                Section("Debug") {
-                    Button {
-                        createReadMe()
-                    } label: {
-                        Text("Create README.txt")
-                    }
-                }
             }
         }
-    }
-    
-    func createReadMe() {
-        let file = "README.txt"
-        let contents = "Idk why I still need to do this"
-        
-        let dir = URL.documentsDirectory
-        let fileURL = dir.appending(component: file)
-        
-        do {
-            try contents.write(to: fileURL, atomically: false, encoding: .utf8)
-        }
-        catch { }
     }
 }
 

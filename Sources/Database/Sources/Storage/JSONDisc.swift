@@ -62,6 +62,22 @@ public final class JSONDiscInterface<Model: Codable>: DiscInterface<Model> {
         }
     }
     
+    public override func size(_ key: String) async throws -> Bytes {
+        let path = pathFor(key)
+        return try path.fileSize()
+    }
+    
+    public override func allocatedSize(_ key: String) async throws -> Bytes {
+        let path = pathFor(key)
+        return try path.fileSize()
+    }
+    
+    public override func sizeAndAllocatedSize(_ key: String) async throws -> (Bytes, Bytes) {
+        let path = pathFor(key)
+        
+        return (try path.fileSize(), try path.fileAllocatedSize())
+    }
+    
     private func pathFor(_ key: String) -> URL {
         var url = rootDirectory
         

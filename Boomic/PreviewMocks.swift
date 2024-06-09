@@ -13,6 +13,7 @@ import Database
 import MediaFileKit
 import Repository
 import MediaPlayerKit
+import Storage
 
 
 internal class PreviewMocks {
@@ -30,7 +31,7 @@ internal class PreviewMocks {
     )
     
     init() {
-        Task { await sharedRepo.addSongs([]) }
+        Task { await sharedRepo.importSongs() }
     }
     
     public func previewNavigator() -> Navigator { return Navigator() }

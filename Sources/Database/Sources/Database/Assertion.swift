@@ -20,16 +20,16 @@ public enum Assertion: Codable, Equatable {
     case deleteArtist(UUID)
     
     
-    /// order matters, the transactions at later indexes will overwrite earlier ones.
-    public static func flatten(_ transactions: [KeySet<Assertion>]) -> KeySet<Assertion> {
-        let count = transactions.count
+    /// order matters, the assertions at later indexes will overwrite earlier ones.
+    public static func flatten(_ assertions: [KeySet<Assertion>]) -> KeySet<Assertion> {
+        let count = assertions.count
         guard count != 0 else { return KeySet() }
-        if count == 1 { return transactions.first! }
+        if count == 1 { return assertions.first! }
         
         let middle = count/2
         
-        let left = flatten(Array(transactions.prefix(middle)))
-        let right = flatten(Array(transactions.suffix(from: middle)))
+        let left = flatten(Array(assertions.prefix(middle)))
+        let right = flatten(Array(assertions.suffix(from: middle)))
     
         return union(left: left, right: right)
     }
@@ -38,17 +38,17 @@ public enum Assertion: Codable, Equatable {
         
         var merged = KeySet<Assertion>()
         
-        left.forEach { leftTransaction in
-            if let rightTransaction = right[leftTransaction] {
-                merged.insert(combine(left: leftTransaction, right: rightTransaction))
+        left.forEach { leftAssertion in
+            if let rightAssertion = right[leftAssertion] {
+                merged.insert(combine(left: leftAssertion, right: rightAssertion))
             } else {
-                merged.insert(leftTransaction)
+                merged.insert(leftAssertion)
             }
         }
         
-        right.forEach { rightTransaction in
-            if !merged.contains(rightTransaction) {
-                merged.insert(rightTransaction)
+        right.forEach { rightAssertion in
+            if !merged.contains(rightAssertion) {
+                merged.insert(rightAssertion)
             }
         }
         

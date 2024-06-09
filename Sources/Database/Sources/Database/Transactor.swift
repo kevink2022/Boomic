@@ -97,7 +97,10 @@ public final class Transactor<TransactionData: Codable, Post> {
             await self.commitAndSave(transaction: transaction)
         }
     }
-    
+}
+
+// MARK: - Transactor Management
+extension Transactor {
     public func viewTransactions(last count: Int? = nil) async -> [DataTransaction<TransactionData>] {
 
         return (try? await storage.load(last: count)) ?? []
@@ -124,6 +127,10 @@ public final class Transactor<TransactionData: Codable, Post> {
                 await build(from: base, with: transactions.map{$0.data})
             }
         }
+    }
+    
+    public func sizeAndAllocatedSize() async throws -> (Bytes, Bytes) {
+        try await storage.sizeAndAllocatedSize()
     }
 }
 
