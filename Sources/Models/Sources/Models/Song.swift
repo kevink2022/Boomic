@@ -158,6 +158,6 @@ extension Song {
 
 // MARK: - Defaults
 extension Song {
-    public static let none = Song(id: UUID(), source: .local(url: URL.documentsDirectory), duration: 90)
+    public static let none = Song(id: UUID(), source: .local(path: AppPath(url: URL.documentsDirectory)), duration: 90)
 }
 

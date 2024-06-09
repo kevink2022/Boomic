@@ -13,18 +13,18 @@ public protocol Media: Codable, Identifiable {
 }
 
 public enum MediaSource: Codable, Equatable {
-    case local(url: URL)
+    case local(path: AppPath)
 }
 
 public enum MediaArt: Codable, Equatable {
-    case local(url: URL)
-    case embedded(url: URL, hash: String)
+    case local(path: AppPath)
+    case embedded(path: AppPath, hash: String)
 }
 
 extension MediaSource {
     public var label: String {
         switch self {
-        case .local(let url): return url.lastPathComponent
+        case .local(let path): return path.url.lastPathComponent
         }
     }
 }
@@ -38,11 +38,15 @@ public struct AppPath: Codable, Equatable {
         self.relative = relativePath
     }
     
-    init(url: URL) {
-        let absolutePath = url.absoluteString
+    public init(url: URL) {
+        let absolutePath = String(url.path(percentEncoded: false).dropFirst("/private".count))
+        let rootPath = AppPath.root.path(percentEncoded: false)
         
-        guard absolutePath.hasPrefix(AppPath.root.absoluteString) else { self.relative = ""; return }
-        self.relative = String(absolutePath.dropFirst(AppPath.root.absoluteString.count))
+        if absolutePath.hasPrefix(rootPath) {
+            self.relative = String(absolutePath.dropFirst(rootPath.count))
+        } else { 
+            self.relative = ""
+        }
     }
     
     public var url: URL {

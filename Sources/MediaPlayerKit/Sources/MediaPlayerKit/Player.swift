@@ -166,7 +166,7 @@ extension SongPlayer {
         
         engine = {
             switch (song.source) {
-            case .local(let url): AVEngine(source: url)
+            case .local(let path): AVEngine(source: path.url)
             }
         }()
         

@@ -44,6 +44,6 @@ struct MediaArtView: View {
 }
 
 #Preview {
-    MediaArtView(.local(url: URL(string: "/Users/kevinkelly/Music/Stuff/Joe Hisaishi (久石譲) - 千と千尋の神隠し サウンドトラック (2001) [FLAC]/cover.jpg")!))
+    MediaArtView(.test)
         .environment(\.repository, PreviewMocks.shared.previewRepository())
 }

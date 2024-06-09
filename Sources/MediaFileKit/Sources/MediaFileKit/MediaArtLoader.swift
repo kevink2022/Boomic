@@ -63,17 +63,17 @@ public final class MediaArtCache : MediaArtLoader {
     private func hashKey(for art: MediaArt) -> String {
         switch art {
         case .embedded(_, let hash): return hash
-        case .local(let url): return url.path()
+        case .local(let path): return path.relative
         }
     }
     
     private func imageObject(for art: MediaArt) -> ImageObject? {
         switch art {
-        case .embedded(let url, _):
-            guard let data = AudioToolboxParser.embeddedArtData(from: url) else { return nil }
+        case .embedded(let path, _):
+            guard let data = AudioToolboxParser.embeddedArtData(from: path.url) else { return nil }
             return ImageObject(data: data)
             
-        case .local(let url): return ImageObject(url: url)
+        case .local(let path): return ImageObject(url: path.url)
         }
     }
 }

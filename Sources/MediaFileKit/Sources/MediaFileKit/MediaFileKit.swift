@@ -10,14 +10,14 @@ extension Song {
         let externalParser = DirectoryParser(file: file)
         
         let albumArt: MediaArt? = {
-            if let hash = internalParser.embeddedHash { return .embedded(url: file, hash: hash) }
-            if let art = externalParser.albumArt { return .local(url: art) }
+            if let hash = internalParser.embeddedHash { return .embedded(path: AppPath(url: file), hash: hash) }
+            if let art = externalParser.albumArt { return .local(path: AppPath(url: art)) }
             return nil
         }()
         
         self.init(
             id: UUID()
-            , source: .local(url: file)
+            , source: .local(path: AppPath(url: file))
             , duration: internalParser.duration ?? 0
             , title: internalParser.title
             , trackNumber: internalParser.trackNumber

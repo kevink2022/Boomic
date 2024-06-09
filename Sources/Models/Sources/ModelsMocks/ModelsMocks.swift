@@ -28,7 +28,9 @@ extension Song {
       "id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
       "source": {
         "local" : {
-          "url": "file:///fakepath/a_caged_persona.mp3"
+            "path": {
+              "relative": "a_caged_persona.mp3"
+            }
         }
       },
       "duration": 217,
@@ -47,7 +49,7 @@ extension Song {
     
     public static let aCagedPersona = Song(
         id: UUID(uuidString: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d")!
-        , source: .local(url: URL(string: "file:///fakepath/a_caged_persona.mp3")!)
+        , source: .local(path: AppPath(url: URL(string: "file:///fakepath/a_caged_persona.mp3")!))
         , duration: 217
         , title: "a caged persona"
         , trackNumber: 1
@@ -61,7 +63,9 @@ extension Song {
         "id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
         "source": {
           "local" : {
-            "url": "file:///fakepath/a_caged_persona.mp3"
+            "path": {
+              "relative": "a_caged_persona.mp3"
+            }
           }
         },
         "duration": 217,
@@ -80,7 +84,9 @@ extension Song {
         "id": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
         "source": {
           "local" : {
-            "url": "file:///fakepath/voyage_gothic_bold.mp3"
+            "path": {
+              "relative": "voyage_gothic_bold.mp3"
+            }
           }
         },
         "duration": 219,
@@ -99,7 +105,9 @@ extension Song {
         "id": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
         "source": {
           "local" : {
-            "url": "file:///fakepath/fall_coin_sunset.mp3"
+            "path": {
+              "relative": "fall_coin_sunset.mp3"
+            }
           }
         },
         "duration": 260,
@@ -118,7 +126,9 @@ extension Song {
         "id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
         "source": {
           "local" : {
-            "url": "file:///fakepath/in_the_shade.mp3"
+            "path": {
+              "relative": "in_the_shade.mp3"
+            }
           }
         },
         "duration": 233,
@@ -137,7 +147,9 @@ extension Song {
         "id": "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b",
         "source": {
           "local" : {
-            "url": "file:///fakepath/labyrinth.mp3"
+            "path": {
+              "relative": "labyrinth.mp3"
+            }
           }
         },
         "duration": 236,
@@ -156,7 +168,9 @@ extension Song {
         "id": "6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c",
         "source": {
           "local" : {
-            "url": "file:///fakepath/tea_break.mp3"
+            "path": {
+              "relative": "tea_break.mp3"
+            }
           }
         },
         "duration": 215,
@@ -175,7 +189,9 @@ extension Song {
         "id": "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d",
         "source": {
           "local" : {
-            "url": "file:///fakepath/no_more_news.mp3"
+            "path": {
+              "relative": "no_more_news.mp3"
+            }
           }
         },
         "duration": 225,
@@ -194,7 +210,9 @@ extension Song {
         "id": "8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
         "source": {
           "local" : {
-            "url": "file:///fakepath/parfait_amour.mp3"
+            "path": {
+              "relative": "parfait_amour.mp3"
+            }
           }
         },
         "duration": 280,
@@ -213,7 +231,9 @@ extension Song {
         "id": "9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f",
         "source": {
           "local" : {
-            "url": "file:///fakepath/burning_rum_tea.mp3"
+            "path": {
+              "relative": "burning_rum_tea.mp3"
+            }
           }
         },
         "duration": 295,
@@ -232,7 +252,9 @@ extension Song {
         "id": "0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a",
         "source": {
           "local" : {
-            "url": "file:///fakepath/un_fiore_rosso_take1.mp3"
+            "path": {
+              "relative": "un_fiore_rosso_take1.mp3"
+            }
           }
         },
         "duration": 172,
@@ -251,7 +273,9 @@ extension Song {
         "id": "80691b33-c722-44e3-bddc-d8a1234c4a72",
         "source": {
           "local" : {
-            "url": "file:///fakepath/un_fiore_rosa_takeb1.mp3"
+            "path": {
+              "relative": "un_fiore_rosa_takeb1.mp3"
+            }
           }
         },
         "duration": 186,
@@ -270,7 +294,9 @@ extension Song {
         "id": "81afadc4-1028-492d-b4b6-2b35f6b9af17",
         "source": {
           "local" : {
-            "url": "file:///fakepath/sparrowtail.mp3"
+            "path": {
+              "relative": "sparrowtail.mp3"
+            }
           }
         },
         "duration": 239,
@@ -289,7 +315,9 @@ extension Song {
         "id": "9096eb06-550f-4102-80c5-161d25eef98f",
         "source": {
           "local" : {
-            "url": "file:///fakepath/asian_samba.mp3"
+            "path": {
+              "relative": "asian_samba.mp3"
+            }
           }
         },
         "duration": 187,
@@ -308,7 +336,9 @@ extension Song {
         "id": "42a0c0f1-4b16-47b9-b9fc-dad24e4cdf32",
         "source": {
           "local" : {
-            "url": "file:///fakepath/lucondium.mp3"
+            "path": {
+              "relative": "lucondium.mp3"
+            }
           }
         },
         "duration": 298,
@@ -327,7 +357,9 @@ extension Song {
         "id": "886c1573-630a-476e-9a2f-2bf59c41a5f7",
         "source": {
           "local" : {
-            "url": "file:///fakepath/color_del_amor.mp3"
+            "path": {
+              "relative": "color_del_amor.mp3"
+            }
           }
         },
         "duration": 198,
@@ -346,7 +378,9 @@ extension Song {
         "id": "c5eafedc-f835-4f49-806c-7dddc0da9d07",
         "source": {
           "local" : {
-            "url": "file:///fakepath/red_eye.mp3"
+            "path": {
+              "relative": "red_eye.mp3"
+            }
           }
         },
         "duration": 180,
@@ -365,7 +399,9 @@ extension Song {
         "id": "cef946c6-f1f2-4a96-b229-d65b329db84d",
         "source": {
           "local" : {
-            "url": "file:///fakepath/in_the_room.mp3"
+            "path": {
+              "relative": "in_the_room.mp3"
+            }
           }
         },
         "duration": 264,
@@ -384,7 +420,9 @@ extension Song {
         "id": "4ec2878b-4ef1-4955-96a0-77bab00b0ada",
         "source": {
           "local" : {
-            "url": "file:///fakepath/nestikinz.mp3"
+            "path": {
+              "relative": "nestikinz.mp3"
+            }
           }
         },
         "duration": 248,
@@ -403,7 +441,9 @@ extension Song {
         "id": "dbf5fe26-049a-4de6-bf9d-a638779e8dad",
         "source": {
           "local" : {
-            "url": "file:///fakepath/narciso.mp3"
+            "path": {
+              "relative": "narciso.mp3"
+            }
           }
         },
         "duration": 181,
@@ -422,7 +462,9 @@ extension Song {
         "id": "691a2c31-9845-4b89-80d3-6441ee8919cb",
         "source": {
           "local" : {
-            "url": "file:///fakepath/para_la_princesa_tarde.mp3"
+            "path": {
+              "relative": "para_la_princesa_tarde.mp3"
+            }
           }
         },
         "duration": 192,
@@ -441,7 +483,9 @@ extension Song {
         "id": "33731a68-2bcc-4b93-9174-3b3ff4a1a765",
         "source": {
           "local" : {
-            "url": "file:///fakepath/sangatsu_yori_nishi_e.mp3"
+            "path": {
+              "relative": "sangatsu_yori_nishi_e.mp3"
+            }
           }
         },
         "duration": 354,
@@ -692,7 +736,7 @@ extension Artist {
 }
 
 extension MediaArt {
-    public static let test: MediaArt = .local(url:  URL(string: "file:///fakepath/cover.jpg")!)
+    public static let test: MediaArt = .local(path: AppPath(url: URL(string: "file:///fakepath/cover.jpg")!))
 }
 
 

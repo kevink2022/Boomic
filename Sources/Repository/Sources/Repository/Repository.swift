@@ -73,7 +73,7 @@ extension Repository {
 extension Repository {
     public func importSongs() async {
         let existingFiles = queryEngine.getSongs(for: nil, from: dataBasis).compactMap { song in
-            if case .local(let url) = song.source { return url }
+            if case .local(let path) = song.source { return path.url }
             return nil
         }
         

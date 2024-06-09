@@ -24,7 +24,7 @@ struct PlayerArtView: View {
     
     private func artID() -> String {
         switch player.art {
-        case .local(let url): return url.path()
+        case .local(let path): return path.relative
         case .embedded(_, let hash): return hash
         case .none: return "none"
         }

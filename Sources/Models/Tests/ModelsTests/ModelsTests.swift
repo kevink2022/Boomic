@@ -24,7 +24,7 @@ final class ModelsTests: XCTestCase {
         }
         
         XCTAssertEqual(song.id, UUID(uuidString: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"))
-        XCTAssertEqual(song.source, .local(url: URL(string: "file:///fakepath/a_caged_persona.mp3")!))
+        XCTAssertEqual(song.source, .local(path: AppPath(relativePath: "a_caged_persona.mp3")))
         XCTAssertEqual(song.duration, 217)
     }
     
@@ -154,13 +154,13 @@ final class ModelsTests: XCTestCase {
         
         XCTAssertEqual(songs.count, 21)
         XCTAssertEqual(songs[0].id, UUID(uuidString: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"))
-        XCTAssertEqual(songs[0].source, .local(url: URL(string: "file:///fakepath/a_caged_persona.mp3")!))
+        XCTAssertEqual(songs[0].source, .local(path: AppPath(relativePath: "a_caged_persona.mp3")))
         XCTAssertEqual(songs[0].duration, 217)
         XCTAssertEqual(songs[10].id, UUID(uuidString: "80691b33-c722-44e3-bddc-d8a1234c4a72"))
-        XCTAssertEqual(songs[10].source, .local(url: URL(string: "file:///fakepath/un_fiore_rosa_takeb1.mp3")!))
+        XCTAssertEqual(songs[10].source, .local(path: AppPath(relativePath: "un_fiore_rosa_takeb1.mp3")))
         XCTAssertEqual(songs[10].duration, 186)
         XCTAssertEqual(songs[20].id, UUID(uuidString: "33731a68-2bcc-4b93-9174-3b3ff4a1a765"))
-        XCTAssertEqual(songs[20].source, .local(url: URL(string: "file:///fakepath/sangatsu_yori_nishi_e.mp3")!))
+        XCTAssertEqual(songs[20].source, .local(path: AppPath(relativePath: "sangatsu_yori_nishi_e.mp3")))
         XCTAssertEqual(songs[20].duration, 354)
     }
     
