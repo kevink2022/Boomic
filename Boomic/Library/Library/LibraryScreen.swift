@@ -49,6 +49,20 @@ struct LibraryScreen: View {
                             , action: { navigator.library.navigateTo(LibraryNavigation.artists) }
                             , icon: { LibraryGridEntry(imageName: SI.artist) }
                         )
+                        
+                    case .topRated:
+                        GridListEntry(
+                            label: "Top Rated"
+                            , action: { navigator.library.navigateTo(LibraryNavigation.topRated) }
+                            , icon: { LibraryGridEntry(imageName: SI.unrated) }
+                        )
+                        
+                    case .taglists:
+                        GridListEntry(
+                            label: "Taglists"
+                            , action: { navigator.library.navigateTo(LibraryNavigation.taglists) }
+                            , icon: { LibraryGridEntry(imageName: SI.tag) }
+                        )
                     }
                 })
             )
@@ -59,6 +73,11 @@ struct LibraryScreen: View {
                 case .songs: AllSongsScreen()
                 case .albums: AllAlbumsScreen()
                 case .artists: AllArtistsScreen()
+                case .topRated: AllSongsScreen(filter: {
+                    guard let rating = $0.rating else { return false }
+                    return rating > 0
+                })
+                case .taglists: Text("soon")
                 }
             }
             .navigationDestination(for: Album.self) { album in

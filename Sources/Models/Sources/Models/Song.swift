@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Domain
 
 public final class Song: Media, Identifiable, Codable, Equatable {
     public let id: UUID

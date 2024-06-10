@@ -14,6 +14,13 @@ private typealias F = ViewConstants.Fonts
 struct AllSongsScreen: View {
     @Environment(\.repository) private var repository
     @State private var songs: [Song] = []
+    @State private var predicate: String = ""
+    
+    let filter: ((Song) -> Bool)?
+    
+    init(filter: ((Song) -> Bool)? = nil) {
+        self.filter = filter
+    }
     
     var body: some View {
         ScrollView {
@@ -26,17 +33,22 @@ struct AllSongsScreen: View {
             }
             
             LazyVStack(spacing: 0) {
-                ForEach(songs) { song in
+                ForEach(songs.search(predicate)) { song in
                     Divider()
                     SongListButton(song: song, context: songs, queueName: "All Songs")
                 }
                 Divider()
             }
-            
         }
         
+        .searchable(text: $predicate)
+        
         .task {
-            songs = await repository.getSongs(for: nil)
+            if let filter = filter {
+                songs = repository.getSongs(for: nil).filter(filter)
+            } else {
+                songs = repository.getSongs(for: nil)
+            }
         }
     }
 }

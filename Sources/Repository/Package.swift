@@ -25,7 +25,10 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "Repository",
-            dependencies: ["Models", "Database", "MediaFileKit"]),
+            dependencies: [
+                "Models",
+                "Database",
+                "MediaFileKit"]),
         .testTarget(
             name: "RepositoryTests",
             dependencies: ["Repository"]),

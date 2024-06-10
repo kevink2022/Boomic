@@ -2,6 +2,8 @@
 // https://docs.swift.org/swift-book
 
 import Foundation
+
+import Domain
 import Models
 
 extension Song {

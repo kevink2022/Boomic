@@ -32,6 +32,7 @@ public final class Transactor<TransactionData: Codable, Post> {
     private let storage: LogStore<DataTransaction<TransactionData>>
     private let coreCommit: (TransactionData, Post) async -> (Post)
     private let queue: AsyncChannel<() async -> ()>
+    private let flatten: (([TransactionData]) -> TransactionData)?
     private var base: Post
     public let publisher: CurrentValueSubject<Post, Never>
     
@@ -40,12 +41,14 @@ public final class Transactor<TransactionData: Codable, Post> {
         , key: String = "transactions-generic"
         , inMemory: Bool = false
         , coreCommit: @escaping (TransactionData, Post) async -> (Post)
+        , flatten: (([TransactionData]) -> TransactionData)? = nil
     ) {
         self.storage = LogStore<DataTransaction<TransactionData>>(key: key, inMemory: inMemory)
         self.publisher = CurrentValueSubject<Post, Never>(basePost)
         self.coreCommit = coreCommit
         self.queue = AsyncChannel<() async -> ()>()
         self.base = basePost
+        self.flatten = flatten
         
         Task {
             if let tranactions = try? await storage.load().reversed() {
@@ -57,9 +60,15 @@ public final class Transactor<TransactionData: Codable, Post> {
     
     private func build(from base: Post, with data: [TransactionData]) async {
         var post = base
-        for transaction in data {
-            post = (await coreCommit(transaction, post))
+        
+        if let flatten = self.flatten {
+            post = (await coreCommit(flatten(data), post))
+        } else {
+            for transaction in data {
+                post = (await coreCommit(transaction, post))
+            }
         }
+
         publisher.send(post)
     }
     

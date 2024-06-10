@@ -29,6 +29,12 @@ struct LibraryPanelOrder: View {
                 case .artists:
                     Image(systemName: SI.artist)
                     Text("Artists")
+                case .topRated:
+                    Image(systemName: SI.unrated)
+                    Text("Top Rated")
+                case .taglists:
+                    Image(systemName: SI.tag)
+                    Text("Taglists")
                 }
             }
         }

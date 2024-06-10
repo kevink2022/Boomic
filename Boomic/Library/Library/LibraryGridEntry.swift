@@ -19,7 +19,7 @@ struct LibraryGridEntry: View {
                 Image(systemName: imageName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .padding(C.libraryGridObjectInternalPadding)
+                    .scaleEffect(0.7)
                     
                 RoundedRectangle(cornerSize: CGSize(
                     width: C.albumCornerRadius,
@@ -28,6 +28,7 @@ struct LibraryGridEntry: View {
                 .stroke(style: StrokeStyle(lineWidth: C.libraryGridObjectStroke))
                 .aspectRatio(contentMode: .fit)
             }
+            .aspectRatio(1, contentMode: .fit)
         }
         .padding(.horizontal, C.libraryGridPadding)
     }

@@ -26,7 +26,12 @@ internal class PreviewMocks {
             basePost: DataBasis.empty
             , key: "transactor-preview"
             , inMemory: true
-            , coreCommit: { transaction, basis in await BasisResolver(currentBasis: basis).apply(transaction: transaction)}
+            , coreCommit: { transaction, basis in
+                await BasisResolver(currentBasis: basis).apply(transaction: transaction)
+            }
+            , flatten: { transaction in
+                LibraryTransaction.flatten(transaction)
+            }
         )
     )
     

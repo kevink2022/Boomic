@@ -14,13 +14,19 @@ private typealias F = ViewConstants.Fonts
 private typealias SI = ViewConstants.SystemImages
 
 struct AlbumScreen: View {
-    @Environment(\.repository) private var repository
+    @Environment(\.navigator) private var navigator
     @Environment(\.player) private var player
+    @Environment(\.preferences) private var preferences
+    @Environment(\.repository) private var repository
+
     private let baseAlbum: Album
     @State private var query = Query()
     private var album: Album { query.albums.first ?? baseAlbum }
     private var songs: [Song] { query.songs }
     private var artists: [Artist] { query.artists }
+    
+    @State private var predicate: String = ""
+    private var primaryOnly: Bool { preferences.localSearchOnlyPrimary }
     
     init(album: Album) {
         self.baseAlbum = album
@@ -29,54 +35,58 @@ struct AlbumScreen: View {
     }
     
     var body: some View {
+        @Bindable var nav = navigator
+        
         ScrollView {
             VStack {
-                HStack {
-                    Spacer(minLength: C.albumScreenSpacers)
-                    
-                    MediaArtView(album.art, cornerRadius: C.albumCornerRadius)
-                    
-                    Spacer(minLength: C.albumScreenSpacers)
-                }
-                
-                Text(album.title)
-                    .font(F.title)
-                    .multilineTextAlignment(.center)
-                
-                Text(album.artistName ?? "Unknown Artist")
-                    .font(F.subtitle)
-                    .multilineTextAlignment(.center)
-                
-                Text("\(songs.count) tracks • \(songs.reduce(TimeInterval(), {$0 + $1.duration}).formatted)")
-                    .font(F.listDuration)
-                
-                HStack {
-                    LargeButton {
-                        if let song = songs.first {
-                            player.setSong(song, context: songs, queueName: album.title)
-                            if player.queueOrder == .shuffle { player.toggleShuffle() }
-                        }
-                    } label: {
-                        HStack {
-                            Image(systemName: SI.play)
-                            Text("Play")
-                        }
+                if !nav.isSearchFocused {
+                    HStack {
+                        Spacer(minLength: C.albumScreenSpacers)
+                        
+                        MediaArtView(album.art, cornerRadius: C.albumCornerRadius)
+                        
+                        Spacer(minLength: C.albumScreenSpacers)
                     }
                     
-                    LargeButton {
-                        if let song = songs.randomElement() {
-                            player.setSong(song, context: songs, queueName: album.title)
-                            if player.queueOrder == .inOrder { player.toggleShuffle() }
+                    Text(album.title)
+                        .font(F.title)
+                        .multilineTextAlignment(.center)
+                    
+                    Text(album.artistName ?? "Unknown Artist")
+                        .font(F.subtitle)
+                        .multilineTextAlignment(.center)
+                    
+                    Text("\(songs.count) tracks • \(songs.reduce(TimeInterval(), {$0 + $1.duration}).formatted)")
+                        .font(F.listDuration)
+                    
+                    HStack {
+                        LargeButton {
+                            if let song = songs.first {
+                                player.setSong(song, context: songs, queueName: album.title)
+                                if player.queueOrder == .shuffle { player.toggleShuffle() }
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: SI.play)
+                                Text("Play")
+                            }
                         }
-                    } label: {
-                        HStack {
-                            Image(systemName: SI.shuffle)
-                            Text("Shuffle")
+                        
+                        LargeButton {
+                            if let song = songs.randomElement() {
+                                player.setSong(song, context: songs, queueName: album.title)
+                                if player.queueOrder == .inOrder { player.toggleShuffle() }
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: SI.shuffle)
+                                Text("Shuffle")
+                            }
                         }
                     }
+                    .frame(height: C.buttonHeight)
+                    .padding(.vertical)
                 }
-                .frame(height: C.buttonHeight)
-                .padding(.vertical)
                 
                 HStack {
                     Text("Songs")
@@ -86,7 +96,7 @@ struct AlbumScreen: View {
                 }
                 
                 LazyVStack(spacing: 0) {
-                    ForEach(songs) { song in
+                    ForEach(songs.search(predicate, primaryOnly: primaryOnly)) { song in
                         Divider()
                         
                         SongListButton(song: song, context: songs, queueName: album.title, showAlbumArt: false, showTrackNumber: true)
@@ -104,17 +114,15 @@ struct AlbumScreen: View {
             }
             .padding(C.gridPadding)
             
-            ScrollView(.horizontal) {
-                HStack {
-                    ForEach(artists) { artist in
-                        ArtistGridLink(artist: artist)
-                    }
-                    .frame(width: C.artistHorizontalListEntryWidth)
-                }
-                .frame(height: C.artistHorizontalListEntryHeight)
-                .padding(C.gridPadding)
-            }
+            ArtistGrid(
+                key: Preferences.GridKeys.albumArtists
+                , artists: artists.search(predicate, primaryOnly: primaryOnly)
+                , title: "Artists"
+                , titleFont: F.sectionTitle
+            )
         }
+        
+        .searchable(text: $predicate, isPresented: $nav.isSearchFocused)
         
         .task {
             query.forAlbum(album)

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Domain
 
 public final class LibraryTransaction: Codable {
     public let label: String
@@ -22,7 +23,7 @@ public final class LibraryTransaction: Codable {
         self.assertions = assertions
     }
     
-    public static func flatten(_ transactions: [LibraryTransaction]) throws -> LibraryTransaction  {
+    public static func flatten(_ transactions: [LibraryTransaction]) -> LibraryTransaction  {
         LibraryTransaction(
             label: "Flattened"
             , level: transactions.reduce(.normal, { partialResult, transaction in max(partialResult, transaction.level) })
@@ -30,7 +31,7 @@ public final class LibraryTransaction: Codable {
         )
     }
     
-    static let empty = LibraryTransaction(label: "Empty", level: .normal, assertions: KeySet())
+    public static let empty = LibraryTransaction(label: "Empty", level: .normal, assertions: KeySet())
 }
 
 public enum LibraryTransactionLevel: String, Codable, Comparable {

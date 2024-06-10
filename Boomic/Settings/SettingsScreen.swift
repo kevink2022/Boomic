@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct SettingsScreen: View {
-    @Environment(\.repository) var repository
+    @Environment(\.repository) private var repository
+    @Environment(\.preferences) private var preferences
     
     var body: some View {
+        @Bindable var preferences = preferences
+        
         NavigationStack {
             List {
                 Section {
@@ -21,7 +24,7 @@ struct SettingsScreen: View {
                     }
                 }
                 
-                Section("Libary Data") {
+                Section {
                     NavigationLink {
                         LibraryData()
                     } label: {
@@ -33,9 +36,23 @@ struct SettingsScreen: View {
                     } label: {
                         Text("Library Change History")
                     }
+                }  header: {
+                    Text("Libary Data")
                 }
                 
-                Section("UI Preferences") {
+                Section {
+                    Toggle(isOn: $preferences.localSearchOnlyPrimary) {
+                        Text("Local Search by Title Only")
+                    }
+                } header: {
+                    Text("Search")
+                } footer: {
+                    Text("Limit searches to only the title/name of the object. Does not apply to global search.")
+                }
+
+                
+                
+                Section {
                     NavigationLink {
                         AccentColorPicker()
                     } label: {
@@ -53,6 +70,8 @@ struct SettingsScreen: View {
                     } label: {
                         Text("Library Panel Order")
                     }
+                } header: {
+                    Text("UI Preferences")
                 }
             }
         }

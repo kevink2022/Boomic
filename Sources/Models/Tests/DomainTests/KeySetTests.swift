@@ -1,5 +1,5 @@
 import XCTest
-@testable import Database
+@testable import Domain
 
 private final class Test: Identifiable, Equatable {
     let id: Int

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Domain
 
 public enum FileInterfaceError: LocalizedError, Equatable {
     case enumeratorInitFail(URL)
@@ -39,16 +40,15 @@ public class FileInterface {
     
     public func allFiles(of extensions: Set<String>? = nil, excluding: Set<URL>? = nil) throws -> [URL] {
         let allURLs = try allFiles()
-        let allExtensionURLs = allURLs.filter { extensions?.contains($0.pathExtension.lowercased()) ?? true }
-        
-        let allNewURLs = {
-            if let excluding = excluding, excluding.count > 1 {
-                return allExtensionURLs.filter{ !excluding.contains($0) }
-            } else {
-                return allExtensionURLs
-            }
-        }()
-        
+        let allExtensionURLs = filterExtensions(include: extensions, in: allURLs)
+        let allNewURLs = filterExcludedURLs(exclude: excluding, from: allExtensionURLs)
+        return allNewURLs
+    }
+    
+    public func allFiles(of extensions: Set<String>? = nil, excluding: Set<AppPath>? = nil) throws -> [URL] {
+        let allURLs = try allFiles()
+        let allExtensionURLs = filterExtensions(include: extensions, in: allURLs)
+        let allNewURLs = filterExcludedAppPaths(exclude: excluding, from: allExtensionURLs)
         return allNewURLs
     }
     
@@ -58,6 +58,28 @@ public class FileInterface {
         
         return enumerator.allObjects.compactMap { $0 as? URL }
     }
+    
+    private func filterExtensions(include extensions: Set<String>?, in urls: [URL]) -> [URL] {
+        return urls.filter { extensions?.contains($0.pathExtension.lowercased()) ?? true }
+    }
+    
+    private func filterExcludedURLs(exclude excludeURLs: Set<URL>?, from URLs: [URL]) -> [URL] {
+        if let excludeURLs = excludeURLs, excludeURLs.count > 1 {
+            return URLs.filter{ !excludeURLs.contains($0) }
+        } else {
+            return URLs
+        }
+    }
+    
+    private func filterExcludedAppPaths(exclude excludeURLs: Set<AppPath>?, from URLs: [URL]) -> [URL] {
+        if let excludeURLs = excludeURLs, excludeURLs.count > 1 {
+            return URLs.filter{ !excludeURLs.contains(AppPath(url: $0)) }
+        } else {
+            return URLs
+        }
+    }
+    
+    private func filterExcludedAppPaths() {}
     
     public func size() throws -> Bytes {
         let urls = try allFiles()

@@ -8,21 +8,23 @@
 import SwiftUI
 import Models
 
-struct ArtistGridLink: View {
-    @Environment(\.navigator) private var navigator
-    let artist: Artist
-    
-    var body: some View {
-        Button {
-            navigator.library.append(artist)
-        } label: {
-            ArtistGridEntry(artist: artist)
-        }
-        .foregroundStyle(.primary)
-    }
-}
+//struct ArtistGridLink: View {
+//    @Environment(\.navigator) private var navigator
+//    let artist: Artist
+//    
+//    var body: some View {
+//        Button {
+//            navigator.library.append(artist)
+//        } label: {
+//            ArtistGridEntry(artist: artist)
+//        }
+//        .foregroundStyle(.primary)
+//    }
+//}
+//
+//#Preview {
+//    ArtistGridLink(artist: PreviewMocks.shared.previewArtist())
+//        .environment(\.navigator, PreviewMocks.shared.previewNavigator())
+//}
 
-#Preview {
-    ArtistGridLink(artist: PreviewMocks.shared.previewArtist())
-        .environment(\.navigator, PreviewMocks.shared.previewNavigator())
-}
+

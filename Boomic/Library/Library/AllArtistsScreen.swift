@@ -12,41 +12,30 @@ private typealias C = ViewConstants
 private typealias F = ViewConstants.Fonts
 
 struct AllArtistsScreen: View {
-    @Environment(\.repository) private var repository
     @Environment(\.navigator) private var navigator
+    @Environment(\.preferences) private var preferences
+    @Environment(\.repository) private var repository
+   
     @State private var artists: [Artist] = []
     
-    // dynamic grid
-    let column: GridItem = GridItem.init(.flexible())
-    @State var columnCount = 2
-    @State var columns: [GridItem] = Array(repeating: .init(.flexible()), count: 2)
-    @State var showTitleButtons = false
-    
-    let left = "chevron.left.circle"
-    let right = "chevron.right.circle"
-    
-    
+    @State private var predicate: String = ""
+    private var primaryOnly: Bool { preferences.localSearchOnlyPrimary }
+   
     var body: some View {
+        @Bindable var nav = navigator
+        
         ScrollView {
-            GridList(
-                title: "Artists"
-                , key: Preferences.GridKeys.allArtists
+            ArtistGrid(
+                key: Preferences.GridKeys.allArtists
+                , artists: artists.search(predicate, primaryOnly: primaryOnly)
+                , title: "Artists"
                 , titleFont: F.screenTitle
                 , buttonsInToolbar: true
-                , entries: artists.map({ artist in
-                    GridListEntry(
-                        label: artist.name
-                        , action: { navigator.library.navigateTo(artist) }
-                        , icon: { 
-                            MediaArtView(artist.art)
-                                .clipShape(Circle())
-                        }
-                    )
-                })
             )
             .padding(.horizontal, C.gridPadding)
         }
         
+        .searchable(text: $predicate, isPresented: $nav.isSearchFocused)
         
         .task {
             artists = await repository.getArtists(for: nil)

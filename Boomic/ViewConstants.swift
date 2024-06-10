@@ -115,7 +115,7 @@ struct ViewConstants {
         static let backwardSkip = "backward.fill"
         static let forwardSkip = "forward.fill"
         
-        static let edit = "pencit.circle"
+        static let edit = "square.and.pencil"
         static let tag = "number"
         static let unrated = "star"
         static let rated = "star.fill"

@@ -24,35 +24,37 @@ struct SongBarWrapper<Content: View> : View {
         VStack(spacing: 0) {
             content()
             
-            if let _ = player.song {
-                
-                Divider()
-                
-                Button {
-                    navigator.openPlayer()
-                } label: {
-                    SongBar()
-                        .padding(C.gridPadding)
-                }
-                .foregroundStyle(.primary)
-                .highPriorityGesture(
-                    DragGesture().onEnded { value in
-                        let offset = value.translation.width
-                        let velocity = abs(value.predictedEndTranslation.width - value.translation.width)
-                        
-                        let velocityTrigger: CGFloat = 100
-                        let swipeLeft = offset > 0 && velocity > velocityTrigger
-                        let swipeRight = offset < 0 && velocity > velocityTrigger
-
-                        if swipeRight {
-                            withAnimation(A.standard) { player.next() }
-                        } else if swipeLeft {
-                            withAnimation(A.standard) { player.previous() }
-                        }
+            if let _ = player.song, !navigator.hidePlayerBar {
+                VStack(spacing: 0) {
+                    Divider()
+                    
+                    Button {
+                        navigator.openPlayer()
+                    } label: {
+                        SongBar()
+                            .padding(C.gridPadding)
                     }
-                )
+                    .foregroundStyle(.primary)
+                    .highPriorityGesture(
+                        DragGesture().onEnded { value in
+                            let offset = value.translation.width
+                            let velocity = abs(value.predictedEndTranslation.width - value.translation.width)
+                            
+                            let velocityTrigger: CGFloat = 100
+                            let swipeLeft = offset > 0 && velocity > velocityTrigger
+                            let swipeRight = offset < 0 && velocity > velocityTrigger
+                            
+                            if swipeRight {
+                                withAnimation(A.standard) { player.next() }
+                            } else if swipeLeft {
+                                withAnimation(A.standard) { player.previous() }
+                            }
+                        }
+                    )
+                    
+                    Divider()
+                }
                 
-                Divider()
             }
         }
         .background {

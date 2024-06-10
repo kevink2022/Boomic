@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Domain
 
 public protocol Media: Codable, Identifiable {
     var id: UUID { get }
@@ -29,27 +30,4 @@ extension MediaSource {
     }
 }
 
-public struct AppPath: Codable, Equatable {
-    public let relative: String
-    
-    static let root: URL = URL.homeDirectory
-    
-    public init(relativePath: String) {
-        self.relative = relativePath
-    }
-    
-    public init(url: URL) {
-        let absolutePath = String(url.path(percentEncoded: false).dropFirst("/private".count))
-        let rootPath = AppPath.root.path(percentEncoded: false)
-        
-        if absolutePath.hasPrefix(rootPath) {
-            self.relative = String(absolutePath.dropFirst(rootPath.count))
-        } else { 
-            self.relative = ""
-        }
-    }
-    
-    public var url: URL {
-        return AppPath.root.appending(path: self.relative)
-    }
-}
+

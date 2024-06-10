@@ -7,6 +7,7 @@
 
 import Foundation
 import Models
+import Domain
 
 public final class ModelsMocks {
     public static func sampleModels() -> ([Song], [Album], [Artist]) {

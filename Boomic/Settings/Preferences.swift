@@ -8,6 +8,8 @@
 import SwiftUI
 
 import Foundation
+
+import Domain
 import Database
 import Storage
 
@@ -26,6 +28,9 @@ final class Preferences {
     var libraryOrder: [LibraryNavigation] { didSet { Task { try await libraryOrderStore.save(libraryOrder) } } }
     private let libraryOrderStore: SimpleStore<[LibraryNavigation]>
     
+    var localSearchOnlyPrimary: Bool { didSet { Task { try await localSearchOnlyPrimaryStore.save(localSearchOnlyPrimary) } } }
+    private let localSearchOnlyPrimaryStore: SimpleStore<Bool>
+    
     init(
         inMemory: Bool = false
     ) {
@@ -39,11 +44,24 @@ final class Preferences {
         
         self.libraryOrder = LibraryNavigation.allCases
         self.libraryOrderStore = SimpleStore<[LibraryNavigation]>(key: Keys.libraryOrder, cached: false, namespace: Keys.namespace, inMemory: inMemory)
+        
+        self.localSearchOnlyPrimary = false
+        self.localSearchOnlyPrimaryStore = SimpleStore<Bool>(key: Keys.libraryOrder, cached: false, namespace: Keys.namespace, inMemory: inMemory)
                 
         Task {
-            self.grids = await (try? gridStore.load()) ?? KeySet()
-            self.tabOrder = await (try? tabOrderStore.load()) ?? TabNavigation.allCases
-            self.libraryOrder = await (try? libraryOrderStore.load()) ?? LibraryNavigation.allCases
+            let savedGrids = await (try? gridStore.load())
+            self.grids = savedGrids ?? KeySet()
+            
+            let savedTabOrder = await (try? tabOrderStore.load())
+            self.tabOrder = savedTabOrder ?? TabNavigation.allCases
+            
+            if let savedLibraryOrder = await (try? libraryOrderStore.load()) {
+                let newButtons = LibraryNavigation.allCases.filter { !savedLibraryOrder.contains($0) }
+                self.libraryOrder = savedLibraryOrder + newButtons
+            }
+            
+            let savedLocalSearchOnlyPrimary = await (try? localSearchOnlyPrimaryStore.load())
+            self.localSearchOnlyPrimary = savedLocalSearchOnlyPrimary ?? false
         }
     }
 }
@@ -66,12 +84,14 @@ extension Preferences {
         static let grids = "grids"
         static let tabOrder = "tabOrder"
         static let libraryOrder = "libraryOrder"
+        static let localSearchOnlyPrimary = "localSearchOnlyPrimary"
     }
     
     final class GridKeys {
         static let allAlbums = "allAlbums"
         static let allArtists = "allArtists"
         static let artistAlbums = "artistAlbums"
+        static let albumArtists = "albumArtists"
         static let library = "library"
     }
 }

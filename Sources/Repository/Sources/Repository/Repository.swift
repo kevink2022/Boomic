@@ -28,7 +28,12 @@ public final class Repository {
             basePost: DataBasis.empty
             , key: "transactor"
             , inMemory: false
-            , coreCommit: { transaction, basis in await BasisResolver(currentBasis: basis).apply(transaction: transaction)}
+            , coreCommit: { transaction, basis in
+                await BasisResolver(currentBasis: basis).apply(transaction: transaction)
+            }
+            , flatten: { transaction in
+                LibraryTransaction.flatten(transaction)
+            }
         )
     ) {
         self.fileInterface = fileInterface
@@ -44,7 +49,12 @@ public final class Repository {
                 basePost: DataBasis.empty
                 , key: "transactor"
                 , inMemory: inMemory
-                , coreCommit: { transaction, basis in await BasisResolver(currentBasis: basis).apply(transaction: transaction)}
+                , coreCommit: { transaction, basis in await
+                    BasisResolver(currentBasis: basis).apply(transaction: transaction)
+                }
+                , flatten: { transaction in
+                    LibraryTransaction.flatten(transaction)
+                }
             )
         )
     }
@@ -73,7 +83,7 @@ extension Repository {
 extension Repository {
     public func importSongs() async {
         let existingFiles = queryEngine.getSongs(for: nil, from: dataBasis).compactMap { song in
-            if case .local(let path) = song.source { return path.url }
+            if case .local(let path) = song.source { return path }
             return nil
         }
         

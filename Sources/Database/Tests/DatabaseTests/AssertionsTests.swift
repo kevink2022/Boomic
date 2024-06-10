@@ -1,4 +1,5 @@
 import XCTest
+import Domain
 import Models
 import ModelsMocks
 @testable import Database

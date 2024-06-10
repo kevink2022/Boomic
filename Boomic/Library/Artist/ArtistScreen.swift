@@ -8,13 +8,15 @@
 import SwiftUI
 import Models
 
-private typealias F = ViewConstants.Fonts
 private typealias C = ViewConstants
+private typealias F = ViewConstants.Fonts
 private typealias A = ViewConstants.Animations
 
 struct ArtistScreen: View {
     @Environment(\.navigator) private var navigator
     @Environment(\.repository) private var repository
+    @Environment(\.preferences) private var preferences
+    
     let artist: Artist
     @State private var songs: [Song] = []
     @State private var albums: [Album] = []
@@ -22,22 +24,26 @@ struct ArtistScreen: View {
     private let topSongCount = 3
     @State private var showAllSongs = false
     
-    @State var albumColumns: [GridItem] = Array(repeating: .init(.flexible()), count: 2)
+    @State private var predicate: String = ""
+    private var primaryOnly: Bool { preferences.localSearchOnlyPrimary }
 
-    
     var body: some View {
+        @Bindable var nav = navigator
+        
         ScrollView {
             LazyVStack {
-                MediaArtView(artist.art)
-                    .clipShape(Circle())
-                    .padding(.horizontal, C.artistScreenHeaderPadding)
-                
-                Text(artist.name)
-                    .font(F.title)
-                    .multilineTextAlignment(.center)
-                
-                Text("\(albums.count) albums • \(songs.count) tracks")
-                    .font(F.listDuration)
+                if !nav.isSearchFocused {
+                    MediaArtView(artist.art)
+                        .clipShape(Circle())
+                        .padding(.horizontal, C.artistScreenHeaderPadding)
+                    
+                    Text(artist.name)
+                        .font(F.title)
+                        .multilineTextAlignment(.center)
+                    
+                    Text("\(albums.count) albums • \(songs.count) tracks")
+                        .font(F.listDuration)
+                }
                 
                 HStack {
                     Text("Top Songs")
@@ -48,13 +54,13 @@ struct ArtistScreen: View {
                 .padding(.top)
                 
                 LazyVStack(spacing: 0) {
-                    ForEach(songs.prefix(showAllSongs ? songs.count : topSongCount)) { song in
+                    ForEach(songs.search(predicate, primaryOnly: primaryOnly).prefix((showAllSongs || nav.isSearchFocused) ? songs.count : topSongCount)) { song in
                         Divider()
                         SongListButton(song: song, context: songs, queueName: artist.name)
                     }
                     Divider()
                     
-                    if topSongCount < songs.count {
+                    if !nav.isSearchFocused && topSongCount < songs.count {
                         Button {
                             withAnimation(A.artistScreenShowAllSongs) { showAllSongs.toggle() }
                         } label: {
@@ -69,25 +75,18 @@ struct ArtistScreen: View {
                     Divider()
                 }
                 
-                GridList(
-                    title: "Albums"
-                    , key: Preferences.GridKeys.artistAlbums
-                    , titleFont: F.screenTitle
-                    , entries: albums.map({ album in
-                        GridListEntry(
-                            label: album.title
-                            , subLabel: album.artistName ?? "Unknown Artist"
-                            , action: { navigator.library.navigateTo(album) }
-                            , icon: {
-                                MediaArtView(album.art, cornerRadius: C.albumCornerRadius)
-                            }
-                        )
-                    })
+                AlbumGrid(
+                    key: Preferences.GridKeys.artistAlbums
+                    , albums: albums.search(predicate, primaryOnly: primaryOnly)
+                    , title: "Albums"
+                    , titleFont: F.sectionTitle
                 )
                 .padding(.top)
             }
             .padding(C.gridPadding)
         }
+        
+        .searchable(text: $predicate, isPresented: $nav.isSearchFocused)
         
         .task {
             songs = await repository.getSongs(for: artist.songs)

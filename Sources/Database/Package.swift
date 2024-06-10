@@ -37,7 +37,9 @@ let package = Package(
             ]),
         .target(
             name: "Storage",
-            dependencies: ["Models"]),
+            dependencies: [
+                "Models",
+            ]),
         .target(
             name: "DatabaseMocks",
             dependencies: [

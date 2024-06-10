@@ -12,7 +12,11 @@ private typealias A = ViewConstants.Animations
 @Observable
 public final class Navigator {
     
-    public var library = NavigationPath()
+    public var library = NavigationPath() {
+        didSet {
+            isSearchFocused = false
+        }
+    }
     
     public var tab = TabNavigation.home {
         willSet {
@@ -25,8 +29,11 @@ public final class Navigator {
         }
     }
     
+    public var isSearchFocused: Bool = false
+    
     public var playerOffset: CGFloat = 800
     public var playerFullscreen = false
+    public var hidePlayerBar: Bool { isSearchFocused }
     
     public func closePlayer() {
         withAnimation(A.playerExit) {
@@ -54,7 +61,7 @@ extension NavigationPath {
 
 public enum LibraryNavigation : String, CaseIterable, Identifiable, Hashable, Codable {
    
-    case songs, albums, artists
+    case songs, albums, artists, topRated, taglists
     
     public var id : String { self.rawValue }
 }
