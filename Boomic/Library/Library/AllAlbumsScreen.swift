@@ -17,29 +17,23 @@ struct AllAlbumsScreen: View {
     @Environment(\.preferences) private var preferences
     @Environment(\.repository) private var repository
     
-    @State private var albums: [Album] = []
+    private var albums: [Album] { repository.albums() }
+    
     @State private var predicate: String = ""
     private var primaryOnly: Bool { preferences.localSearchOnlyPrimary }
 
     var body: some View {
         @Bindable var nav = navigator
         
-        ScrollView {
-            AlbumGrid(
-                key: Preferences.GridKeys.allAlbums
-                , albums: albums.search(predicate, primaryOnly: primaryOnly)
-                , title: "Albums"
-                , titleFont: F.screenTitle
-                , buttonsInToolbar: true
-            )
-            .padding(.horizontal, C.gridPadding)
-        }
+        AlbumGrid(
+            albums: albums.search(predicate, primaryOnly: primaryOnly)
+            , key: Preferences.GridKeys.allAlbums
+            , header: .buttonsInToolbar
+            , title: "Albums"
+            , titleFont: F.screenTitle
+        )
         
         .searchable(text: $predicate, isPresented: $nav.isSearchFocused)
-        
-        .task {
-            albums = await repository.getAlbums(for: nil)
-        }
     }
 }
 

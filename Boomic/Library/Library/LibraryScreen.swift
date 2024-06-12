@@ -23,9 +23,10 @@ struct LibraryScreen: View {
         NavigationStack(path: $navigator.library) {
             
             GridList(
-                title: "Library"
-                , key: Preferences.GridKeys.library
+                key: Preferences.GridKeys.library
+                , title: "Library"
                 , titleFont: F.screenTitle
+                , hasSubLabels: false
                 , entries: preferences.libraryOrder.map({ libraryButton in
                     switch libraryButton {
                     
@@ -66,7 +67,6 @@ struct LibraryScreen: View {
                     }
                 })
             )
-            .padding(C.gridPadding)
             
             .navigationDestination(for: LibraryNavigation.self) { menu in
                 switch menu {

@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+enum GridListHeader {
+    case standard, buttonsInToolbar, buttonsHidden, hidden
+}
+
 struct GridListConfiguration: Identifiable {
     public let key: String
     public var id: String { key }
@@ -30,19 +34,27 @@ struct GridListConfiguration: Identifiable {
     
     public var gridMode: Bool { columnCount <= Self.maxColumns }
     public var listMode: Bool { !gridMode }
+    
+    public var iconList: Bool { columnCount >= Self.largeIconListCount && columnCount <= Self.smallIconListCount }
+    public var largeIconList: Bool { columnCount == Self.largeIconListCount }
+    public var mediumIconList: Bool { columnCount == Self.mediumIconListCount }
+    public var smallIconList: Bool { columnCount == Self.smallIconListCount }
+    
+    public var noIconList: Bool { columnCount >= Self.largeListCount }
     public var largeList: Bool { columnCount == Self.largeListCount }
-    public var mediumList: Bool { columnCount == Self.mediumListCount }
     public var smallList: Bool { columnCount == Self.smallListCount }
     
     private static let minColumns = 2
     private static let maxColumns = 5
     private static let maxInternalColumns = Self.smallListCount
-    static let largeListCount = Self.maxColumns + 1
-    static let mediumListCount = Self.maxColumns + 2
-    static let smallListCount = Self.maxColumns + 3
+    static let largeIconListCount = Self.maxColumns + 1
+    static let mediumIconListCount = Self.maxColumns + 2
+    static let smallIconListCount = Self.maxColumns + 3
+    static let largeListCount = Self.maxColumns + 4
+    static let smallListCount = Self.maxColumns + 5
     
-    static let oneColumn: [GridItem] = Array(repeating: .init(.flexible()), count: 1)
-    var columns: [GridItem] { Array(repeating: .init(.flexible()), count: columnCount) }
+    static let oneColumn: [GridItem] = Array(repeating: .init(.flexible(), spacing: 0), count: 1)
+    var columns: [GridItem] { Array(repeating: .init(.flexible(), spacing: 0), count: columnCount) }
     
     var canZoomIn: Bool { columns.count > Self.minColumns }
     var canZoomOut: Bool { columns.count < Self.maxInternalColumns }

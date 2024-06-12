@@ -154,7 +154,7 @@ struct ViewConstants {
     }
     
     static let gridPadding: CGFloat = 8
-    static let albumCornerRadius: CGFloat = 8
+    static let albumCornerRadius: CGFloat = 6
     
     static let songListEntryPadding: CGFloat = 7
     static let songListEntryMinHeight: CGFloat = 30

@@ -40,7 +40,7 @@ struct GridListButtons: View {
                 AnimatedButton(A.standard) {
                     config.showLabels.toggle()
                 } label: {
-                    if config.showLabels {
+                    if config.showLabels && config.gridMode {
                         ZStack {
                             Image(systemName: SI.dynamicGridNegative)
                             Image(systemName: SI.dynamicGridShowLabel)
@@ -52,6 +52,7 @@ struct GridListButtons: View {
                             .font(font)
                     }
                 }
+                .disabled(config.listMode)
                 
                 AnimatedButton(A.standard) {
                     config.zoomOut()

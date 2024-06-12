@@ -57,6 +57,10 @@ extension NavigationPath {
     mutating func navigateTo(_ value: any Hashable) {
         self.append(value)
     }
+    
+    mutating func navigateBack() {
+        self.removeLast()
+    }
 }
 
 public enum LibraryNavigation : String, CaseIterable, Identifiable, Hashable, Codable {

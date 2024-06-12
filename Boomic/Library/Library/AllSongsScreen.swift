@@ -12,44 +12,41 @@ private typealias C = ViewConstants
 private typealias F = ViewConstants.Fonts
 
 struct AllSongsScreen: View {
+    @Environment(\.navigator) private var navigator
+    @Environment(\.preferences) private var preferences
     @Environment(\.repository) private var repository
-    @State private var songs: [Song] = []
-    @State private var predicate: String = ""
     
     let filter: ((Song) -> Bool)?
+    
+    private var songs: [Song] {
+        if let filter = filter {
+            return repository.songs().filter(filter)
+        } else {
+            return repository.songs()
+        }
+    }
+    
+    @State private var predicate: String = ""
+    private var primaryOnly: Bool { preferences.localSearchOnlyPrimary }
     
     init(filter: ((Song) -> Bool)? = nil) {
         self.filter = filter
     }
     
     var body: some View {
-        ScrollView {
-            HStack {
-                Text("Songs")
-                    .font(F.screenTitle)
-                    .padding(.horizontal, C.gridPadding)
- 
-                Spacer()
-            }
-            
-            LazyVStack(spacing: 0) {
-                ForEach(songs.search(predicate)) { song in
-                    Divider()
-                    SongListButton(song: song, context: songs, queueName: "All Songs")
-                }
-                Divider()
-            }
-        }
+        @Bindable var nav = navigator
         
-        .searchable(text: $predicate)
+        SongGrid(
+            songs: songs.search(predicate, primaryOnly: primaryOnly)
+            , key: Preferences.GridKeys.allSongs
+            , header: .buttonsInToolbar
+            , title: "Songs"
+            , titleFont: F.screenTitle
+            , queueName: "All Songs"
+            , showTrackNumber: false
+        )
         
-        .task {
-            if let filter = filter {
-                songs = repository.getSongs(for: nil).filter(filter)
-            } else {
-                songs = repository.getSongs(for: nil)
-            }
-        }
+        .searchable(text: $predicate, isPresented: $nav.isSearchFocused)
     }
 }
 

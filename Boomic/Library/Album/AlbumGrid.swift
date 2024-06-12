@@ -14,31 +14,34 @@ private typealias F = ViewConstants.Fonts
 struct AlbumGrid: View {
     @Environment(\.navigator) private var navigator
     
-    let title: String
-    let key: String
-    let titleFont: Font
-    let buttonsInToolbar: Bool
     let albums: [Album]
     
+    let key: String?
+    let header: GridListHeader
+    let title: String
+    let titleFont: Font
+    
     init(
-        key: String
-        , albums: [Album]
+        albums: [Album]
+        , key: String? = nil
+        , header: GridListHeader = .standard
         , title: String = "Artists"
         , titleFont: Font = F.sectionTitle
-        , buttonsInToolbar: Bool = false
     ) {
-        self.key = key
         self.albums = albums
+        self.key = key
+        self.header = header
         self.title = title
         self.titleFont = titleFont
-        self.buttonsInToolbar = buttonsInToolbar
     }
     
     var body: some View {
         GridList(
-            title: title
-            , key: key
+            key: key
+            , header: header
+            , title: title
             , titleFont: titleFont
+            , textAlignment: .leading
             , entries: albums.map({ album in
                 GridListEntry(
                     label: album.title
@@ -46,6 +49,9 @@ struct AlbumGrid: View {
                     , action: { navigator.library.navigateTo(album) }
                     , icon: {
                         MediaArtView(album.art, cornerRadius: C.albumCornerRadius)
+                    }
+                    , menu: {
+                        AlbumMenu(album: album)
                     }
                 )
             })

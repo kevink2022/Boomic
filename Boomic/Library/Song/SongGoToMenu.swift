@@ -17,7 +17,7 @@ struct SongGoToMenu: View {
     
     var body: some View {
         if song.artists.count > 0 {
-            ForEach(repository.getArtists(for: song.artists)) { artist in
+            ForEach(repository.artists(song.artists)) { artist in
                 Button {
                     navigator.tab = .home
                     navigator.library.navigateTo(artist)
@@ -29,7 +29,7 @@ struct SongGoToMenu: View {
         }
         
         if song.albums.count > 0 {
-            ForEach(repository.getAlbums(for: song.albums)) { album in
+            ForEach(repository.albums(song.albums)) { album in
                 Button {
                     navigator.tab = .home
                     navigator.library.navigateTo(album)

@@ -67,8 +67,8 @@ final class Preferences {
 }
 
 extension Preferences {
-    func loadGrid(key: String) -> GridListConfiguration {
-        grids[key] ?? GridListConfiguration(key: key)
+    func loadGrid(key: String, default fallback: GridListConfiguration = .standard) -> GridListConfiguration {
+        grids[key] ?? GridListConfiguration(key: key, columnCount: fallback.columnCount, showLabels: fallback.showLabels)
     }
     
     func saveGrid(_ grid: GridListConfiguration) {
@@ -88,6 +88,7 @@ extension Preferences {
     }
     
     final class GridKeys {
+        static let allSongs = "allSongs"
         static let allAlbums = "allAlbums"
         static let allArtists = "allArtists"
         static let artistAlbums = "artistAlbums"

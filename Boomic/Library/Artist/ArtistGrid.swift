@@ -13,32 +13,34 @@ private typealias F = ViewConstants.Fonts
 struct ArtistGrid: View {
     @Environment(\.navigator) private var navigator
     
-    let title: String
-    let key: String
-    let titleFont: Font
-    let buttonsInToolbar: Bool
     let artists: [Artist]
     
+    let key: String?
+    let header: GridListHeader
+    let title: String
+    let titleFont: Font
+    
     init(
-        key: String
-        , artists: [Artist]
+        artists: [Artist]
+        , key: String? = nil
+        , header: GridListHeader = .standard
         , title: String = "Artists"
         , titleFont: Font = F.sectionTitle
-        , buttonsInToolbar: Bool = false
     ) {
         self.artists = artists
         self.key = key
+        self.header = header
         self.title = title
         self.titleFont = titleFont
-        self.buttonsInToolbar = buttonsInToolbar
     }
     
     var body: some View {
         GridList(
-            title: title
-            , key: key
+            key: key
+            , header: header
+            , title: title
             , titleFont: titleFont
-            , buttonsInToolbar: buttonsInToolbar
+            , hasSubLabels: false
             , entries: artists.map({ artist in
                 GridListEntry(
                     label: artist.name
@@ -46,6 +48,9 @@ struct ArtistGrid: View {
                     , icon: {
                         MediaArtView(artist.art)
                             .clipShape(Circle())
+                    }
+                    , menu: {
+                        ArtistMenu(artist: artist)
                     }
                 )
             })

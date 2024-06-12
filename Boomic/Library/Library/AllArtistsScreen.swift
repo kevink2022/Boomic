@@ -16,7 +16,7 @@ struct AllArtistsScreen: View {
     @Environment(\.preferences) private var preferences
     @Environment(\.repository) private var repository
    
-    @State private var artists: [Artist] = []
+    private var artists: [Artist] { repository.artists() }
     
     @State private var predicate: String = ""
     private var primaryOnly: Bool { preferences.localSearchOnlyPrimary }
@@ -24,22 +24,15 @@ struct AllArtistsScreen: View {
     var body: some View {
         @Bindable var nav = navigator
         
-        ScrollView {
-            ArtistGrid(
-                key: Preferences.GridKeys.allArtists
-                , artists: artists.search(predicate, primaryOnly: primaryOnly)
-                , title: "Artists"
-                , titleFont: F.screenTitle
-                , buttonsInToolbar: true
-            )
-            .padding(.horizontal, C.gridPadding)
-        }
+        ArtistGrid(
+            artists: artists.search(predicate, primaryOnly: primaryOnly)
+            , key: Preferences.GridKeys.allArtists
+            , header: .buttonsInToolbar
+            , title: "Artists"
+            , titleFont: F.screenTitle
+        )
         
         .searchable(text: $predicate, isPresented: $nav.isSearchFocused)
-        
-        .task {
-            artists = await repository.getArtists(for: nil)
-        }
     }
 }
 

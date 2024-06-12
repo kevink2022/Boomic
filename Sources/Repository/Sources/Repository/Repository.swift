@@ -9,6 +9,7 @@ import Database
 import MediaFileKit
 import Storage
 
+@Observable
 public final class Repository {
     
     public let artLoader: MediaArtLoader
@@ -16,7 +17,7 @@ public final class Repository {
        
     private let queryEngine: QueryEngine
     private let transactor: Transactor<LibraryTransaction, DataBasis>
-    private var dataBasis: DataBasis { transactor.publisher.value }
+    private var basis: DataBasis
     
     private var cancellables: Set<AnyCancellable> = []
     
@@ -41,6 +42,13 @@ public final class Repository {
         
         self.queryEngine = queryEngine
         self.transactor = transactor
+        self.basis = .empty
+        
+        self.transactor.publisher
+            .sink { [weak self] basis in
+                self?.basis = basis
+            }
+            .store(in: &cancellables)
     }
     
     public convenience init(inMemory: Bool = false) {
@@ -62,27 +70,48 @@ public final class Repository {
 
 // MARK: - Queries
 extension Repository {
-    public func getSongs(for ids: [UUID]?) -> [Song] {
-        return queryEngine.getSongs(for: ids, from: dataBasis)
+    
+    public func song(_ song: Song) -> Song? {
+        return basis.songMap[song.id]
     }
     
-    public func getAlbums(for ids: [UUID]?) -> [Album] {
-        return queryEngine.getAlbums(for: ids, from: dataBasis)
+    public func album(_ album: Album) -> Album? {
+        return basis.albumMap[album.id]
     }
     
-    public func getArtists(for ids: [UUID]?) -> [Artist] {
-        return queryEngine.getArtists(for: ids, from: dataBasis)
+    public func artist(_ artist: Artist) -> Artist? {
+        return basis.artistMap[artist.id]
     }
     
-    public func addQuery(_ query: Query) {
-        query.addBasis(publisher: transactor.publisher)
+    public func songs(_ ids: [UUID]? = nil) -> [Song] {
+        if let ids = ids {
+            return ids.compactMap { basis.songMap[$0] }
+        } else {
+            return basis.allSongs
+        }
+    }
+    
+    public func albums(_ ids: [UUID]? = nil) -> [Album] {
+        if let ids = ids {
+            return ids.compactMap { basis.albumMap[$0] }
+        } else {
+            return basis.allAlbums
+        }
+    }
+    
+    public func artists(_ ids: [UUID]? = nil) -> [Artist] {
+        if let ids = ids {
+            return ids.compactMap { basis.artistMap[$0] }
+        } else {
+            return basis.allArtists
+        }
     }
 }
 
 // MARK: - Transactions
 extension Repository {
     public func importSongs() async {
-        let existingFiles = queryEngine.getSongs(for: nil, from: dataBasis).compactMap { song in
+        let existingFiles = queryEngine.getSongs(for: nil, from: basis).compactMap { song in
             if case .local(let path) = song.source { return path }
             return nil
         }
@@ -105,6 +134,30 @@ extension Repository {
     public func deleteSong(_ song: Song) async {
         await transactor.commit { basis in
             return await BasisResolver(currentBasis: basis).deleteSong(song)
+        }
+    }
+    
+    public func updateSong(_ albumUpdate: AlbumUpdate) async {
+        await transactor.commit { basis in
+            return await BasisResolver(currentBasis: basis).updateAlbum(albumUpdate)
+        }
+    }
+    
+    public func deleteAlbum(_ album: Album) async {
+        await transactor.commit { basis in
+            return await BasisResolver(currentBasis: basis).deleteAlbum(album)
+        }
+    }
+    
+    public func updateArtist(_ artistUpdate: ArtistUpdate) async {
+        await transactor.commit { basis in
+            return await BasisResolver(currentBasis: basis).updateArtist(artistUpdate)
+        }
+    }
+    
+    public func deleteArtist(_ artist: Artist) async {
+        await transactor.commit { basis in
+            return await BasisResolver(currentBasis: basis).deleteArtist(artist)
         }
     }
 }

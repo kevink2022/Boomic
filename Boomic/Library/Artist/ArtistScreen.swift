@@ -17,9 +17,15 @@ struct ArtistScreen: View {
     @Environment(\.repository) private var repository
     @Environment(\.preferences) private var preferences
     
-    let artist: Artist
-    @State private var songs: [Song] = []
-    @State private var albums: [Album] = []
+    let baseArtist: Artist
+    private var artist: Artist { repository.artist(baseArtist) ?? baseArtist }
+    private var songs: [Song] { repository.songs(artist.songs) }
+    private var albums: [Album] { repository.albums(artist.albums) }
+    private var exists: Bool { repository.artist(baseArtist) != nil }
+    
+    init(artist: Artist) {
+        self.baseArtist = artist
+    }
     
     private let topSongCount = 3
     @State private var showAllSongs = false
@@ -33,64 +39,61 @@ struct ArtistScreen: View {
         ScrollView {
             LazyVStack {
                 if !nav.isSearchFocused {
-                    MediaArtView(artist.art)
-                        .clipShape(Circle())
-                        .padding(.horizontal, C.artistScreenHeaderPadding)
-                    
-                    Text(artist.name)
-                        .font(F.title)
-                        .multilineTextAlignment(.center)
-                    
-                    Text("\(albums.count) albums • \(songs.count) tracks")
-                        .font(F.listDuration)
-                }
-                
-                HStack {
-                    Text("Top Songs")
-                        .font(F.sectionTitle)
-                    
-                    Spacer()
-                }
-                .padding(.top)
-                
-                LazyVStack(spacing: 0) {
-                    ForEach(songs.search(predicate, primaryOnly: primaryOnly).prefix((showAllSongs || nav.isSearchFocused) ? songs.count : topSongCount)) { song in
-                        Divider()
-                        SongListButton(song: song, context: songs, queueName: artist.name)
+                    VStack {
+                        MediaArtView(artist.art)
+                            .clipShape(Circle())
+                            .padding(.horizontal, C.artistScreenHeaderPadding)
+                        
+                        Text(artist.name)
+                            .font(F.title)
+                            .multilineTextAlignment(.center)
+                        
+                        Text("\(albums.count) albums • \(songs.count) tracks")
+                            .font(F.listDuration)
                     }
-                    Divider()
-                    
-                    if !nav.isSearchFocused && topSongCount < songs.count {
-                        Button {
-                            withAnimation(A.artistScreenShowAllSongs) { showAllSongs.toggle() }
-                        } label: {
-                            ZStack {
-                                Color(.clear)
-                                Text(showAllSongs ? "Show Less" : "Show All")
-                            }
-                            .frame(height: C.smallAlbumFrame + 5)
+                    .padding(C.gridPadding)
+                }
+                
+                SongGrid(
+                    songs: Array(songs.search(predicate, primaryOnly: primaryOnly).prefix((showAllSongs || nav.isSearchFocused) ? songs.count : topSongCount))
+                    , key: nil
+                    , config: .songStandard
+                    , header: .buttonsHidden
+                    , title: "Songs"
+                    , titleFont: F.sectionTitle
+                    , queueName: artist.name
+                    , showTrackNumber: false
+                )
+
+                if !nav.isSearchFocused && topSongCount < songs.count {
+                    Button {
+                        withAnimation(A.artistScreenShowAllSongs) { showAllSongs.toggle() }
+                    } label: {
+                        ZStack {
+                            Color(.clear)
+                            Text(showAllSongs ? "Show Less" : "Show All")
                         }
+                        .frame(height: C.smallAlbumFrame - 5)
                     }
                     
                     Divider()
                 }
                 
                 AlbumGrid(
-                    key: Preferences.GridKeys.artistAlbums
-                    , albums: albums.search(predicate, primaryOnly: primaryOnly)
+                    albums: albums.search(predicate, primaryOnly: primaryOnly)
+                    , key: Preferences.GridKeys.artistAlbums
+                    , header: .standard
                     , title: "Albums"
                     , titleFont: F.sectionTitle
                 )
                 .padding(.top)
             }
-            .padding(C.gridPadding)
         }
         
         .searchable(text: $predicate, isPresented: $nav.isSearchFocused)
         
-        .task {
-            songs = await repository.getSongs(for: artist.songs)
-            albums = await repository.getAlbums(for: artist.albums)
+        .onChange(of: exists) { oldValue, newValue in
+            if newValue == false { navigator.library.navigateBack() }
         }
     }
 }

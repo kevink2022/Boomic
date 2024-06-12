@@ -18,18 +18,17 @@ import Database
 public final class SongPlayer {
     
     // data
-    public var song: Song? { songQuery.songs.first ?? baseSong }
-    public private(set) var queue: MediaQueue?
-    public private(set) var art: MediaArt?
-    private var baseSong: Song? {
-        didSet {
-            if let song = baseSong {
-                songQuery = Query.forSong(song)
-                repository.addQuery(songQuery)
-            }
+    public var song: Song? {
+        if let baseSong = baseSong {
+            return repository.song(baseSong)
+        } else {
+            return nil
         }
     }
-    private var songQuery: Query
+    
+    public private(set) var queue: MediaQueue?
+    public private(set) var art: MediaArt?
+    private var baseSong: Song?
     public var songDuration: TimeInterval { engine?.duration ?? song?.duration ?? 0 }
     
     // behavioral state
@@ -53,7 +52,6 @@ public final class SongPlayer {
     ) {
         //self.song = nil
         self.baseSong = nil
-        self.songQuery = Query()
         self.queue = nil
         self.engine = nil
         self.engineStatus = .idle
