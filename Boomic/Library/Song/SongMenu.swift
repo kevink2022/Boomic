@@ -13,6 +13,8 @@ private typealias SI = ViewConstants.SystemImages
 struct SongMenu: View {
     @Environment(\.player) private var player
     @Environment(\.repository) private var repository
+    @Environment(\.selector) private var selector
+    
     let song: Song
     
     @State private var deleteAlert = false
@@ -28,6 +30,15 @@ struct SongMenu: View {
             player.addToEnd(song)
         } label: {
             Label("Play Last", systemImage: SI.bottomOfQueue)
+        }
+        
+        if !selector.active {
+            Button {
+                selector.select(.songs)
+                selector.toggleSelect(song.id, group: .songs)
+            } label: {
+                Label("Select Song", systemImage: SI.select)
+            }
         }
         
         Divider()

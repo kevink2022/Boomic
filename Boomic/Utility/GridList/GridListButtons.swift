@@ -75,5 +75,5 @@ struct GridListButtons: View {
 }
 
 #Preview {
-    GridListButtons(config: .constant(.standard))
+    GridListButtons(config: .constant(.threeColumns))
 }

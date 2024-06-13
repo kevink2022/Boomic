@@ -18,6 +18,7 @@ struct AlbumScreen: View {
     @Environment(\.player) private var player
     @Environment(\.preferences) private var preferences
     @Environment(\.repository) private var repository
+    @Environment(\.selector) private var selector
 
     private let baseAlbum: Album
     private var album: Album { repository.album(baseAlbum) ?? baseAlbum }
@@ -92,8 +93,9 @@ struct AlbumScreen: View {
                 SongGrid(
                     songs: songs.search(predicate, primaryOnly: primaryOnly)
                     , key: nil
-                    , config: .songAlbumStandard
+                    , config: .largeList
                     , header: .buttonsHidden
+                    , selectable: selector.group == .songs
                     , title: "Songs"
                     , titleFont: F.sectionTitle
                     , queueName: album.title
@@ -104,6 +106,7 @@ struct AlbumScreen: View {
                     artists: artists.search(predicate, primaryOnly: primaryOnly)
                     , key: Preferences.GridKeys.albumArtists
                     , header: .standard
+                    , selectable: selector.group == .artists
                     , title: "Artists"
                     , titleFont: F.sectionTitle
                 )

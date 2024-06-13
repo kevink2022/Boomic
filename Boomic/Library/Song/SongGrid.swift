@@ -20,6 +20,8 @@ struct SongGrid: View {
     let key: String?
     let config: GridListConfiguration
     let header: GridListHeader
+    let selectable: Bool
+    let disabled: Bool
     let title: String
     let titleFont: Font
     let queueName: String?
@@ -28,8 +30,10 @@ struct SongGrid: View {
     init(
         songs: [Song]
         , key: String? = nil
-        , config: GridListConfiguration = .songStandard
+        , config: GridListConfiguration = .smallIconList
         , header: GridListHeader = .standard
+        , selectable: Bool = false
+        , disabled: Bool = false
         , title: String = "Songs"
         , titleFont: Font = F.sectionTitle
         , queueName: String? = nil
@@ -39,6 +43,8 @@ struct SongGrid: View {
         self.key = key
         self.config = config
         self.header = header
+        self.selectable = selectable
+        self.disabled = disabled
         self.title = title
         self.titleFont = titleFont
         self.queueName = queueName
@@ -58,6 +64,8 @@ struct SongGrid: View {
             key: key
             , config: config
             , header: header
+            , selectable: selectable
+            , disabled: disabled
             , title: title
             , titleFont: titleFont
             , entries: songs.map({ song in
@@ -66,6 +74,8 @@ struct SongGrid: View {
                     , subLabel: song.artistName
                     , listHeader: trackNumber(song)
                     , listFooter: song.duration.formatted
+                    , selectionGroup: .songs
+                    , selectionID: song.id
                     , action: { player.setSong(song, context: songs, queueName: queueName ?? "Songs") }
                     , icon: {
                         MediaArtView(song.art, cornerRadius: C.albumCornerRadius)
@@ -80,12 +90,12 @@ struct SongGrid: View {
 }
 
 extension GridListConfiguration {
-    static let songStandard = GridListConfiguration(
+    static let smallIconList = GridListConfiguration(
         key: "songStandard"
         , columnCount: GridListConfiguration.smallIconListCount
     )
     
-    static let songAlbumStandard = GridListConfiguration(
+    static let largeList = GridListConfiguration(
         key: "songAlbumStandard"
         , columnCount: GridListConfiguration.largeListCount
     )

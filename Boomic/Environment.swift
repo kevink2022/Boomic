@@ -25,6 +25,11 @@ struct PreferencesEnvironmentKey: EnvironmentKey {
     static let defaultValue: Preferences = Preferences()
 }
 
+struct SelectorEnvironmentKey: EnvironmentKey {
+    static let defaultValue: ModelSelector = ModelSelector()
+}
+
+
 extension EnvironmentValues {
     var repository: Repository {
         get { self[RepositoryEnvironmentKey.self] }
@@ -44,6 +49,11 @@ extension EnvironmentValues {
     var preferences: Preferences {
         get { self[PreferencesEnvironmentKey.self] }
         set { self[PreferencesEnvironmentKey.self] = newValue }
+    }
+    
+    var selector: ModelSelector {
+        get { self[SelectorEnvironmentKey.self] }
+        set { self[SelectorEnvironmentKey.self] = newValue }
     }
 }
 

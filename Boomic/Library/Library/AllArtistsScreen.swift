@@ -28,6 +28,7 @@ struct AllArtistsScreen: View {
             artists: artists.search(predicate, primaryOnly: primaryOnly)
             , key: Preferences.GridKeys.allArtists
             , header: .buttonsInToolbar
+            , selectable: true
             , title: "Artists"
             , titleFont: F.screenTitle
         )

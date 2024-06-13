@@ -12,12 +12,6 @@ private typealias A = ViewConstants.Animations
 @Observable
 public final class Navigator {
     
-    public var library = NavigationPath() {
-        didSet {
-            isSearchFocused = false
-        }
-    }
-    
     public var tab = TabNavigation.home {
         willSet {
             if tab == newValue {
@@ -27,6 +21,26 @@ public final class Navigator {
                 }
             }
         }
+    }
+    public func toTab(_ tab: TabNavigation) {
+        if self.tab != tab {
+            // prevent triggering double tabs on programatic navigation
+            self.tab = tab
+        }
+    }
+    
+    public var library = NavigationPath() {
+        didSet {
+            isSearchFocused = false
+        }
+    }
+    
+    public var showSheet: Bool = false
+    public var sheetContent: AnyView? = nil
+    
+    func present<V: View>(_ view: V) {
+        self.sheetContent = AnyView(view)
+        self.showSheet = true
     }
     
     public var isSearchFocused: Bool = false

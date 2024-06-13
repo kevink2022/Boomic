@@ -18,7 +18,7 @@ struct GridListConfiguration: Identifiable {
     public private(set) var columnCount: Int
     
     
-    static let standard = GridListConfiguration(
+    static let threeColumns = GridListConfiguration(
         key: "standard"
     )
     

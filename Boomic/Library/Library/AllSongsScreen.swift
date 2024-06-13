@@ -40,6 +40,7 @@ struct AllSongsScreen: View {
             songs: songs.search(predicate, primaryOnly: primaryOnly)
             , key: Preferences.GridKeys.allSongs
             , header: .buttonsInToolbar
+            , selectable: true
             , title: "Songs"
             , titleFont: F.screenTitle
             , queueName: "All Songs"

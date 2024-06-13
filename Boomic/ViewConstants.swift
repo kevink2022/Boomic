@@ -151,6 +151,12 @@ struct ViewConstants {
         static let beforeTransaction = "clock.arrow.2.circlepath"
         
         static let delete = "trash"
+        
+        static let select = "checkmark.circle"
+        static let unselected = "circle"
+        static let cancelSelection = "x.circle"
+        static let editSelections = "pencil.circle"
+        static let viewSelections = "line.3.horizontal.circle"
     }
     
     static let gridPadding: CGFloat = 8

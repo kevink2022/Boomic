@@ -8,11 +8,19 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.navigator) private var navigator
     @Environment(\.preferences) private var preferences
     
-    var body: some View { 
+    var body: some View {
+        @Bindable var navigator = navigator
+        
         PlayerWrapper { TabsScreen() }
             .tint(preferences.accentColor)
+            .sheet(isPresented: $navigator.showSheet) {
+                if let content = navigator.sheetContent {
+                    content
+                }
+            }
     }
 }
 

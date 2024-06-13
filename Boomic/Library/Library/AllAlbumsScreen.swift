@@ -29,6 +29,7 @@ struct AllAlbumsScreen: View {
             albums: albums.search(predicate, primaryOnly: primaryOnly)
             , key: Preferences.GridKeys.allAlbums
             , header: .buttonsInToolbar
+            , selectable: true
             , title: "Albums"
             , titleFont: F.screenTitle
         )

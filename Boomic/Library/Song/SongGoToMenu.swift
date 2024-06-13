@@ -19,7 +19,7 @@ struct SongGoToMenu: View {
         if song.artists.count > 0 {
             ForEach(repository.artists(song.artists)) { artist in
                 Button {
-                    navigator.tab = .home
+                    navigator.toTab(.home)
                     navigator.library.navigateTo(artist)
                     navigator.closePlayer()
                 } label: {
@@ -31,7 +31,7 @@ struct SongGoToMenu: View {
         if song.albums.count > 0 {
             ForEach(repository.albums(song.albums)) { album in
                 Button {
-                    navigator.tab = .home
+                    navigator.toTab(.home)
                     navigator.library.navigateTo(album)
                     navigator.closePlayer()
                 } label: {

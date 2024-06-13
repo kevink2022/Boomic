@@ -19,6 +19,8 @@ struct GridList<Icon: View, Menu: View>: View {
     
     let key: String?
     let header: GridListHeader
+    let selectable: Bool
+    let disabled: Bool
     let title: String
     let titleFont: Font
     let textAlignment: HorizontalAlignment
@@ -31,8 +33,10 @@ struct GridList<Icon: View, Menu: View>: View {
     
     init(
         key: String? = nil
-        , config: GridListConfiguration = .standard
+        , config: GridListConfiguration = .threeColumns
         , header: GridListHeader = .standard
+        , selectable: Bool = false
+        , disabled: Bool = false
         , title: String = "Grid"
         , titleFont: Font = F.sectionTitle
         , textAlignment: HorizontalAlignment = .center
@@ -44,6 +48,8 @@ struct GridList<Icon: View, Menu: View>: View {
         self.key = key
         self.config = config
         self.header = header
+        self.selectable = selectable
+        self.disabled = disabled
         self.title = title
         self.titleFont = titleFont
         self.textAlignment = textAlignment
@@ -56,8 +62,6 @@ struct GridList<Icon: View, Menu: View>: View {
     private var buttonsInToolbar: Bool { header == .buttonsInToolbar && header != .hidden}
     private var buttonsInHeader: Bool { header == .standard }
     private var showHeader: Bool { header != .hidden }
-    private var showIcon: Bool { config.gridMode || config.iconList }
-    private var showSubLabel: Bool { hasSubLabels && !config.smallList }
     private var showDividers: Bool { config.listMode && hasListDividers }
     
     var body: some View {
@@ -78,80 +82,40 @@ struct GridList<Icon: View, Menu: View>: View {
                     .padding(C.gridPadding)
                 }
                 
-                if showDividers {
-                    Divider()
-                }
-                
                 LazyVGrid(
                     columns: config.gridMode ? config.columns : Config.oneColumn
                     , alignment: .leading
                     , spacing: 0
+                    , pinnedViews: [.sectionHeaders]
                 ) {
-                    ForEach(gridEntries) { entry in
-                        Button {
-                            entry.action()
-                        } label: {
-                            VStack(alignment: textAlignment) {
-                                HStack {
-                                    if showListHeader && config.listMode, let header = entry.listHeader {
-                                        Text(header)
-                                            .font(F.trackNumber)
-                                            .frame(minWidth: C.songTrackNumberWidth)
-                                    }
-                                    
-                                    if showIcon {
-                                        entry.icon()
-                                    }
-                                    
-                                    if config.listMode {
-                                        VStack(alignment: .leading) {
-                                            Text(entry.label)
-                                                .font(config.labelFont)
-                                                .lineLimit(1)
-                                            
-                                            
-                                            if showSubLabel, let subLabel = entry.subLabel {
-                                                Text(subLabel)
-                                                    .font(config.subLabelFont)
-                                                    .lineLimit(1)
-                                            }
-                                        }
-                                        
-                                        Spacer()
-                                        
-                                        if let footer = entry.listFooter {
-                                            Text(footer)
-                                                .font(F.listDuration)
-                                        }
-                                    }
-                                }
-                                .frame(minHeight: config.minHeight, maxHeight: config.maxHeight)
-                                
-                                if config.showLabels && config.gridMode {
-                                    VStack(alignment: textAlignment) {
-                                        Text(entry.label)
-                                            .font(config.labelFont)
-                                            .lineLimit(1)
-                                        
-                                        if showSubLabel {
-                                            Text(entry.subLabel ?? " ")
-                                                .font(config.subLabelFont)
-                                                .lineLimit(1)
-                                        }
-                                    }
-                                }
-                            }
-                            .foregroundColor(.primary)
+                    Section(header: GridListSelectorBar(
+                        selectable: selectable
+                        , externalHorizontalPadding: config.externalPadding
+                    )) {
+                        if showDividers {
+                            Divider()
                         }
-                        .padding(config.internalPadding)
-                        .contextMenu { entry.menu() }
                         
-                        if showDividers { Divider() }
+                        ForEach(gridEntries) { entry in
+                            GridListBody(
+                                entry: entry
+                                , config: config
+                                , selectable: selectable
+                                , disabled: disabled
+                                , textAlignment: textAlignment
+                                , showListHeader: showListHeader
+                                , hasSubLabels: hasSubLabels
+                            )
+                            
+                            if showDividers { Divider() }
+                        }
                     }
                 }
                 .padding(.horizontal, config.externalPadding)
+                
             }
             
+                        
             .toolbar {
                 if buttonsInToolbar {
                     GridListButtons(config: $config, font: F.toolbarButton)
@@ -168,6 +132,119 @@ struct GridList<Icon: View, Menu: View>: View {
                 if key != nil {
                     preferences.saveGrid(config)
                 }
+            }
+        }
+    }
+}
+
+struct GridListBody<Icon: View, Menu: View>: View {
+    @Environment(\.preferences) private var preferences
+    @Environment(\.selector) private var selector
+    
+    let entry: GridListEntry<Icon, Menu>
+    let config: GridListConfiguration
+    
+    let selectable: Bool
+    let disabled: Bool
+    let textAlignment: HorizontalAlignment
+    let showListHeader: Bool
+    let hasSubLabels: Bool
+    
+    fileprivate init(
+        entry: GridListEntry<Icon, Menu>
+        , config: Config
+        , selectable: Bool
+        , disabled: Bool
+        , textAlignment: HorizontalAlignment
+        , showListHeader: Bool
+        , hasSubLabels: Bool
+    ) {
+        self.entry = entry
+        self.config = config
+        self.selectable = selectable
+        self.disabled = disabled
+        self.textAlignment = textAlignment
+        self.showListHeader = showListHeader
+        self.hasSubLabels = hasSubLabels
+    }
+    
+    private var showIcon: Bool { config.gridMode || config.iconList }
+    private var showSubLabel: Bool { hasSubLabels && !config.smallList }
+    private func tapToSelect(_ group: SelectionGroup?) -> Bool {
+        selectable
+        && selector.active
+        && group == selector.group
+    }
+    
+    var body: some View {
+        ZStack {
+            Button {
+                if tapToSelect(entry.selectionGroup), let id = entry.selectionID {
+                    selector.toggleSelect(id, group: entry.selectionGroup)
+                } else {
+                    entry.action()
+                }
+            } label: {
+                VStack(alignment: textAlignment) {
+                    HStack {
+                        if showListHeader && config.listMode, let header = entry.listHeader {
+                            Text(header)
+                                .font(F.trackNumber)
+                                .frame(minWidth: C.songTrackNumberWidth)
+                        }
+                        
+                        if showIcon {
+                            entry.icon()
+                        }
+                        
+                        if config.listMode {
+                            VStack(alignment: .leading) {
+                                Text(entry.label)
+                                    .font(config.labelFont)
+                                    .lineLimit(1)
+                                
+                                
+                                if showSubLabel, let subLabel = entry.subLabel {
+                                    Text(subLabel)
+                                        .font(config.subLabelFont)
+                                        .lineLimit(1)
+                                }
+                            }
+                            
+                            Spacer()
+                            
+                            if let footer = entry.listFooter {
+                                Text(footer)
+                                    .font(F.listDuration)
+                            }
+                        }
+                    }
+                    .frame(minHeight: config.minHeight, maxHeight: config.maxHeight)
+                    
+                    if config.showLabels && config.gridMode {
+                        VStack(alignment: textAlignment) {
+                            Text(entry.label)
+                                .font(config.labelFont)
+                                .lineLimit(1)
+                            
+                            if showSubLabel {
+                                Text(entry.subLabel ?? " ")
+                                    .font(config.subLabelFont)
+                                    .lineLimit(1)
+                            }
+                        }
+                    }
+                }
+                .foregroundColor(.primary)
+            }
+            .disabled(disabled)
+            .padding(config.internalPadding)
+            .contextMenu { entry.menu() }
+            
+            if selectable && selector.isSelected(entry.selectionID) {
+                Color(preferences.accentColor)
+                    .opacity(0.3)
+                    .allowsHitTesting(false)
             }
         }
     }

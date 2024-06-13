@@ -16,6 +16,7 @@ struct ArtistScreen: View {
     @Environment(\.navigator) private var navigator
     @Environment(\.repository) private var repository
     @Environment(\.preferences) private var preferences
+    @Environment(\.selector) private var selector
     
     let baseArtist: Artist
     private var artist: Artist { repository.artist(baseArtist) ?? baseArtist }
@@ -57,8 +58,9 @@ struct ArtistScreen: View {
                 SongGrid(
                     songs: Array(songs.search(predicate, primaryOnly: primaryOnly).prefix((showAllSongs || nav.isSearchFocused) ? songs.count : topSongCount))
                     , key: nil
-                    , config: .songStandard
+                    , config: .smallIconList
                     , header: .buttonsHidden
+                    , selectable: selector.group == .songs
                     , title: "Songs"
                     , titleFont: F.sectionTitle
                     , queueName: artist.name
@@ -83,6 +85,7 @@ struct ArtistScreen: View {
                     albums: albums.search(predicate, primaryOnly: primaryOnly)
                     , key: Preferences.GridKeys.artistAlbums
                     , header: .standard
+                    , selectable: selector.group == .artists
                     , title: "Albums"
                     , titleFont: F.sectionTitle
                 )

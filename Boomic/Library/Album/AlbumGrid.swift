@@ -17,20 +17,29 @@ struct AlbumGrid: View {
     let albums: [Album]
     
     let key: String?
+    let config: GridListConfiguration
     let header: GridListHeader
+    let selectable: Bool
+    let disabled: Bool
     let title: String
     let titleFont: Font
     
     init(
         albums: [Album]
         , key: String? = nil
+        , config: GridListConfiguration = .threeColumns
         , header: GridListHeader = .standard
+        , selectable: Bool = false
+        , disabled: Bool = false
         , title: String = "Artists"
         , titleFont: Font = F.sectionTitle
     ) {
         self.albums = albums
         self.key = key
+        self.config = config
         self.header = header
+        self.selectable = selectable
+        self.disabled = disabled
         self.title = title
         self.titleFont = titleFont
     }
@@ -38,7 +47,10 @@ struct AlbumGrid: View {
     var body: some View {
         GridList(
             key: key
+            , config: config
             , header: header
+            , selectable: selectable
+            , disabled: disabled
             , title: title
             , titleFont: titleFont
             , textAlignment: .leading
@@ -46,6 +58,8 @@ struct AlbumGrid: View {
                 GridListEntry(
                     label: album.title
                     , subLabel: album.artistName ?? "Unknown Artist"
+                    , selectionGroup: .albums
+                    , selectionID: album.id
                     , action: { navigator.library.navigateTo(album) }
                     , icon: {
                         MediaArtView(album.art, cornerRadius: C.albumCornerRadius)
