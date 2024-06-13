@@ -37,7 +37,7 @@ struct AlbumScreen: View {
         @Bindable var nav = navigator
         
         ScrollView {
-            VStack {
+            LazyVStack {
                 if !nav.isSearchFocused {
                     VStack {
                         HStack {
@@ -112,6 +112,7 @@ struct AlbumScreen: View {
                 )
                 .padding(.top)
             }
+            .id(nav.isSearchFocused)
         }
         
         .searchable(text: $predicate, isPresented: $nav.isSearchFocused)

@@ -8,46 +8,112 @@
 import SwiftUI
 import Models
 
+private typealias F = ViewConstants.Fonts
+private typealias SI = ViewConstants.SystemImages
+
 private typealias SheetData = SongUpdateSheetData
 
 struct SongUpdateSheet: View {
     let song: Song
-    
-    @State private var newTitle: String
-//    @State private var newTrackNumber: String
-    
     @State private var data: SheetData
     
     init(song: Song) {
         self.song = song
-        self.newTitle = song.title ?? ""
-//        self.newTrackNumber = Self.intToString(song.trackNumber)
         self.data = SheetData(song: song)
+    }
+    
+    private func rated(_ star: Int) -> Bool { data.rating ?? 0 >= star }
+    private var willModify: Bool {
+        data.asUpdate().willModify(song)
     }
      
     var body: some View {
-        Form {
-            Text(data.song.label)
-            Text("\(data.song.source)")
+        VStack(spacing: 0) {
+            HStack {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(data.song.label)
+                        .font(F.listTitle)
+                    Text("\(data.song.source.label)")
+                    
+                    HStack {
+                        ForEach(1...5, id: \.self) { star in
+                            Button {
+                                if rated(star) {
+                                    data.rating = data.rating ?? 1 - 1
+                                } else {
+                                    data.rating = star
+                                }
+                            } label: {
+                                Image(systemName: rated(star) ? SI.rated : SI.unrated)
+                            }
+                        }
+                    }
+                    
+                    LargeButton {
+                        
+                    } label: {
+                        Text("Save Changes")
+                    }
+                    .disabled(!willModify)
+                    .frame(height: 50)
 
-            Section("Title") {
-                TextField(text: $data.title, prompt: Text(song.title ?? "")) {
-                    Text("Title")
                 }
+                .padding(20)
+                
+                Spacer()
             }
             
-//            Section("Track Number") {
-//                TextField(text: $newTrackNumber, prompt: Text(Self.intToString(song.trackNumber))) {
-//                    Text("Track Number")
-//                }
-//            }
+            Divider()
+            
+            Form {
+                Section("Title") {
+                    TextField(text: $data.title, prompt: Text(UpdateSheet.toSheet(song.title))) { EmptyView() }
+                }
+                
+                Section("Track Number") {
+                    TextField(text: $data.trackNumber, prompt: Text(UpdateSheet.toSheet(song.trackNumber))) { EmptyView() }
+                }
+                
+                Section("Disc Number") {
+                    TextField(text: $data.discNumber, prompt: Text(UpdateSheet.toSheet(song.discNumber))) { EmptyView() }
+                }
+                
+                Section("Artist Name") {
+                    TextField(text: $data.artistName, prompt: Text(UpdateSheet.toSheet(song.artistName))) { EmptyView() }
+                }
+                
+                Section("Album Title") {
+                    TextField(text: $data.albumTitle, prompt: Text(UpdateSheet.toSheet(song.albumTitle))) { EmptyView() }
+                }
+            }
         }
     }
-    
-    
 }
 
-fileprivate final class SongUpdateSheetData {
+class UpdateSheet {
+    static func toSheet(_ int: Int?) -> String {
+        if let int = int { return String(int) }
+        return ""
+    }
+    
+    static func fromSheet(_ string: String) -> Int? {
+        if string == "" { return nil }
+        return Int(string)
+    }
+    
+    static func toSheet(_ string: String?) -> String {
+        if let string = string { return string }
+        return ""
+    }
+    
+    static func fromSheet(_ string: String) -> String? {
+        if string == "" { return nil }
+        return string
+    }
+}
+
+@Observable
+fileprivate final class SongUpdateSheetData: UpdateSheet {
     let song: Song
     
     var title: String
@@ -56,33 +122,44 @@ fileprivate final class SongUpdateSheetData {
     
     var artistName: String
     var albumTitle: String
-    var rating: String
+    var rating: Int? { didSet { if rating == 0 {rating = nil} } }
     
     var art: MediaArt?
     
     init(song: Song) {
         self.song = song
-        self.title = Self.toString(song.title)
-        self.trackNumber = Self.toString(song.trackNumber)
-        self.discNumber = Self.toString(song.discNumber)
+        self.title = Self.toSheet(song.title)
+        self.trackNumber = Self.toSheet(song.trackNumber)
+        self.discNumber = Self.toSheet(song.discNumber)
         self.art = song.art
-        self.artistName = Self.toString(song.artistName)
-        self.albumTitle = Self.toString(song.albumTitle)
-        self.rating = Self.toString(song.rating)
+        self.artistName = Self.toSheet(song.artistName)
+        self.albumTitle = Self.toSheet(song.albumTitle)
+        self.rating = song.rating
     }
     
-    static func toString(_ int: Int?) -> String {
-        if let int = int {
-            return String(int)
-        }
-        return ""
-    }
-    
-    static func toString(_ string: String?) -> String {
-        if let string = string {
-            return string
-        }
-        return ""
+    func asUpdate() -> SongUpdate {
+        var erasing = Set<PartialKeyPath<Song>>()
+        
+        if song.title != nil && title == "" { erasing.insert(\.title) }
+        if song.trackNumber != nil && trackNumber == "" { erasing.insert(\.trackNumber) }
+        if song.discNumber != nil && discNumber == "" { erasing.insert(\.discNumber) }
+        if song.art != nil && art == nil { erasing.insert(\.title) }
+        if song.artistName != nil && artistName == "" { erasing.insert(\.artistName) }
+        if song.albumTitle != nil && albumTitle == "" { erasing.insert(\.albumTitle) }
+        if song.rating != nil && rating == nil { erasing.insert(\.title) }
+        
+        let update =  SongUpdate(
+            song: song
+            , title: song.title != Self.fromSheet(title) ? Self.fromSheet(title) : nil
+            , trackNumber: song.trackNumber != Self.fromSheet(trackNumber) ? Self.fromSheet(trackNumber) : nil
+            , discNumber: song.discNumber != Self.fromSheet(discNumber) ? Self.fromSheet(discNumber) : nil
+            , art: song.art != art ? art : nil
+            , artistName: song.artistName != Self.fromSheet(artistName) ? Self.fromSheet(artistName) : nil
+            , albumTitle: song.albumTitle != Self.fromSheet(albumTitle) ? Self.fromSheet(albumTitle) : nil
+            , rating: song.rating != rating ? rating : nil
+        )
+        
+        return update
     }
 }
 

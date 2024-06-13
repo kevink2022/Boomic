@@ -15,7 +15,6 @@ public final class Repository {
     public let artLoader: MediaArtLoader
     private let fileInterface: FileInterface
        
-    private let queryEngine: QueryEngine
     private let transactor: Transactor<LibraryTransaction, DataBasis>
     private var basis: DataBasis
     
@@ -24,7 +23,6 @@ public final class Repository {
     public init(
         fileInterface: FileInterface = FileInterface(at: URL.documentsDirectory)
         , artLoader: MediaArtLoader = MediaArtCache()
-        , queryEngine: QueryEngine = QueryEngine()
         , transactor: Transactor<LibraryTransaction, DataBasis> = Transactor<LibraryTransaction, DataBasis>(
             basePost: DataBasis.empty
             , key: "transactor"
@@ -40,7 +38,6 @@ public final class Repository {
         self.fileInterface = fileInterface
         self.artLoader = artLoader
         
-        self.queryEngine = queryEngine
         self.transactor = transactor
         self.basis = .empty
         
@@ -111,7 +108,7 @@ extension Repository {
 // MARK: - Transactions
 extension Repository {
     public func importSongs() async {
-        let existingFiles = queryEngine.getSongs(for: nil, from: basis).compactMap { song in
+        let existingFiles = basis.allSongs.compactMap { song in
             if case .local(let path) = song.source { return path }
             return nil
         }

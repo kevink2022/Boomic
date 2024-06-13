@@ -38,7 +38,7 @@ public final class Navigator {
     public var showSheet: Bool = false
     public var sheetContent: AnyView? = nil
     
-    func present<V: View>(_ view: V) {
+    func presentSheet<V: View>(_ view: V) {
         self.sheetContent = AnyView(view)
         self.showSheet = true
     }

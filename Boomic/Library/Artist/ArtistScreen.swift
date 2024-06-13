@@ -91,6 +91,7 @@ struct ArtistScreen: View {
                 )
                 .padding(.top)
             }
+            .id(nav.isSearchFocused)
         }
         
         .searchable(text: $predicate, isPresented: $nav.isSearchFocused)

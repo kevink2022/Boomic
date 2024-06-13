@@ -45,7 +45,7 @@ struct GridListSelectorBar: View {
                     
                     HStack {
                         Button {
-                            navigator.present(ShowAllSelections())
+                            navigator.presentSheet(ShowAllSelections())
                         } label: {
                             Image(systemName: SI.viewSelections)
                                 .font(F.playerButton)

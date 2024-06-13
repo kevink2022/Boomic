@@ -111,7 +111,7 @@ public final class SongUpdate: Identifiable, Codable, Hashable {
         else if let trackNumber = self.trackNumber, trackNumber != song.trackNumber { return true }
         else if let discNumber = self.discNumber, discNumber != song.discNumber { return true }
         else if let art = self.art, art != song.art { return true }
-        else  if let artistName = self.artistName, artistName != song.artistName { return true }
+        else if let artistName = self.artistName, artistName != song.artistName { return true }
         else if let artists = self.artists, artists != song.artists { return true }
         else if let albumTitle = self.albumTitle, albumTitle != song.albumTitle { return true }
         else if let albums = self.albums, albums != song.albums { return true }

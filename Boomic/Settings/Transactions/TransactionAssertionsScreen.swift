@@ -42,7 +42,7 @@ struct TransactionAssertionsScreen: View {
                                 .padding(padding)
 
                                 List {
-                                    Text("Source:\(model.source)")
+                                    Text("Source: \(model.source.label)")
                                     Text("Duration: \(model.duration.formatted)")
                                     if let title = model.title { Text("Title: \(title)") }
                                     if let trackNumber = model.trackNumber { Text("Track Number: \(trackNumber)") }
@@ -55,7 +55,7 @@ struct TransactionAssertionsScreen: View {
                                         Text("Album Title: \(albumTitle)")
                                         Text("Linked Album Count: \(model.albums.count)")
                                     }
-                                    if let art = model.art { Text("Art Location: \(art)") }
+                                    if let art = model.art { Text("Art Location: \(art.label)") }
                                 }
                             }
                         } label: {
@@ -81,7 +81,7 @@ struct TransactionAssertionsScreen: View {
                                         Text("Artist Name: \(artistName)")
                                         Text("Linked Artist Count: \(model.artists.count)")
                                     }
-                                    if let art = model.art { Text("Art Location: \(art)") }
+                                    if let art = model.art { Text("Art Location: \(art.label)") }
                                 }
                             }
                         } label: {
@@ -104,7 +104,7 @@ struct TransactionAssertionsScreen: View {
                                     Text("Name: \(model.name)")
                                     Text("Linked Song Count: \(model.songs.count)")
                                     Text("Linked Album Count: \(model.albums.count)")
-                                    if let art = model.art { Text("Art Location: \(art)") }
+                                    if let art = model.art { Text("Art Location: \(art.label)") }
                                 }
                             }
                         } label: {
@@ -130,7 +130,7 @@ struct TransactionAssertionsScreen: View {
                                     if let artists = model.artists { Text("Linked Artist Count updated to: \(artists.count)")  }
                                     if let albumTitle = model.albumTitle { Text("Album Title updated to: \(albumTitle)") }
                                     if let albums = model.albums { Text("Linked Album Count updated to: \(albums.count)") }
-                                    if let art = model.art { Text("Art Location updated to: \(art)") }
+                                    if let art = model.art { Text("Art Location updated to: \(art.label)") }
                                     if let rating = model.rating { Text("Rating updated to: \(rating)") }
                                 }
                             }
@@ -155,7 +155,7 @@ struct TransactionAssertionsScreen: View {
                                     if let songs = model.songs { Text("Linked Song Count updated to: \(songs.count)") }
                                     if let artistName = model.artistName { Text("Artist Name updated to: \(artistName)") }
                                     if let artists = model.artists { Text("Linked Artist Count updated to: \(artists.count)") }
-                                    if let art = model.art { Text("Art Location updated to: \(art)") }
+                                    if let art = model.art { Text("Art Location updated to: \(art.label)") }
                                 }
                             }
                         } label: {
@@ -178,7 +178,7 @@ struct TransactionAssertionsScreen: View {
                                    if let newName = model.newName { Text("Name updated to: \(newName) (from \(model.originalName))") }
                                    if let songs = model.songs { Text("Linked Song Count updated to: \(songs.count)") }
                                    if let albums = model.albums { Text("Linked Album Count updated to: \(albums.count)") }
-                                   if let art = model.art { Text("Art Location updated to: \(art)") }
+                                   if let art = model.art { Text("Art Location updated to: \(art.label)") }
                                }
                            }
                        } label: {

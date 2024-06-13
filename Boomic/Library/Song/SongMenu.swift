@@ -11,6 +11,7 @@ import Models
 private typealias SI = ViewConstants.SystemImages
 
 struct SongMenu: View {
+    @Environment(\.navigator) private var navigator
     @Environment(\.player) private var player
     @Environment(\.repository) private var repository
     @Environment(\.selector) private var selector
@@ -54,6 +55,12 @@ struct SongMenu: View {
                 
             } label: {
                 Label("Add to Playlist", systemImage: SI.addToPlaylist)
+            }
+            
+            Button {
+                navigator.presentSheet(SongUpdateSheet(song: song))
+            } label: {
+                Label("Edit Attributes", systemImage: SI.edit)
             }
             
             Button(role: .destructive) {

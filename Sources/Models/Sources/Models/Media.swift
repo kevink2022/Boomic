@@ -15,19 +15,25 @@ public protocol Media: Codable, Identifiable {
 
 public enum MediaSource: Codable, Equatable {
     case local(path: AppPath)
+    
+    public var label: String {
+        switch self {
+        case .local(let path): return "(Local) \(path.relative)"
+        }
+    }
 }
 
 public enum MediaArt: Codable, Equatable {
     case local(path: AppPath)
     case embedded(path: AppPath, hash: String)
-}
-
-extension MediaSource {
+    
     public var label: String {
         switch self {
-        case .local(let path): return path.url.lastPathComponent
+        case .local(let path): return "(Local) \(path.relative)"
+        case .embedded(let path, _): return "(Embedded) \(path.relative)"
         }
     }
 }
+
 
 
