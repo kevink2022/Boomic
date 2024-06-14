@@ -66,49 +66,31 @@ public final class BasisResolver {
         let adds = assertions.filter { $0.operation == .add }
         guard adds.count > 0 else { return basis }
         
-        async let newSongMap_await = {
-            var songMap = basis.songMap
-            let addSongs = adds.filter { $0.model == .song }
-            addSongs.forEach {
-                if case let .addSong(song) = $0 {
-                    songMap[song.id] = song
+        var songMap = basis.songMap
+        var albumMap = basis.albumMap
+        var artistMap = basis.artistMap
+        
+        adds.forEach { add in
+            switch add.model {
+            case .song:
+                if let model = add.data as? Song {
+                    songMap[model.id] = model
+                }
+            case .album:
+                if let model = add.data as? Album {
+                    albumMap[model.id] = model
+                }
+            case .artist:
+                if let model = add.data as? Artist {
+                    artistMap[model.id] = model
                 }
             }
-            return songMap
-        }()
-        
-        async let newAlbumMap_await = {
-            var albumMap = basis.albumMap
-            let addAlbums = adds.filter { $0.model == .album }
-            addAlbums.forEach {
-                if case let .addAlbum(album) = $0 {
-                    albumMap[album.id] = album
-                }
-            }
-            return albumMap
-        }()
-        
-        async let newArtistMap_await = {
-            var artistMap = basis.artistMap
-            let addArtists = adds.filter { $0.model == .artist }
-            addArtists.forEach {
-                if case let .addArtist(artist) = $0 {
-                    artistMap[artist.id] = artist
-                }
-            }
-            return artistMap
-        }()
-        
-        let (
-            newSongMap, newAlbumMap, newArtistMap
-        ) = await (
-            newSongMap_await, newAlbumMap_await, newArtistMap_await
-        )
+        }
         
         return DataBasis(
-            songMap: newSongMap
-            , albumMap: newAlbumMap
-            , artistMap: newArtistMap
+            songMap: songMap
+            , albumMap: albumMap
+            , artistMap: artistMap
             , allSongs: basis.allSongs
             , allAlbums: basis.allAlbums
             , allArtists: basis.allArtists
@@ -119,52 +101,34 @@ public final class BasisResolver {
         let updates = assertions.filter { $0.operation == .update }
         guard updates.count > 0 else { return basis }
         
-        async let newSongMap_await = {
-            var songMap = basis.songMap
-            let updateSongs = updates.filter { $0.model == .song }
-            updateSongs.forEach {
-                if case let .updateSong(update) = $0 {
+        var songMap = basis.songMap
+        var albumMap = basis.albumMap
+        var artistMap = basis.artistMap
+        
+        updates.forEach { update in
+            switch update.model {
+            case .song:
+                if let update = update.data as? SongUpdate {
                     let original = songMap[update.id]
                     songMap[update.id] = original?.apply(update: update)
                 }
-            }
-            return songMap
-        }()
-        
-        async let newAlbumMap_await = {
-            var albumMap = basis.albumMap
-            let updateAlbums = updates.filter { $0.model == .album }
-            updateAlbums.forEach {
-                if case let .updateAlbum(update) = $0 {
+            case .album:
+                if let update = update.data as? AlbumUpdate {
                     let original = albumMap[update.id]
                     albumMap[update.id] = original?.apply(update: update)
                 }
-            }
-            return albumMap
-        }()
-        
-        async let newArtistMap_await = {
-            var artistMap = basis.artistMap
-            let updateArtists = updates.filter { $0.model == .artist }
-            updateArtists.forEach {
-                if case let .updateArtist(update) = $0 {
+            case .artist:
+                if let update = update.data as? ArtistUpdate {
                     let original = artistMap[update.id]
                     artistMap[update.id] = original?.apply(update: update)
                 }
             }
-            return artistMap
-        }()
-        
-        let (
-            newSongMap, newAlbumMap, newArtistMap
-        ) = await (
-            newSongMap_await, newAlbumMap_await, newArtistMap_await
-        )
+        }
         
         return DataBasis(
-            songMap: newSongMap
-            , albumMap: newAlbumMap
-            , artistMap: newArtistMap
+            songMap: songMap
+            , albumMap: albumMap
+            , artistMap: artistMap
             , allSongs: basis.allSongs
             , allAlbums: basis.allAlbums
             , allArtists: basis.allArtists
@@ -174,50 +138,28 @@ public final class BasisResolver {
     private func applyDelete(_ assertions: KeySet<Assertion>, to basis: DataBasis) async -> DataBasis {
         let deletes = assertions.filter { $0.operation == .delete }
         guard deletes.count > 0 else { return basis }
-        
-        async let newSongMap_await = {
-            var songMap = basis.songMap
-            let deleteSongs = deletes.filter { $0.model == .song }
-            deleteSongs.forEach {
-                if case let .deleteSong(id) = $0 {
-                    songMap[id] = nil
-                }
-            }
-            return songMap
-        }()
-        
-        async let newAlbumMap_await = {
-            var albumMap = basis.albumMap
-            let deleteAlbums = deletes.filter { $0.model == .album }
-            deleteAlbums.forEach {
-                if case let .deleteAlbum(id) = $0 {
-                    albumMap[id] = nil
-                }
-            }
-            return albumMap
-        }()
-        
-        async let newArtistMap_await = {
-            var artistMap = basis.artistMap
-            let deleteArtists = deletes.filter { $0.model == .artist }
-            deleteArtists.forEach {
-                if case let .deleteArtist(id) = $0 {
-                    artistMap[id] = nil
-                }
-            }
-            return artistMap
-        }()
 
-        let (
-            newSongMap, newAlbumMap, newArtistMap
-        ) = await (
-            newSongMap_await, newAlbumMap_await, newArtistMap_await
-        )
+        var songMap = basis.songMap
+        var albumMap = basis.albumMap
+        var artistMap = basis.artistMap
+        
+        deletes.forEach {
+            guard let delete = $0.data as? DeleteAssertion else { return }
+            
+            switch delete.model {
+            case .song:
+                songMap[delete.id] = nil
+            case .album:
+                albumMap[delete.id] = nil
+            case .artist:
+                artistMap[delete.id] = nil
+            }
+        }
         
         return DataBasis(
-            songMap: newSongMap
-            , albumMap: newAlbumMap
-            , artistMap: newArtistMap
+            songMap: songMap
+            , albumMap: albumMap
+            , artistMap: artistMap
             , allSongs: basis.allSongs
             , allAlbums: basis.allAlbums
             , allArtists: basis.allArtists
@@ -229,7 +171,7 @@ public final class BasisResolver {
         let label = "Update Album: \(album.title)"
         
         var songUpdateAssertions = KeySet<Assertion>()
-        let albumUpdateAssertion = KeySet<Assertion>().inserting(.updateAlbum(update))
+        let albumUpdateAssertion = KeySet<Assertion>().inserting(Assertion(update))
         
         if update.newTitle == nil {
             return albumUpdateAssertion.asTransaction(label: label, level: .normal)
@@ -237,7 +179,7 @@ public final class BasisResolver {
             album.songs.forEach {
                 if let song = currentBasis.songMap[$0] {
                     let songUpdate = SongUpdate(song: song, albumTitle: update.newTitle)
-                    songUpdateAssertions.insert(.updateSong(songUpdate))
+                    songUpdateAssertions.insert(Assertion(songUpdate))
                 }
             }
             let updateBasis = await self.apply(transaction: albumUpdateAssertion.asTransaction())
@@ -252,7 +194,7 @@ public final class BasisResolver {
         let label = "Update Artist: \(artist.name)"
         
         var songUpdateAssertions = KeySet<Assertion>()
-        let artistUpdateAssertion = KeySet<Assertion>().inserting(.updateArtist(update))
+        let artistUpdateAssertion = KeySet<Assertion>().inserting(Assertion(update))
         
         if update.newName == nil {
             return artistUpdateAssertion.asTransaction(label: label, level: .normal)
@@ -260,7 +202,7 @@ public final class BasisResolver {
             artist.songs.forEach {
                 if let song = currentBasis.songMap[$0] {
                     let songUpdate = SongUpdate(song: song, artistName: update.newName)
-                    songUpdateAssertions.insert(.updateSong(songUpdate))
+                    songUpdateAssertions.insert(Assertion(songUpdate))
                 }
             }
             let updateBasis = await self.apply(transaction: artistUpdateAssertion.asTransaction())
@@ -274,7 +216,9 @@ public final class BasisResolver {
         guard let album = currentBasis.albumMap[album.id] else { return .empty }
         
         var assertions = KeySet<Assertion>()
-        album.songs.forEach { assertions.insert(.deleteSong($0)) }
+        album.songs
+            .compactMap { currentBasis.songMap[$0] }
+            .forEach { assertions.insert(Assertion(DeleteAssertion($0))) }
         
         assertions = await updateLinks(assertions)
         return assertions.asTransaction(label: "Delete Album: \(album.title)", level: .significant)
@@ -284,7 +228,9 @@ public final class BasisResolver {
         guard let artist = currentBasis.artistMap[artist.id] else { return .empty }
         
         var assertions = KeySet<Assertion>()
-        artist.songs.forEach { assertions.insert(.deleteSong($0)) }
+        artist.songs
+            .compactMap { currentBasis.songMap[$0] }
+            .forEach { assertions.insert(Assertion(DeleteAssertion($0))) }
         
         assertions = await updateLinks(assertions)
         return assertions.asTransaction(label: "Delete Artist: \(artist.name)", level: .significant)
@@ -294,7 +240,7 @@ public final class BasisResolver {
         guard let song = currentBasis.songMap[song.id] else { return .empty }
         
         var assertions = KeySet<Assertion>()
-        assertions.insert(.deleteSong(song.id))
+        assertions.insert(Assertion(DeleteAssertion(song)))
         
         assertions = await updateLinks(assertions)
         return assertions.asTransaction(label: "Delete Song: \(song.label)", level: .significant)
@@ -306,7 +252,7 @@ public final class BasisResolver {
         let label = "Update Song: \(song.label)"
         
         var assertions = KeySet<Assertion>()
-        assertions.insert(.updateSong(update))
+        assertions.insert(Assertion(update))
         
         if update.artistName != nil || update.albumTitle != nil {
             assertions = await updateLinks(assertions)
@@ -320,7 +266,7 @@ public final class BasisResolver {
         guard unlinkedSongs.count > 0 else { return .empty }
         
         var assertions = KeySet<Assertion>()
-        unlinkedSongs.forEach{ assertions.insert(.addSong($0)) }
+        unlinkedSongs.forEach{ assertions.insert(Assertion($0)) }
         
         assertions = await updateLinks(assertions)
         return assertions.asTransaction(label: "Import Songs: \(unlinkedSongs.count) songs", level: .significant)
@@ -364,22 +310,26 @@ public final class BasisResolver {
     }
     
     // MARK: - String Maps
-    private func songsToTitleLinks(_ songTransaction: KeySet<Assertion>) -> [String:UUID] {
+    private func songsToTitleLinks(_ songAssertions: KeySet<Assertion>) -> [String:UUID] {
         var affectedAlbums = [String:UUID]()
         
-         songTransaction.forEach { songTransaction in
+         songAssertions.forEach { assertion in
              guard let albumTitles = {
-                 switch songTransaction {
-                 case .addSong(let song):
+                 switch assertion.operation {
+                 case .add:
+                     guard let song = assertion.data as? Song else { break }
                      if let title = song.albumTitle { return Set([title]) }
                  
-                 case .updateSong(let update):
+                 case .update:
+                     guard let update = assertion.data as? SongUpdate else { break }
                      let songTitle = currentBasis.songMap[update.id]?.albumTitle
                      let updateTitle = update.albumTitle
                      return Set([songTitle, updateTitle].compactMap{ $0 })
                      
-                 case .deleteSong(let id):
-                     if let title = currentBasis.songMap[id]?.albumTitle { return Set([title]) }
+                /* we need the deletes titles so they will be relinked. */
+                 case .delete:
+                     guard let delete = assertion.data as? DeleteAssertion else { break }
+                     if let title = currentBasis.songMap[delete.id]?.albumTitle { return Set([title]) }
                     
                  default: return nil
                  }
@@ -400,24 +350,27 @@ public final class BasisResolver {
         return affectedAlbums
     }
     
-    private func songsToNameLinks(_ songTransaction: KeySet<Assertion>) -> [String:UUID] {
+    private func songsToNameLinks(_ songAssertions: KeySet<Assertion>) -> [String:UUID] {
         var affectedArtists = [String:UUID]()
         
-         songTransaction.forEach { songTransaction in
+        songAssertions.forEach { assertion in
              guard let artistNames = {
-                 switch songTransaction {
-                 case .addSong(let song):
+                 switch assertion.operation {
+                 case .add:
+                     guard let song = assertion.data as? Song else { break }
                      if let name = song.artistName { return Set([name]) }
                  
-                 case .updateSong(let update):
+                 case .update:
+                     guard let update = assertion.data as? SongUpdate else { break }
                      let songTitle = currentBasis.songMap[update.id]?.artistName
                      let updateTitle = update.artistName
                      return Set([songTitle, updateTitle].compactMap{ $0 })
                      
-                 case .deleteSong(let id):
-                     if let name = currentBasis.songMap[id]?.artistName { return Set([name]) }
+                /* we need the delete titles so they will be relinked. */
+                 case .delete:
+                     guard let delete = assertion.data as? DeleteAssertion else { break }
+                     if let name = currentBasis.songMap[delete.id]?.artistName { return Set([name]) }
                     
-                 default: return nil
                  }
                  return nil
             }() else { return }
@@ -436,14 +389,25 @@ public final class BasisResolver {
         return affectedArtists
     }
     
-    private func songFromTransaction(_ songTransaction: Assertion, excludeDelete: Bool = false) -> Song? {
-        switch songTransaction {
-        case .addSong(let song): return song
-        case .updateSong(let update): if let song = currentBasis.songMap[update.id] { return song.apply(update: update) }
-        case .deleteSong(let id): return excludeDelete ? nil : currentBasis.songMap[id]
-        default: return nil
+    private func songFromAssertion(_ assertion: Assertion, excludeDelete: Bool = false) -> Song? {
+        guard assertion.model == .song else { return nil }
+        
+        switch assertion.operation {
+        
+        case .add:
+            if let song = assertion.data as? Song { return song }
+            return nil
+        
+        case .update:
+            guard let update = assertion.data as? SongUpdate else { return nil }
+            if let song = currentBasis.songMap[update.id] { return song.apply(update: update) }
+            return nil
+        
+        case .delete:
+            guard let delete = assertion.data as? DeleteAssertion else { return nil }
+            return excludeDelete ? nil : currentBasis.songMap[delete.id]
+        
         }
-        return nil
     }
     
     // MARK: - Naive Linking
@@ -451,7 +415,7 @@ public final class BasisResolver {
         var linkUpdatesTransaction = KeySet<Assertion>()
         
         songTransactions.forEach { transaction in
-            guard let song = songFromTransaction(transaction, excludeDelete: true) else { return }
+            guard let song = songFromAssertion(transaction, excludeDelete: true) else { return }
 
             let albums: [UUID]? = {
                 if let albumTitle = song.albumTitle { return parseAlbums(albumTitle).compactMap{ albumTitles[$0] } }
@@ -464,7 +428,7 @@ public final class BasisResolver {
             }()
             
             let linkUpdate = SongUpdate(song: song, artists: artists, albums: albums)
-            linkUpdatesTransaction.insert(.updateSong(linkUpdate))
+            linkUpdatesTransaction.insert(Assertion(linkUpdate))
         }
         
         return linkUpdatesTransaction
@@ -475,12 +439,19 @@ public final class BasisResolver {
         let albumIDs: [UUID]
         let artistIDs: [UUID]
         
-        public static func fromTransaction(_ transaction: Assertion) -> Link? {
-            switch transaction {
-            case .addSong(let song): return Link(songID: song.id, albumIDs: song.albums, artistIDs: song.artists)
-            case .updateSong(let update): return Link(songID: update.id, albumIDs: update.albums ?? [], artistIDs: update.artists ?? [])
+        public static func fromTransaction(_ assertion: Assertion) -> Link? {
+            guard assertion.model == .song else { return nil }
+            
+            switch (assertion.operation) {
+            case .add:
+                guard let song = assertion.data as? Song else { return nil }
+                return Link(songID: song.id, albumIDs: song.albums, artistIDs: song.artists)
+            case .update:
+                guard let update = assertion.data as? SongUpdate else { return nil }
+                return Link(songID: update.id, albumIDs: update.albums ?? [], artistIDs: update.artists ?? [])
             default: return nil
             }
+            
         }
     }
     
@@ -522,12 +493,12 @@ public final class BasisResolver {
             let linkUpdate = AlbumUpdate(album: album, songs: albumSongs, artists: albumArtists)
             
             if albumSongs.count == 0 {
-                newTransactions.insert(.deleteAlbum(album.id))
+                newTransactions.insert(Assertion(DeleteAssertion(album)))
             } else if isUpdate {
-                baseTransactions.insert(.addAlbum(album))
-                newTransactions.insert(.updateAlbum(linkUpdate))
+                baseTransactions.insert(Assertion(album))
+                newTransactions.insert(Assertion(linkUpdate))
             } else {
-                newTransactions.insert(.addAlbum(album.apply(update: linkUpdate)))
+                newTransactions.insert(Assertion(album.apply(update: linkUpdate)))
             }
         }
         
@@ -573,12 +544,12 @@ public final class BasisResolver {
             let linkUpdate = ArtistUpdate(artist: artist, songs: artistSongs, albums: artistAlbums)
             
             if artistSongs.count == 0 {
-                newTransactions.insert(.deleteArtist(artist.id))
+                newTransactions.insert(Assertion(DeleteAssertion(artist)))
             } else if isUpdate {
-                baseTransactions.insert(.addArtist(artist))
-                newTransactions.insert(.updateArtist(linkUpdate))
+                baseTransactions.insert(Assertion(artist))
+                newTransactions.insert(Assertion(linkUpdate))
             } else {
-                newTransactions.insert(.addArtist(artist.apply(update: linkUpdate)))
+                newTransactions.insert(Assertion(artist.apply(update: linkUpdate)))
             }
         }
         
@@ -598,7 +569,7 @@ public final class BasisResolver {
                 .compactMap { linkedBasis.artistMap[$0] ?? currentBasis.artistMap[$0] }
                 .sorted { Artist.alphabeticalSort($0, $1) }
                 
-            detailsTransaction.insert(.updateSong(SongUpdate(
+            detailsTransaction.insert(Assertion(SongUpdate(
                 song: song
                 , artists: artists.map { $0.id }
                 , albums: albums.map { $0.id }
@@ -632,7 +603,7 @@ public final class BasisResolver {
                 }
             }()
             
-            detailsTransaction.insert(.updateAlbum(AlbumUpdate(
+            detailsTransaction.insert(Assertion(AlbumUpdate(
                 album: album
                 , art: art
                 , songs: songs.map { $0.id }
@@ -658,7 +629,7 @@ public final class BasisResolver {
                 .compactMap { linkedBasis.albumMap[$0] ?? currentBasis.albumMap[$0] }
                 .sorted { Album.alphabeticalSort($0, $1) }
                 
-            detailsTransaction.insert(.updateArtist(ArtistUpdate(
+            detailsTransaction.insert(Assertion(ArtistUpdate(
                 artist: artist
                 , songs: songs.map { $0.id }
                 , albums: albums.map { $0.id }

@@ -28,6 +28,7 @@
 		4F1EBC552C1A2C4300D0FFBF /* Selector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1EBC542C1A2C4300D0FFBF /* Selector.swift */; };
 		4F1EBC572C1A30FE00D0FFBF /* GridListSelectorBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1EBC562C1A30FE00D0FFBF /* GridListSelectorBar.swift */; };
 		4F1EBC592C1A944600D0FFBF /* ShowAllSelections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1EBC582C1A944600D0FFBF /* ShowAllSelections.swift */; };
+		4F1EBC5B2C1CAB1600D0FFBF /* AddDetailsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1EBC5A2C1CAB1600D0FFBF /* AddDetailsScreen.swift */; };
 		4F539D672BD303BF00E12A40 /* SongMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F539D662BD303BF00E12A40 /* SongMenu.swift */; };
 		4F539D6B2BD4B7E400E12A40 /* SongGoToMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F539D6A2BD4B7E400E12A40 /* SongGoToMenu.swift */; };
 		4F539D6D2BD7288C00E12A40 /* QueueListButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F539D6C2BD7288C00E12A40 /* QueueListButton.swift */; };
@@ -124,6 +125,7 @@
 		4F1EBC542C1A2C4300D0FFBF /* Selector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Selector.swift; sourceTree = "<group>"; };
 		4F1EBC562C1A30FE00D0FFBF /* GridListSelectorBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridListSelectorBar.swift; sourceTree = "<group>"; };
 		4F1EBC582C1A944600D0FFBF /* ShowAllSelections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowAllSelections.swift; sourceTree = "<group>"; };
+		4F1EBC5A2C1CAB1600D0FFBF /* AddDetailsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDetailsScreen.swift; sourceTree = "<group>"; };
 		4F539D662BD303BF00E12A40 /* SongMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongMenu.swift; sourceTree = "<group>"; };
 		4F539D6A2BD4B7E400E12A40 /* SongGoToMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongGoToMenu.swift; sourceTree = "<group>"; };
 		4F539D6C2BD7288C00E12A40 /* QueueListButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueListButton.swift; sourceTree = "<group>"; };
@@ -349,6 +351,7 @@
 				4F9A33192BDF4FBD005A2EBD /* TransactionsList.swift */,
 				4FCDB5992C12E5910016EF8C /* TransactionAssertionsScreen.swift */,
 				4FCDB59B2C1514D70016EF8C /* LibraryData.swift */,
+				4F1EBC5A2C1CAB1600D0FFBF /* AddDetailsScreen.swift */,
 			);
 			path = Transactions;
 			sourceTree = "<group>";
@@ -622,6 +625,7 @@
 				4F853B5D2BA75D1100721E59 /* AllArtistsScreen.swift in Sources */,
 				4F853B682BA7DA3C00721E59 /* LargeButton.swift in Sources */,
 				4FB41E2A2BA67EF200270496 /* SongListEntry.swift in Sources */,
+				4F1EBC5B2C1CAB1600D0FFBF /* AddDetailsScreen.swift in Sources */,
 				4FEE487E2BCB340500F5BC86 /* QueueControls.swift in Sources */,
 				4F04DCBB2B74727D006114B3 /* ContentView.swift in Sources */,
 				4F93BBC92C1031A70076B4F2 /* LibraryPanelOrder.swift in Sources */,

@@ -36,7 +36,7 @@ internal class PreviewMocks {
     )
     
     init() {
-        Task { await sharedRepo.importSongs() }
+        /*Task { await sharedRepo.importSongs() }*/
     }
     
     public func previewNavigator() -> Navigator { return Navigator() }

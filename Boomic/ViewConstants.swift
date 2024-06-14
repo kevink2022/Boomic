@@ -202,6 +202,8 @@ struct ViewConstants {
     static let libraryGridPadding: CGFloat = 3
     
     static let defaultAccent: Color = .purple
+    
+    static let screenTitlePadding: CGFloat = 20
 
 }
 

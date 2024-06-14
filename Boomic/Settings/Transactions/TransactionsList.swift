@@ -13,8 +13,13 @@ private typealias SI = ViewConstants.SystemImages
 
 struct TransactionsList: View {
     @Environment(\.repository) private var repository
+    
     @State private var transactions: [DataTransaction<LibraryTransaction>] = []
     @State private var viewOnlySignificant = true
+    @State private var rollbackStatus: String = ""
+    private var rollbackInProgess: Bool {
+        repository.statusActive(for: .rollback)
+    }
     
     var body: some View {
         List {
@@ -24,6 +29,15 @@ struct TransactionsList: View {
                     Text("All").tag(false)
                 }
                 .pickerStyle(.segmented)
+            } header: {
+                Text("Detail Level")
+            } footer: {
+                if rollbackInProgess {
+                    HStack(spacing: 10) {
+                        ProgressView()
+                        Text(rollbackStatus)
+                    }
+                }
             }
             
             ForEach(
@@ -43,7 +57,7 @@ struct TransactionsList: View {
                     Button {
                         Task { 
                             await repository.rollbackTo(after: transaction)
-                            await loadTransactions()
+                            transactions = await repository.getTransactions()
                         }
                     } label: {
                         Label("Rollback to After", systemImage: SI.afterTransaction)
@@ -52,7 +66,7 @@ struct TransactionsList: View {
                     Button {
                         Task { 
                             await repository.rollbackTo(before: transaction)
-                            await loadTransactions()
+                            transactions = await repository.getTransactions()
                         }
                     } label: {
                         Label("Rollback to Before", systemImage: SI.beforeTransaction)
@@ -61,16 +75,22 @@ struct TransactionsList: View {
             }
         }
         .task {
-            await loadTransactions()
+            transactions = await repository.getTransactions()
         }
         .refreshable {
-            await loadTransactions()
+            transactions = await repository.getTransactions()
+        }
+        
+        .onChange(of: repository.status) {
+            if repository.status.key == .rollback {
+                rollbackStatus = repository.status.message
+            }
         }
     }
     
-    private func loadTransactions() async {
-        transactions = await repository.getTransactions()
-    }
+//    private func loadTransactions() async {
+//        transactions = await repository.getTransactions()
+//    }
 }
 
 #Preview {

@@ -14,11 +14,14 @@ public final class Repository {
     
     public let artLoader: MediaArtLoader
     private let fileInterface: FileInterface
-       
+    
     private let transactor: Transactor<LibraryTransaction, DataBasis>
     private var basis: DataBasis
     
     private var cancellables: Set<AnyCancellable> = []
+    
+    public var status = RepositoryStatus(key: .none, message: "")
+    private var statusKeys = Set<RepositoryStatusKey>()
     
     public init(
         fileInterface: FileInterface = FileInterface(at: URL.documentsDirectory)
@@ -65,6 +68,24 @@ public final class Repository {
     }
 }
 
+public struct RepositoryStatus: Equatable {
+    public let key: RepositoryStatusKey
+    public let message: String
+}
+
+public enum RepositoryStatusKey: String {
+    case importSongs
+    case rollback
+    case none
+}
+
+// MARK: - Status
+extension Repository {
+    public func statusActive(for key: RepositoryStatusKey) -> Bool {
+        return statusKeys.contains(key)
+    }
+}
+
 // MARK: - Queries
 extension Repository {
     
@@ -108,18 +129,26 @@ extension Repository {
 // MARK: - Transactions
 extension Repository {
     public func importSongs() async {
+        statusKeys.insert(.importSongs)
+        
+        status = RepositoryStatus(key: .importSongs, message: "Gathering existing files.")
         let existingFiles = basis.allSongs.compactMap { song in
             if case .local(let path) = song.source { return path }
             return nil
         }
         
+        status = RepositoryStatus(key: .importSongs, message: "Searching for new files.")
         guard let newFiles = try? fileInterface.allFiles(of: Song.codecs, excluding: Set(existingFiles)) else { return }
         
+        status = RepositoryStatus(key: .importSongs, message: "Scanning Metadata for \(newFiles.count) new songs.")
         let newSongs = newFiles.map { Song(from: $0) }
         
+        status = RepositoryStatus(key: .importSongs, message: "Adding \(newSongs.count) new songs to library.")
         await transactor.commit { basis in
             return await BasisResolver(currentBasis: basis).addSongs(newSongs)
         }
+        
+        statusKeys.remove(.importSongs)
     }
     
     public func updateSong(_ songUpdate: SongUpdate) async {
@@ -172,11 +201,17 @@ extension Repository {
     }
     
     public func rollbackTo(after transaction: DataTransaction<LibraryTransaction>) async {
+        statusKeys.insert(.rollback)
+        status = RepositoryStatus(key: .importSongs, message: "Rebuilding Database")
         await transactor.rollbackTo(after: transaction)
+        statusKeys.remove(.rollback)
     }
     
     public func rollbackTo(before transaction: DataTransaction<LibraryTransaction>) async {
+        statusKeys.insert(.rollback)
+        status = RepositoryStatus(key: .importSongs, message: "Rebuilding Database")
         await transactor.rollbackTo(before: transaction)
+        statusKeys.remove(.rollback)
     }
     
     

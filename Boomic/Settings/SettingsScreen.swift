@@ -11,6 +11,11 @@ struct SettingsScreen: View {
     @Environment(\.repository) private var repository
     @Environment(\.preferences) private var preferences
     
+    @State private var importStatus: String = ""
+    private var importInProgress: Bool {
+        repository.statusActive(for: .importSongs)
+    }
+    
     var body: some View {
         @Bindable var preferences = preferences
         
@@ -21,6 +26,14 @@ struct SettingsScreen: View {
                         Task { await repository.importSongs() }
                     } label: {
                         Text("Import Songs")
+                    }
+                    .disabled(importInProgress)
+                } footer: {
+                    if importInProgress {
+                        HStack(spacing: 10) {
+                            ProgressView()
+                            Text(importStatus)
+                        }
                     }
                 }
                 
@@ -73,6 +86,12 @@ struct SettingsScreen: View {
                 } header: {
                     Text("UI Preferences")
                 }
+            }
+        }
+        
+        .onChange(of: repository.status) {
+            if repository.status.key == .importSongs {
+                importStatus = repository.status.message
             }
         }
     }

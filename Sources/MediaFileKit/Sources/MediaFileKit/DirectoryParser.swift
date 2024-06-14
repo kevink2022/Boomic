@@ -25,6 +25,17 @@ public final class DirectoryParser {
     }
     
     private func extractDiscNumber(from fileURL: URL) -> Int? {
+        if let number = extractDiscNumberFromFileName(fileURL) { return number }
+        if let number = extractDiscNumberFromParentDirectory(fileURL) { return number }
+        return nil
+    }
+    
+    private func extractDiscNumberFromFileName(_ fileURL: URL) -> Int? {
+        let fileName = fileURL.lastPathComponent
+        return Int(fileName.split(separator: "-")[0])
+    }
+    
+    private func extractDiscNumberFromParentDirectory(_ fileURL: URL) -> Int? {
         let pathComponents = fileURL.pathComponents
         guard pathComponents.count >= 2 else { return nil }
         

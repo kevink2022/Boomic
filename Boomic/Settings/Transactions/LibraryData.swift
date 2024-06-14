@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import Database
+import Storage
 
 struct LibraryData: View {
     @Environment(\.repository) private var repository
@@ -29,6 +31,12 @@ struct LibraryData: View {
             }
             
             Section {
+                Button {
+                    createReadMe()
+                } label: {
+                    Text("Create README.txt")
+                }
+                
                 Button(role: .destructive) {
                     
                 } label: {
@@ -41,7 +49,20 @@ struct LibraryData: View {
             (libraryDataSize, libraryDataAllocatedSize) = await repository.libraryDataSizeAndAllocatedSize()
             
             (libraryFileSize, libraryFileAllocatedSize) = await repository.libraryFilesSizeAndAllocatedSize()
+        }        
+    }
+    
+    private func createReadMe() {
+        let file = "README.txt"
+        let contents = "Idk why I still need to do this"
+        
+        let dir = URL.documentsDirectory
+        let fileURL = dir.appending(component: file)
+        
+        do {
+            try contents.write(to: fileURL, atomically: false, encoding: .utf8)
         }
+        catch { }
     }
 }
 
