@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Domain
 import Models
 
 public final class DeleteAssertion: DeleteAssertable {
@@ -14,6 +15,7 @@ public final class DeleteAssertion: DeleteAssertable {
         let id: UUID
         let model: AssertionModel
         let label: String
+        let path: AppPath?
         
         static func == (lhs: Self, rhs: Self) -> Bool {
             return lhs.id == rhs.id && lhs.model == rhs.model
@@ -24,11 +26,13 @@ public final class DeleteAssertion: DeleteAssertable {
         id: UUID
         , model: AssertionModel
         , label: String
+        , path: AppPath? = nil
     ) {
         self.data = DeleteAssertion.Data(
             id: id
             , model: model
             , label: label
+            , path: path
         )
     }
     
@@ -36,6 +40,7 @@ public final class DeleteAssertion: DeleteAssertable {
     public var id: UUID { data.id }
     public var model: AssertionModel { data.model }
     public var label: String { data.label }
+    public var path: AppPath? { data.path }
     
     public var code: AssertionCode { .delete(self) }
     
@@ -52,10 +57,17 @@ public final class DeleteAssertion: DeleteAssertable {
     }
     
     public convenience init(_ song: Song) {
+        var path: AppPath? = nil
+        
+        if case let .local(songPath) = song.source {
+            path = songPath
+        }
+        
         self.init(
             id: song.id
             , model: .song
             , label: song.label
+            , path: path
         )
     }
     

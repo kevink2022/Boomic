@@ -173,7 +173,7 @@ final class DatabaseTests: XCTestCase {
         guard let songToUpdate = testBasis.allSongs.first(where: { $0.title == "a caged persona" }) 
         else { XCTFail("Test model not found"); return }
         let update = SongUpdate(song: songToUpdate, title: "an uncaged persona")
-        let transaction = await sut.updateSong(update)
+        let transaction = await sut.updateSongs([update])
         let newBasis = await sut.apply(transaction: transaction)
         
         XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
@@ -200,7 +200,7 @@ final class DatabaseTests: XCTestCase {
         guard let songToUpdate = testBasis.allSongs.first(where: { $0.title == "Sparrowtail" })
         else { XCTFail("Test model not found"); return }
         let update = SongUpdate(song: songToUpdate, artistName: "maximum electric design")
-        let transaction = await sut.updateSong(update)
+        let transaction = await sut.updateSongs([update])
         let newBasis = await sut.apply(transaction: transaction)
         
         XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 1)
@@ -226,7 +226,7 @@ final class DatabaseTests: XCTestCase {
         let sut = BasisResolver(currentBasis: testBasis)
         guard let songToDelete = testBasis.allSongs.first(where: { $0.title == "a caged persona" })
         else { XCTFail("Test model not found"); return }
-        let transaction = await sut.deleteSong(songToDelete)
+        let transaction = await sut.deleteSongs([songToDelete])
         let newBasis = await sut.apply(transaction: transaction)
         
         XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
@@ -247,7 +247,7 @@ final class DatabaseTests: XCTestCase {
         guard let albumToUpdate = testBasis.allAlbums.first(where: { $0.title == "Girls Apartment" })
         else { XCTFail("Test model not found"); return }
         let update = AlbumUpdate(album: albumToUpdate, artistName: "Various Touhou Girls")
-        let transaction = await sut.updateAlbum(update)
+        let transaction = await sut.updateAlbums([update])
         let newBasis = await sut.apply(transaction: transaction)
         guard let updatedAlbum = newBasis.albumMap[albumToUpdate.id]
         else { XCTFail("Updated model not found"); return }
@@ -276,7 +276,7 @@ final class DatabaseTests: XCTestCase {
         guard let albumToUpdate = testBasis.allAlbums.first(where: { $0.title == "Girls Apartment" })
         else { XCTFail("Test model not found"); return }
         let update = AlbumUpdate(album: albumToUpdate, title: "Reimu's Apartment")
-        let transaction = await sut.updateAlbum(update)
+        let transaction = await sut.updateAlbums([update])
         let newBasis = await sut.apply(transaction: transaction)
         
         XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
@@ -303,7 +303,7 @@ final class DatabaseTests: XCTestCase {
         let sut = BasisResolver(currentBasis: testBasis)
         guard let albumToDelete = testBasis.allAlbums.first(where: { $0.title == "Girls Apartment" })
         else { XCTFail("Test model not found"); return }
-        let transaction = await sut.deleteAlbum(albumToDelete)
+        let transaction = await sut.deleteAlbums([albumToDelete])
         let newBasis = await sut.apply(transaction: transaction)
         
         XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
@@ -325,7 +325,7 @@ final class DatabaseTests: XCTestCase {
         guard let artistToUpdate = testBasis.allArtists.first(where: { $0.name == "flap+frog" })
         else { XCTFail("Test model not found"); return }
         let update = ArtistUpdate(artist: artistToUpdate, art: MediaArt.test)
-        let transaction = await sut.updateArtist(update)
+        let transaction = await sut.updateArtists([update])
         let newBasis = await sut.apply(transaction: transaction)
         guard let updatedArtist = newBasis.artistMap[artistToUpdate.id]
         else { XCTFail("Updated model not found"); return }
@@ -354,7 +354,7 @@ final class DatabaseTests: XCTestCase {
         guard let artistToUpdate = testBasis.allArtists.first(where: { $0.name == "flap+frog" })
         else { XCTFail("Test model not found"); return }
         let update = ArtistUpdate(artist: artistToUpdate, name: "Reimu")
-        let transaction = await sut.updateArtist(update)
+        let transaction = await sut.updateArtists([update])
         let newBasis = await sut.apply(transaction: transaction)
         
         XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
@@ -377,9 +377,9 @@ final class DatabaseTests: XCTestCase {
         let expectedStableBasis = await stableBasis(songs: expectedSongs)
         
         let sut = BasisResolver(currentBasis: testBasis)
-        guard let artistToUpdate = testBasis.allArtists.first(where: { $0.name == "flap+frog" })
+        guard let artistToDelete = testBasis.allArtists.first(where: { $0.name == "flap+frog" })
         else { XCTFail("Test model not found"); return }
-        let transaction = await sut.deleteArtist(artistToUpdate)
+        let transaction = await sut.deleteArtists([artistToDelete])
         let newBasis = await sut.apply(transaction: transaction)
         
         XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
@@ -388,6 +388,306 @@ final class DatabaseTests: XCTestCase {
         
         XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .artist }).count, 1) // delete flap+frog
         XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .song }).count, 4) // delete flap+frog songs
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .album }).count, 2) // update flap+frog albums
+        
+        compare(stable: expectedStableBasis, against: newBasis, test: #function)
+    }
+    
+    func test_updateMultipleSongsNoLinks() async {
+        let testBasis = await stableBasis()
+        let expectedSongs = unlinkedSongs().map { song in
+            if song.title == "a caged persona" {
+                song.apply(update: SongUpdate(song: song, title: "an uncaged persona"))
+            } else if song.title == "Para la princesa tarde" {
+                song.apply(update: SongUpdate(song: song, title: "Para la princesa temprano"))
+            } else {
+                song
+            }
+        }
+        let expectedStableBasis = await stableBasis(songs: expectedSongs)
+        
+        let sut = BasisResolver(currentBasis: testBasis)
+        
+        guard let songToUpdate1 = testBasis.allSongs.first(where: { $0.title == "a caged persona" })
+        else { XCTFail("Test model not found"); return }
+        guard let songToUpdate2 = testBasis.allSongs.first(where: { $0.title == "Para la princesa tarde" })
+        else { XCTFail("Test model not found"); return }
+        
+        let update1 = SongUpdate(song: songToUpdate1, title: "an uncaged persona")
+        let update2 = SongUpdate(song: songToUpdate2, title: "Para la princesa temprano")
+        
+        let transaction = await sut.updateSongs([update1, update2])
+        let newBasis = await sut.apply(transaction: transaction)
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 2)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 0)
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .song }).count, 2)
+        
+        compare(stable: expectedStableBasis, against: newBasis, test: #function)
+    }
+    
+    func test_updateMultipleSongsLinks() async {
+        let testBasis = await stableBasis()
+        let expectedSongs = unlinkedSongs().map { song in
+            if song.title == "Sparrowtail" {
+                song.apply(update: SongUpdate(song: song, artistName: "maximum electric design"))
+            } else if song.title == "a caged persona" {
+                song.apply(update: SongUpdate(song: song, albumTitle: "Reimu's Apartment"))
+            } else {
+                song
+            }
+        }
+        let expectedStableBasis = await stableBasis(songs: expectedSongs)
+        
+        let sut = BasisResolver(currentBasis: testBasis)
+        
+        guard let songToUpdate1 = testBasis.allSongs.first(where: { $0.title == "Sparrowtail" })
+        else { XCTFail("Test model not found"); return }
+        guard let songToUpdate2 = testBasis.allSongs.first(where: { $0.title == "a caged persona" })
+        else { XCTFail("Test model not found"); return }
+        
+        let update1 = SongUpdate(song: songToUpdate1, artistName: "maximum electric design")
+        let update2 = SongUpdate(song: songToUpdate2, albumTitle: "Reimu's Apartment")
+        
+        let transaction = await sut.updateSongs([update1, update2])
+        let newBasis = await sut.apply(transaction: transaction)
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 2)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 5)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 1)
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .song }).count, 2) // update Sparrowtail and a caged apartment
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add && $0.model == .album }).count, 1) // add reimu's apartment
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .album }).count, 2) // update ga2 to link to max, remove a caged persona from ga1
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add && $0.model == .artist }).count, 1) // add maximum
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .artist }).count, 1) // delete minimum
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .artist }).count, 1) // update SaXi to have album ra1 instead of ga1
+        
+        compare(stable: expectedStableBasis, against: newBasis, test: #function)
+    }
+    
+    func test_deleteMultipleSongs() async {
+        let testBasis = await stableBasis()
+        let expectedSongs: [Song] = unlinkedSongs().compactMap { song in
+            if song.title == "a caged persona" || song.title == "Para la princesa tarde" { return nil }
+            else { return song }
+        }
+        let expectedStableBasis = await stableBasis(songs: expectedSongs)
+        
+        let sut = BasisResolver(currentBasis: testBasis)
+        
+        guard let songToDelete1 = testBasis.allSongs.first(where: { $0.title == "a caged persona" })
+        else { XCTFail("Test model not found"); return }
+        guard let songToDelete2 = testBasis.allSongs.first(where: { $0.title == "Para la princesa tarde" })
+        else { XCTFail("Test model not found"); return }
+        
+        let transaction = await sut.deleteSongs([songToDelete1, songToDelete2])
+        let newBasis = await sut.apply(transaction: transaction)
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 4)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 2)
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .song }).count, 2) // delete a caged persona
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .album }).count, 2) // update its album
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .artist }).count, 2) // update its artist
+        
+        compare(stable: expectedStableBasis, against: newBasis, test: #function)
+    }
+    
+    func test_updateMultipleAlbumsNoLinks() async {
+        let testBasis = await stableBasis()
+        
+        let sut = BasisResolver(currentBasis: testBasis)
+        
+        guard let albumToUpdate1 = testBasis.allAlbums.first(where: { $0.title == "Girls Apartment" })
+        else { XCTFail("Test model not found"); return }
+        guard let albumToUpdate2 = testBasis.allAlbums.first(where: { $0.title == "Girls Apartment 2" })
+        else { XCTFail("Test model not found"); return }
+        
+        let update1 = AlbumUpdate(album: albumToUpdate1, artistName: "Various Touhou Girls")
+        let update2 = AlbumUpdate(album: albumToUpdate2, artistName: "Various Touhou Girls 2")
+        
+        let transaction = await sut.updateAlbums([update1, update2])
+        let newBasis = await sut.apply(transaction: transaction)
+        
+        guard let updatedAlbum1 = newBasis.albumMap[albumToUpdate1.id]
+        else { XCTFail("Updated model not found"); return }
+        guard let updatedAlbum2 = newBasis.albumMap[albumToUpdate2.id]
+        else { XCTFail("Updated model not found"); return }
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 2)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 0)
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .album }).count, 2) // update girls apartment
+        
+        XCTAssertEqual(updatedAlbum1.artistName, "Various Touhou Girls")
+        XCTAssertEqual(updatedAlbum2.artistName, "Various Touhou Girls 2")
+
+    }
+    
+    func test_updateMultipleAlbumsLinks() async {
+        let testBasis = await stableBasis()
+        let expectedSongs = unlinkedSongs().map { song in
+            if song.albumTitle == "Girls Apartment" {
+                song.apply(update: SongUpdate(song: song, albumTitle: "Reimu's Apartment"))
+            } else if song.albumTitle == "Girls Apartment 2" {
+                song.apply(update: SongUpdate(song: song, albumTitle: "Reimu's Apartment 2"))
+            } else {
+                song
+            }
+        }
+        let expectedStableBasis = await stableBasis(songs: expectedSongs)
+        
+        let sut = BasisResolver(currentBasis: testBasis)
+        
+        guard let albumToUpdate1 = testBasis.allAlbums.first(where: { $0.title == "Girls Apartment" })
+        else { XCTFail("Test model not found"); return }
+        guard let albumToUpdate2 = testBasis.allAlbums.first(where: { $0.title == "Girls Apartment 2" })
+        else { XCTFail("Test model not found"); return }
+        
+        let update1 = AlbumUpdate(album: albumToUpdate1, title: "Reimu's Apartment")
+        let update2 = AlbumUpdate(album: albumToUpdate2, title: "Reimu's Apartment 2")
+        
+        let transaction = await sut.updateAlbums([update1, update2])
+        let newBasis = await sut.apply(transaction: transaction)
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 23)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 0)
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .album }).count, 2) // update both albums
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .song }).count, 21) // update all song
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .artist }).count, 0) // artists don't re-sort albums
+        
+        compare(stable: expectedStableBasis, against: newBasis, test: #function)
+    }
+    
+    func test_deleteMultipleAlbums() async {
+        let testBasis = await stableBasis()
+        let expectedSongs: [Song] = unlinkedSongs().compactMap { song in
+            if song.albumTitle == "Girls Apartment" || song.albumTitle == "Girls Apartment 2" { return nil }
+            else { return song }
+        }
+        let expectedStableBasis = await stableBasis(songs: expectedSongs)
+        
+        let sut = BasisResolver(currentBasis: testBasis)
+        
+        guard let albumToDelete1 = testBasis.allAlbums.first(where: { $0.title == "Girls Apartment" })
+        else { XCTFail("Test model not found"); return }
+        guard let albumToDelete2 = testBasis.allAlbums.first(where: { $0.title == "Girls Apartment 2" })
+        else { XCTFail("Test model not found"); return }
+        
+        let transaction = await sut.deleteAlbums([albumToDelete1, albumToDelete2])
+        let newBasis = await sut.apply(transaction: transaction)
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 30)
+        
+        // they're all gone
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .album }).count, 2)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .song }).count, 21)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .artist }).count, 7)
+        
+        compare(stable: expectedStableBasis, against: newBasis, test: #function)
+    }
+    
+    func test_updateMultipleArtistsNoLinks() async {
+        let testBasis = await stableBasis()
+        
+        let sut = BasisResolver(currentBasis: testBasis)
+        
+        guard let artistToUpdate1 = testBasis.allArtists.first(where: { $0.name == "flap+frog" })
+        else { XCTFail("Test model not found"); return }
+        guard let artistToUpdate2 = testBasis.allArtists.first(where: { $0.name == "minimum electric design" })
+        else { XCTFail("Test model not found"); return }
+        
+        let update1 = ArtistUpdate(artist: artistToUpdate1, art: MediaArt.test)
+        let update2 = ArtistUpdate(artist: artistToUpdate2, art: MediaArt.test)
+        
+        let transaction = await sut.updateArtists([update1, update2])
+        let newBasis = await sut.apply(transaction: transaction)
+        
+        guard let updatedArtist1 = newBasis.artistMap[artistToUpdate1.id]
+        else { XCTFail("Updated model not found"); return }
+        guard let updatedArtist2 = newBasis.artistMap[artistToUpdate2.id]
+        else { XCTFail("Updated model not found"); return }
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 2)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 0)
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .artist }).count, 2)
+        
+        XCTAssertEqual(updatedArtist1.art, MediaArt.test)
+        XCTAssertEqual(updatedArtist2.art, MediaArt.test)
+    }
+    
+    func test_updateMultipleArtistsLinks() async {
+        let testBasis = await stableBasis()
+        let expectedSongs = unlinkedSongs().map { song in
+            if song.artistName == "flap+frog" {
+                song.apply(update: SongUpdate(song: song, artistName: "Reimu"))
+            } else if song.artistName == "minimum electric design" {
+                song.apply(update: SongUpdate(song: song, artistName: "Azusa"))
+            } else {
+                song
+            }
+        }
+        let expectedStableBasis = await stableBasis(songs: expectedSongs)
+        
+        let sut = BasisResolver(currentBasis: testBasis)
+        
+        guard let artistToUpdate1 = testBasis.allArtists.first(where: { $0.name == "flap+frog" })
+        else { XCTFail("Test model not found"); return }
+        guard let artistToUpdate2 = testBasis.allArtists.first(where: { $0.name == "minimum electric design" })
+        else { XCTFail("Test model not found"); return }
+        
+        let update1 = ArtistUpdate(artist: artistToUpdate1, name: "Reimu")
+        let update2 = ArtistUpdate(artist: artistToUpdate2, name: "Azusa")
+        
+        let transaction = await sut.updateArtists([update1, update2])
+        let newBasis = await sut.apply(transaction: transaction)
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 9)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 0)
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .artist }).count, 2) // update flap+frog
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .song }).count, 5) // update flap+frog songs
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .album }).count, 2) // album artists sorting update
+        
+        compare(stable: expectedStableBasis, against: newBasis, test: #function)
+    }
+    
+    func test_deleteMultipleArtists() async {
+        let testBasis = await stableBasis()
+        let expectedSongs: [Song] = unlinkedSongs().compactMap { song in
+            if song.artistName == "flap+frog" || song.artistName == "minimum electric design" { return nil }
+            else { return song }
+        }
+        let expectedStableBasis = await stableBasis(songs: expectedSongs)
+        
+        let sut = BasisResolver(currentBasis: testBasis)
+        
+        guard let artistToDelete1 = testBasis.allArtists.first(where: { $0.name == "flap+frog" })
+        else { XCTFail("Test model not found"); return }
+        guard let artistToDelete2 = testBasis.allArtists.first(where: { $0.name == "minimum electric design" })
+        else { XCTFail("Test model not found"); return }
+        
+        let transaction = await sut.deleteArtists([artistToDelete1, artistToDelete2])
+        let newBasis = await sut.apply(transaction: transaction)
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .add }).count, 0)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update }).count, 2)
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete }).count, 7)
+        
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .artist }).count, 2) // delete flap+frog
+        XCTAssertEqual(transaction.assertions.filter({ $0.operation == .delete && $0.model == .song }).count, 5) // delete flap+frog songs
         XCTAssertEqual(transaction.assertions.filter({ $0.operation == .update && $0.model == .album }).count, 2) // update flap+frog albums
         
         compare(stable: expectedStableBasis, against: newBasis, test: #function)

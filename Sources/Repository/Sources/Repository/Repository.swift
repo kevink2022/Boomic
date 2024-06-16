@@ -151,39 +151,39 @@ extension Repository {
         statusKeys.remove(.importSongs)
     }
     
-    public func updateSong(_ songUpdate: SongUpdate) async {
+    public func updateSongs(_ songUpdate: Set<SongUpdate>) async {
         await transactor.commit { basis in
-            return await BasisResolver(currentBasis: basis).updateSong(songUpdate)
+            return await BasisResolver(currentBasis: basis).updateSongs(songUpdate)
         }
     }
     
-    public func deleteSong(_ song: Song) async {
+    public func deleteSongs(_ song: Set<Song>) async {
         await transactor.commit { basis in
-            return await BasisResolver(currentBasis: basis).deleteSong(song)
+            return await BasisResolver(currentBasis: basis).deleteSongs(song)
         }
     }
     
-    public func updateSong(_ albumUpdate: AlbumUpdate) async {
+    public func updateAlbums(_ albumUpdate: Set<AlbumUpdate>) async {
         await transactor.commit { basis in
-            return await BasisResolver(currentBasis: basis).updateAlbum(albumUpdate)
+            return await BasisResolver(currentBasis: basis).updateAlbums(albumUpdate)
         }
     }
     
-    public func deleteAlbum(_ album: Album) async {
+    public func deleteAlbums(_ album: Set<Album>) async {
         await transactor.commit { basis in
-            return await BasisResolver(currentBasis: basis).deleteAlbum(album)
+            return await BasisResolver(currentBasis: basis).deleteAlbums(album)
         }
     }
     
-    public func updateArtist(_ artistUpdate: ArtistUpdate) async {
+    public func updateArtists(_ artistUpdate: Set<ArtistUpdate>) async {
         await transactor.commit { basis in
-            return await BasisResolver(currentBasis: basis).updateArtist(artistUpdate)
+            return await BasisResolver(currentBasis: basis).updateArtists(artistUpdate)
         }
     }
     
-    public func deleteArtist(_ artist: Artist) async {
+    public func deleteArtists(_ artist: Set<Artist>) async {
         await transactor.commit { basis in
-            return await BasisResolver(currentBasis: basis).deleteArtist(artist)
+            return await BasisResolver(currentBasis: basis).deleteArtists(artist)
         }
     }
 }

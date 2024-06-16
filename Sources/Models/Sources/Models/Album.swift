@@ -8,7 +8,7 @@
 import Foundation
 import Domain
 
-public final class Album: Identifiable, Codable, Equatable {
+public final class Album: Identifiable, Codable, Equatable, Hashable {
     public let id: UUID
     public let title: String
     
@@ -44,14 +44,26 @@ public final class Album: Identifiable, Codable, Equatable {
     }
     
     public static func == (lhs: Album, rhs: Album) -> Bool {
-        lhs.id == rhs.id
+        var lhsHasher = Hasher()
+        lhs.hash(into: &lhsHasher)
+        let lhsHash = lhsHasher.finalize()
+        
+        var rhsHasher = Hasher()
+        rhs.hash(into: &rhsHasher)
+        let rhsHash = rhsHasher.finalize()
+        
+        return lhsHash == rhsHash
     }
-}
-
-extension Album: Hashable {
+    
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+        hasher.combine(title)
+        hasher.combine(art)
+        hasher.combine(artistName)
+        hasher.combine(artists)
     }
+    
+    public static let none = Album(id: UUID(), title: "None")
 }
 
 extension Album {

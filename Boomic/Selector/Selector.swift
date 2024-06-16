@@ -17,6 +17,7 @@ final class ModelSelector {
     var group: SelectionGroup? = nil
     
     var active: Bool { group != nil }
+    var noSelections: Bool { selected.count == 0 }
     
     func toggleSelect(_ id: UUID, group: SelectionGroup?) {
         if active && self.group == group {
@@ -28,8 +29,16 @@ final class ModelSelector {
         }
     }
     
-    func select(_ group: SelectionGroup) {
+    func selectGroup(_ group: SelectionGroup) {
         self.group = group
+    }
+    
+    func select(_ id: UUID) {
+        selected.insert(id)
+    }
+    
+    func deselect(_ id: UUID) {
+        selected.remove(id)
     }
     
     func cancel() {

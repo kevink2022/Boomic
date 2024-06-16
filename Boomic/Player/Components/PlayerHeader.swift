@@ -53,7 +53,7 @@ struct PlayerHeader: View {
                             if song.rating == nil { return SongUpdate(song: song, rating: 1) }
                             else { return SongUpdate(song: song, erasing: [\.rating]) }
                         }()
-                        Task{ await repository.updateSong(update) }
+                        Task{ await repository.updateSongs([update]) }
                     }
                 } label: {
                     Image(systemName: player.song?.rating == nil ? SI.unrated : SI.rated)

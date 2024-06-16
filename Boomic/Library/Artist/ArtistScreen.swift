@@ -45,12 +45,19 @@ struct ArtistScreen: View {
                             .clipShape(Circle())
                             .padding(.horizontal, C.artistScreenHeaderPadding)
                         
-                        Text(artist.name)
-                            .font(F.title)
-                            .multilineTextAlignment(.center)
-                        
-                        Text("\(albums.count) albums • \(songs.count) tracks")
-                            .font(F.listDuration)
+                        Menu {
+                            ArtistMenu(artist: artist, navigateOnSelect: true)
+                        } label: {
+                            VStack {
+                                Text(artist.name)
+                                    .font(F.title)
+                                    .multilineTextAlignment(.center)
+                                
+                                Text("\(albums.count) albums • \(songs.count) tracks")
+                                    .font(F.listDuration)
+                            }
+                        }
+                        .foregroundStyle(.primary)
                     }
                     .padding(C.gridPadding)
                 }

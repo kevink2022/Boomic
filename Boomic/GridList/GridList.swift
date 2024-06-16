@@ -90,6 +90,7 @@ struct GridList<Icon: View, Menu: View>: View {
                 ) {
                     Section(header: GridListSelectorBar(
                         selectable: selectable
+                        , localIDs: gridEntries.compactMap({ $0.selectionID })
                         , externalHorizontalPadding: config.externalPadding
                     )) {
                         if showDividers {

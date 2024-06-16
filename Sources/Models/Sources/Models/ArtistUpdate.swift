@@ -113,7 +113,7 @@ extension ArtistUpdate {
         , art: MediaArt? = nil
         , songs: [UUID]? = nil
         , albums: [UUID]? = nil
-        , erasing: Set<String>? = nil
+        , erasing: Set<PartialKeyPath<Artist>>? = nil
     ) {
         self.init(
             artistID: artist.id
@@ -122,7 +122,7 @@ extension ArtistUpdate {
             , art: art
             , songs: songs 
             , albums: albums
-            , erasing: erasing
+            , erasing: Self.keyPathEncoding(erasing)
         )
     }
     

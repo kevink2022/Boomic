@@ -43,6 +43,10 @@ public final class Navigator {
         self.showSheet = true
     }
     
+    func dismissSheet() {
+        self.showSheet = false
+    }
+    
     public var isSearchFocused: Bool = false
     
     public var playerOffset: CGFloat = 800
@@ -68,7 +72,10 @@ extension NavigationPath {
         self.removeLast(self.count)
     }
     
-    mutating func navigateTo(_ value: any Hashable) {
+    mutating func navigateTo(_ value: any Hashable, clearingPath: Bool = false) {
+        if clearingPath {
+            self.toRoot()
+        }
         self.append(value)
     }
     

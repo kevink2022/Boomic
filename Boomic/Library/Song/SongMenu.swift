@@ -18,8 +18,6 @@ struct SongMenu: View {
     
     let song: Song
     
-    @State private var deleteAlert = false
-    
     var body: some View {
         Button {
             player.addNext(song)
@@ -35,7 +33,7 @@ struct SongMenu: View {
         
         if !selector.active {
             Button {
-                selector.select(.songs)
+                selector.selectGroup(.songs)
                 selector.toggleSelect(song.id, group: .songs)
             } label: {
                 Label("Select Song", systemImage: SI.select)
@@ -48,30 +46,40 @@ struct SongMenu: View {
             Button {
                 
             } label: {
-                Label("Rate Song", systemImage: SI.unrated)
+                Label("Add to Playlist", systemImage: SI.addToPlaylist)
             }
             
             Button {
                 
             } label: {
-                Label("Add to Playlist", systemImage: SI.addToPlaylist)
+                Label("Add tags", systemImage: SI.tag)
             }
-            
+        } label: {
+            Label("Add to...", systemImage: SI.add)
+        }
+        
+        Menu {
             Button {
-                navigator.presentSheet(SongUpdateSheet(song: song))
+                
             } label: {
-                Label("Edit Attributes", systemImage: SI.edit)
+                Label("Rate Song", systemImage: SI.unrated)
+            }
+
+            Button {
+                navigator.presentSheet(SongUpdateSheet(songs: [song]))
+            } label: {
+                Label("Edit Song", systemImage: SI.edit)
             }
             
             Button(role: .destructive) {
-                Task{ await repository.deleteSong(song) }
+                Task{ await repository.deleteSongs([song]) }
             } label: {
                 Label("Delete Song", systemImage: SI.delete)
             }
 
             
         } label: {
-            Label("Edit Song", systemImage: SI.edit)
+            Label("Edit...", systemImage: SI.edit)
         }
         
         Divider()

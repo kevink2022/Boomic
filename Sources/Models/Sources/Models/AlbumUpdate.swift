@@ -122,6 +122,7 @@ extension AlbumUpdate {
         , songs: [UUID]? = nil
         , artistName: String? = nil
         , artists: [UUID]? = nil
+        , erasing: Set<PartialKeyPath<Album>>? = nil
     ) {
         self.init(
             albumID: album.id
@@ -131,6 +132,7 @@ extension AlbumUpdate {
             , songs: songs
             , artistName: artistName
             , artists: artists
+            , erasing: Self.keyPathEncoding(erasing)
         )
     }
     

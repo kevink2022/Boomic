@@ -165,6 +165,7 @@ extension SongUpdate {
         , albumTitle: String? = nil
         , albums: [UUID]? = nil
         , rating: Int? = nil
+        , erasing: Set<PartialKeyPath<Song>>? = nil
     ) {
         self.init(
             songID: song.id
@@ -178,6 +179,7 @@ extension SongUpdate {
             , albumTitle: albumTitle
             , albums: albums
             , rating: rating
+            , erasing: Self.keyPathEncoding(erasing)
         )
     }
     

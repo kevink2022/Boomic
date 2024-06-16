@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class Artist: Identifiable, Codable, Equatable {
+public final class Artist: Identifiable, Codable, Equatable, Hashable {
     public let id: UUID
     public let name: String
     
@@ -38,16 +38,29 @@ public final class Artist: Identifiable, Codable, Equatable {
         case art
     }
     
+    public static func == (lhs: Artist, rhs: Artist) -> Bool {
+        var lhsHasher = Hasher()
+        lhs.hash(into: &lhsHasher)
+        let lhsHash = lhsHasher.finalize()
+        
+        var rhsHasher = Hasher()
+        rhs.hash(into: &rhsHasher)
+        let rhsHash = rhsHasher.finalize()
+        
+        return lhsHash == rhsHash
+    }
+    
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+        hasher.combine(art)
+        hasher.combine(songs)
+        hasher.combine(albums)
     }
+    
+    public static var none = Artist(id: UUID(), name: "None")
 }
 
-extension Artist: Hashable {
-    public static func == (lhs: Artist, rhs: Artist) -> Bool {
-        lhs.id == rhs.id
-    }
-}
+
 
 extension Artist {
     public static func alphabeticalSort(_ artistA: Artist, _ artistB: Artist) -> Bool {

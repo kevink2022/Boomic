@@ -154,9 +154,10 @@ struct ViewConstants {
         
         static let select = "checkmark.circle"
         static let unselected = "circle"
-        static let cancelSelection = "x.circle"
+        static let cancelSelection = "xmark.circle"
         static let editSelections = "pencil.circle"
         static let viewSelections = "line.3.horizontal.circle"
+        static let selectionInformation = "ellipsis.circle"
     }
     
     static let gridPadding: CGFloat = 8

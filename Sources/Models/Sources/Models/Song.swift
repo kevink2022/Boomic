@@ -8,7 +8,7 @@
 import Foundation
 import Domain
 
-public final class Song: Media, Identifiable, Codable, Equatable {
+public final class Song: Media, Identifiable, Codable, Equatable, Hashable {
     public let id: UUID
     public let source: MediaSource
     public let duration: TimeInterval
@@ -70,7 +70,30 @@ public final class Song: Media, Identifiable, Codable, Equatable {
     }
     
     public static func == (lhs: Song, rhs: Song) -> Bool {
-        lhs.id == rhs.id
+        var lhsHasher = Hasher()
+        lhs.hash(into: &lhsHasher)
+        let lhsHash = lhsHasher.finalize()
+        
+        var rhsHasher = Hasher()
+        rhs.hash(into: &rhsHasher)
+        let rhsHash = rhsHasher.finalize()
+        
+        return lhsHash == rhsHash
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(source)
+        hasher.combine(duration)
+        hasher.combine(title)
+        hasher.combine(trackNumber)
+        hasher.combine(discNumber)
+        hasher.combine(art)
+        hasher.combine(artistName)
+        hasher.combine(artists)
+        hasher.combine(albumTitle)
+        hasher.combine(albums)
+        hasher.combine(rating)
     }
 }
 
@@ -79,12 +102,6 @@ extension Song {
     
     public var label: String {
         self.title ?? self.source.label
-    }
-}
-
-extension Song: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
     }
 }
 

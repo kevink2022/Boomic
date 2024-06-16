@@ -187,21 +187,20 @@ struct DeleteAssertionDetailsScreen: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                VStack(alignment: .leading) {
-                    Text("Delete \(model.model.label): \(model.label)")
-                        .font(F.listEntryTitle)
-                    Text(timestamp.shortFormatted)
-                        .font(F.body)
-                        .opacity(0.6)
-                }
-                
-                Spacer()
+            VStack(alignment: .leading) {
+                Text("Delete \(model.model.label): \(model.label)")
+                    .font(F.listEntryTitle)
+                Text(timestamp.shortFormatted)
+                    .font(F.body)
+                    .opacity(0.6)
+
             }
             .padding(C.screenTitlePadding)
             
-            Spacer()
-       }
+            List {
+                if let path = model.path { Text("Path: \(path)") }
+            }
+        }
     }
 }
 

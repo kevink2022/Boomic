@@ -166,100 +166,192 @@ public final class BasisResolver {
         )
     }
     
-    public func updateAlbum(_ update: AlbumUpdate) async -> LibraryTransaction {
-        guard let album = currentBasis.albumMap[update.id] else { return .empty }
-        let label = "Update Album: \(album.title)"
+    public func updateAlbums(_ updates: Set<AlbumUpdate>) async -> LibraryTransaction {
+        guard updates.count > 0 else { return .empty }
         
+        let label = {
+            if updates.count == 1, let update = updates.first, let album = currentBasis.albumMap[update.id] {
+                return "Update Album: \(album.title)"
+            } else {
+                return "Update \(updates.count) Albums"
+            }
+        }()
+        
+        var albumUpdateAssertions = KeySet<Assertion>()
         var songUpdateAssertions = KeySet<Assertion>()
-        let albumUpdateAssertion = KeySet<Assertion>().inserting(Assertion(update))
         
-        if update.newTitle == nil {
-            return albumUpdateAssertion.asTransaction(label: label, level: .normal)
-        } else {
-            album.songs.forEach {
-                if let song = currentBasis.songMap[$0] {
+        updates.forEach { update in
+            guard let album = currentBasis.albumMap[update.id] else { return }
+            
+            albumUpdateAssertions.insert(Assertion(update))
+            
+            if update.newTitle != nil {
+                album.songs.forEach {
+                    guard let song = currentBasis.songMap[$0] else { return }
+                    
                     let songUpdate = SongUpdate(song: song, albumTitle: update.newTitle)
                     songUpdateAssertions.insert(Assertion(songUpdate))
                 }
             }
-            let updateBasis = await self.apply(transaction: albumUpdateAssertion.asTransaction())
+        }
+        
+        guard albumUpdateAssertions.count > 0 else { return .empty }
+        
+        if songUpdateAssertions.count == 0 {
+            return albumUpdateAssertions.asTransaction(label: label, level: .normal)
+        } else {
+            let updateBasis = await self.apply(transaction: albumUpdateAssertions.asTransaction())
             let linkAssertions = await BasisResolver(currentBasis: updateBasis).updateLinks(songUpdateAssertions)
-            let finalAssertions = Assertion.flatten([albumUpdateAssertion, linkAssertions])
+            let finalAssertions = Assertion.flatten([albumUpdateAssertions, linkAssertions])
             return finalAssertions.asTransaction(label: label, level: .significant)
         }
     }
     
-    public func updateArtist(_ update: ArtistUpdate) async -> LibraryTransaction {
-        guard let artist = currentBasis.artistMap[update.id] else { return .empty }
-        let label = "Update Artist: \(artist.name)"
+    public func updateArtists(_ updates: Set<ArtistUpdate>) async -> LibraryTransaction {
+        guard updates.count > 0 else { return .empty }
         
+        let label = {
+            if updates.count == 1, let update = updates.first, let artist = currentBasis.artistMap[update.id] {
+                return "Update Artists: \(artist.name)"
+            } else {
+                return "Update \(updates.count) Artists"
+            }
+        }()
+        
+        var artistUpdateAssertions = KeySet<Assertion>()
         var songUpdateAssertions = KeySet<Assertion>()
-        let artistUpdateAssertion = KeySet<Assertion>().inserting(Assertion(update))
         
-        if update.newName == nil {
-            return artistUpdateAssertion.asTransaction(label: label, level: .normal)
-        } else {
-            artist.songs.forEach {
-                if let song = currentBasis.songMap[$0] {
+        updates.forEach { update in
+            guard let artist = currentBasis.artistMap[update.id] else { return }
+            
+            artistUpdateAssertions.insert(Assertion(update))
+            
+            if update.newName != nil {
+                artist.songs.forEach {
+                    guard let song = currentBasis.songMap[$0] else { return }
+                    
                     let songUpdate = SongUpdate(song: song, artistName: update.newName)
                     songUpdateAssertions.insert(Assertion(songUpdate))
                 }
             }
-            let updateBasis = await self.apply(transaction: artistUpdateAssertion.asTransaction())
+        }
+        
+        guard artistUpdateAssertions.count > 0 else { return .empty }
+        
+        if songUpdateAssertions.count == 0 {
+            return artistUpdateAssertions.asTransaction(label: label, level: .normal)
+        } else {
+            let updateBasis = await self.apply(transaction: artistUpdateAssertions.asTransaction())
             let linkAssertions = await BasisResolver(currentBasis: updateBasis).updateLinks(songUpdateAssertions)
-            let finalAssertions = Assertion.flatten([artistUpdateAssertion, linkAssertions])
+            let finalAssertions = Assertion.flatten([artistUpdateAssertions, linkAssertions])
             return finalAssertions.asTransaction(label: label, level: .significant)
         }
     }
     
-    public func deleteAlbum(_ album: Album) async -> LibraryTransaction {
-        guard let album = currentBasis.albumMap[album.id] else { return .empty }
+    public func deleteAlbums(_ albums: Set<Album>) async -> LibraryTransaction {
+        guard albums.count > 0 else { return .empty }
+        
+        let label = {
+            if albums.count == 1, let album = albums.first, currentBasis.albumMap[album.id] != nil {
+                return "Delete Album: \(album.title)"
+            } else {
+                return "Delete \(albums.count) Albums"
+            }
+        }()
         
         var assertions = KeySet<Assertion>()
-        album.songs
-            .compactMap { currentBasis.songMap[$0] }
-            .forEach { assertions.insert(Assertion(DeleteAssertion($0))) }
         
-        assertions = await updateLinks(assertions)
-        return assertions.asTransaction(label: "Delete Album: \(album.title)", level: .significant)
-    }
-    
-    public func deleteArtist(_ artist: Artist) async -> LibraryTransaction {
-        guard let artist = currentBasis.artistMap[artist.id] else { return .empty }
-        
-        var assertions = KeySet<Assertion>()
-        artist.songs
-            .compactMap { currentBasis.songMap[$0] }
-            .forEach { assertions.insert(Assertion(DeleteAssertion($0))) }
-        
-        assertions = await updateLinks(assertions)
-        return assertions.asTransaction(label: "Delete Artist: \(artist.name)", level: .significant)
-    }
-    
-    public func deleteSong(_ song: Song) async -> LibraryTransaction {
-        guard let song = currentBasis.songMap[song.id] else { return .empty }
-        
-        var assertions = KeySet<Assertion>()
-        assertions.insert(Assertion(DeleteAssertion(song)))
-        
-        assertions = await updateLinks(assertions)
-        return assertions.asTransaction(label: "Delete Song: \(song.label)", level: .significant)
-
-    }
-    
-    public func updateSong(_ update: SongUpdate) async -> LibraryTransaction {
-        guard let song = currentBasis.songMap[update.id] else { return .empty }
-        let label = "Update Song: \(song.label)"
-        
-        var assertions = KeySet<Assertion>()
-        assertions.insert(Assertion(update))
-        
-        if update.artistName != nil || update.albumTitle != nil {
-            assertions = await updateLinks(assertions)
-            return assertions.asTransaction(label: label, level: .significant)
+        albums.forEach { album in
+            guard let album = currentBasis.albumMap[album.id] else { return }
+            
+            album.songs
+                .compactMap { currentBasis.songMap[$0] }
+                .forEach { assertions.insert(Assertion(DeleteAssertion($0))) }
         }
+        
+        assertions = await updateLinks(assertions)
+        return assertions.asTransaction(label: label, level: .significant)
+    }
+    
+    public func deleteArtists(_ artists: Set<Artist>) async -> LibraryTransaction {
+        guard artists.count > 0 else { return .empty }
+        
+        let label = {
+            if artists.count == 1, let artist = artists.first, currentBasis.artistMap[artist.id] != nil {
+                return "Delete Artist: \(artist.name)"
+            } else {
+                return "Delete \(artists.count) Artist"
+            }
+        }()
+        
+        var assertions = KeySet<Assertion>()
+        
+        artists.forEach { artist in
+            guard let artist = currentBasis.artistMap[artist.id] else { return }
+            
+            artist.songs
+                .compactMap { currentBasis.songMap[$0] }
+                .forEach { assertions.insert(Assertion(DeleteAssertion($0))) }
+        }
+        
+        assertions = await updateLinks(assertions)
+        return assertions.asTransaction(label: label, level: .significant)
+    }
+    
+    public func updateSongs(_ updates: Set<SongUpdate>) async -> LibraryTransaction {
+        guard updates.count > 0 else { return .empty }
+        
+        let label = {
+            if updates.count == 1, let update = updates.first, let song = currentBasis.songMap[update.id] {
+                return "Update Song: \(song.label)"
+            } else {
+                return "Update \(updates.count) Songs"
+            }
+        }()
+        
+        var noLinkAssertions = KeySet<Assertion>()
+        var linkAssertions = KeySet<Assertion>()
+        
+        updates.forEach { update in
+            guard let song = currentBasis.songMap[update.id] else { return }
+            
+            if update.artistName != nil || update.albumTitle != nil {
+                linkAssertions.insert(Assertion(update))
+            } else {
+                noLinkAssertions.insert(Assertion(update))
+            }
+        }
+        
+        if linkAssertions.count > 0 {
+            linkAssertions = await updateLinks(linkAssertions)
+            let finalAssertions = Assertion.flatten([noLinkAssertions, linkAssertions])
+            return finalAssertions.asTransaction(label: label, level: .significant)
+        } else {
+            return noLinkAssertions.asTransaction(label: label, level: .normal)
+        }
+    }
+    
+    public func deleteSongs(_ songs: Set<Song>) async -> LibraryTransaction {
+        guard songs.count > 0 else { return .empty }
+        
+        let label = {
+            if songs.count == 1, let song = songs.first, currentBasis.songMap[song.id] != nil {
+                return "Delete Song: \(song.label)"
+            } else {
+                return "Delete \(songs.count) Songs"
+            }
+        }()
+        
+        var assertions = KeySet<Assertion>()
+        songs.forEach { song in
+            guard let song = currentBasis.songMap[song.id] else { return }
+            
+            assertions.insert(Assertion(DeleteAssertion(song)))
 
-        return assertions.asTransaction(label: label, level: .normal)
+        }
+        
+        assertions = await updateLinks(assertions)
+        return assertions.asTransaction(label: label, level: .significant)
     }
     
     public func addSongs(_ unlinkedSongs: [Song]) async -> LibraryTransaction {

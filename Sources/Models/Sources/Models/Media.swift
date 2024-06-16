@@ -13,7 +13,7 @@ public protocol Media: Codable, Identifiable {
     var source: MediaSource { get }
 }
 
-public enum MediaSource: Codable, Equatable {
+public enum MediaSource: Codable, Equatable, Hashable {
     case local(path: AppPath)
     
     public var label: String {
@@ -23,7 +23,7 @@ public enum MediaSource: Codable, Equatable {
     }
 }
 
-public enum MediaArt: Codable, Equatable {
+public enum MediaArt: Codable, Equatable, Hashable {
     case local(path: AppPath)
     case embedded(path: AppPath, hash: String)
     

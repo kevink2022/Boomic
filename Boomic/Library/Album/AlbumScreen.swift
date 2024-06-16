@@ -48,16 +48,24 @@ struct AlbumScreen: View {
                             Spacer(minLength: C.albumScreenSpacers)
                         }
                         
-                        Text(album.title)
-                            .font(F.title)
-                            .multilineTextAlignment(.center)
-                        
-                        Text(album.artistName ?? "Unknown Artist")
-                            .font(F.subtitle)
-                            .multilineTextAlignment(.center)
-                        
-                        Text("\(songs.count) tracks • \(songs.reduce(TimeInterval(), {$0 + $1.duration}).formatted)")
-                            .font(F.listDuration)
+                        Menu {
+                            AlbumMenu(album: album, navigateOnSelect: true)
+                        } label: {
+                            VStack {
+                                Text(album.title)
+                                    .font(F.title)
+                                    .multilineTextAlignment(.center)
+                                
+                                Text(album.artistName ?? "Unknown Artist")
+                                    .font(F.subtitle)
+                                    .multilineTextAlignment(.center)
+                                
+                                Text("\(songs.count) tracks • \(songs.reduce(TimeInterval(), {$0 + $1.duration}).formatted)")
+                                    .font(F.listDuration)
+                            }
+                        }
+                        .foregroundStyle(.primary)
+                            
                         
                         HStack {
                             LargeButton {
