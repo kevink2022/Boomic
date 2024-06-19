@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Models // DEBUG
 
 struct SettingsScreen: View {
     @Environment(\.repository) private var repository
@@ -85,6 +86,20 @@ struct SettingsScreen: View {
                     }
                 } header: {
                     Text("UI Preferences")
+                }
+                
+                Section("Debug") {
+                    Button {
+                        Task {
+                            let marioUpdates = repository.songs()
+                                .search("Mario")
+                                .map { SongUpdate(song: $0, tags: [Tag.from("#mario")!]) }
+                            print(marioUpdates.count)
+                            await repository.updateSongs(Set(marioUpdates))
+                        }
+                    } label: {
+                        Text("Add Mario Tags")
+                    }
                 }
             }
         }

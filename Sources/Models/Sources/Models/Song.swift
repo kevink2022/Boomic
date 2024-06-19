@@ -24,6 +24,7 @@ public final class Song: Media, Identifiable, Codable, Equatable, Hashable {
     public let albums: [UUID]
     
     public let rating: Int?
+    public let tags: Set<Tag>
     
     public init(
         id: UUID
@@ -38,6 +39,7 @@ public final class Song: Media, Identifiable, Codable, Equatable, Hashable {
         , albumTitle: String? = nil
         , albums: [UUID] = []
         , rating: Int? = nil
+        , tags: Set<Tag> = []
     ) {
         self.id = id
         self.source = source
@@ -51,6 +53,7 @@ public final class Song: Media, Identifiable, Codable, Equatable, Hashable {
         self.albumTitle = albumTitle
         self.albums = albums
         self.rating = rating
+        self.tags = tags
     }
     
     enum CodingKeys: String, CodingKey {
@@ -67,6 +70,7 @@ public final class Song: Media, Identifiable, Codable, Equatable, Hashable {
         case albumTitle = "album_title"
         case art
         case rating
+        case tags
     }
     
     public static func == (lhs: Song, rhs: Song) -> Bool {
@@ -94,6 +98,7 @@ public final class Song: Media, Identifiable, Codable, Equatable, Hashable {
         hasher.combine(albumTitle)
         hasher.combine(albums)
         hasher.combine(rating)
+        hasher.combine(tags)
     }
 }
 
@@ -137,40 +142,6 @@ extension Song {
         case (nil, _): return true
         case (_, nil): return false
         }
-    }
-}
-
-// MARK: - Initializers
-extension Song {
-    public convenience init(
-        existingSong: Song
-        , id: UUID? = nil
-        , source: MediaSource? = nil
-        , duration: TimeInterval? = nil
-        , title: String? = nil
-        , trackNumber: Int? = nil
-        , discNumber: Int? = nil
-        , art: MediaArt? = nil
-        , artistName: String? = nil
-        , artists: [UUID]? = nil
-        , albumTitle: String? = nil
-        , albums: [UUID]? = nil
-        , rating: Int? = nil
-    ) {
-        self.init(
-            id: id ?? existingSong.id
-            , source: source ?? existingSong.source
-            , duration: duration ?? existingSong.duration
-            , title: title ?? existingSong.title
-            , trackNumber: trackNumber ?? existingSong.trackNumber
-            , discNumber: discNumber ?? existingSong.discNumber
-            , art: art ?? existingSong.art
-            , artistName: artistName ?? existingSong.artistName
-            , artists: artists ?? existingSong.artists
-            , albumTitle: albumTitle ?? existingSong.albumTitle
-            , albums: albums ?? existingSong.albums
-            , rating: rating ?? existingSong.rating
-        )
     }
 }
 

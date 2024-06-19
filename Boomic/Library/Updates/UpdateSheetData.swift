@@ -36,6 +36,7 @@ struct WorkingSheetData {
             , artistName: newArtistName(from: song.artistName)
             , albumTitle: newAlbumTitle(from: song.albumTitle)
             , rating: newRating(from: song.rating)
+            , tags: !multiEdit ? newTags(from: song.tags) : working.tags.reduce(into: song.tags, { $0.insert($1) })
             , erasing: erasing.count > 0 ? erasing : nil
         )
         
@@ -134,6 +135,10 @@ struct WorkingSheetData {
         new(working: working.art, base: base.art, model: art)
     }
     
+    private func newTags(from tags: Set<Tag>) -> Set<Tag>? {
+        new(working: working.tags, base: base.tags, model: tags)
+    }
+    
     private func eraseTitle(from model: String?) -> Bool {
         let working: String? = SheetData.fromSheet(working.title)
         let base: String? = SheetData.fromSheet(base.title)
@@ -181,6 +186,8 @@ struct SheetData: Equatable {
     var artistName: String = ""
     var albumTitle: String = ""
     
+    var tags: Set<Tag> = []
+    
     var rating: Int? { didSet { if rating == 0 {rating = nil} } }
     var art: MediaArt?
     
@@ -192,6 +199,7 @@ struct SheetData: Equatable {
         self.artistName = Self.toSheet(song.artistName)
         self.albumTitle = Self.toSheet(song.albumTitle)
         self.rating = song.rating
+        self.tags = song.tags
     }
     
     // Clear any data that isn't the same between its current data and a new song
@@ -203,6 +211,7 @@ struct SheetData: Equatable {
         if self.artistName != Self.toSheet(song.artistName) { self.artistName = "" }
         if self.albumTitle != Self.toSheet(song.albumTitle) { self.albumTitle = "" }
         if self.rating != song.rating { self.rating = nil }
+        if self.tags != song.tags { self.tags = [] }
     }
     
     init(album: Album) {
@@ -235,6 +244,7 @@ struct SheetData: Equatable {
         && lhs.artistName == rhs.artistName
         && lhs.albumTitle == rhs.albumTitle
         && lhs.rating == rhs.rating
+        && lhs.tags == rhs.tags
     }
         
     static func toSheet(_ int: Int?) -> String {

@@ -26,6 +26,7 @@ extension Song {
             , albumTitle: erasing.contains(\.albumTitle) ? nil : update.albumTitle ?? self.albumTitle
             , albums: update.albums ?? self.albums
             , rating: erasing.contains(\.rating) ? nil : update.rating ?? self.rating
+            , tags: update.tags ?? self.tags
         )
     }
 }
@@ -44,6 +45,7 @@ public final class SongUpdate: Identifiable, Codable, Hashable {
     public let albumTitle: String?
     public let albums: [UUID]?
     public let rating: Int?
+    public let tags: Set<Tag>?
     
     public let erasing: Set<String>?
     
@@ -59,6 +61,7 @@ public final class SongUpdate: Identifiable, Codable, Hashable {
         , albumTitle: String? = nil
         , albums: [UUID]? = nil
         , rating: Int? = nil
+        , tags: Set<Tag>? = nil
         , erasing: Set<String>? = nil
     ) {
         self.songID = songID
@@ -72,6 +75,7 @@ public final class SongUpdate: Identifiable, Codable, Hashable {
         self.albumTitle = albumTitle
         self.albums = albums
         self.rating = rating
+        self.tags = tags
         self.erasing = erasing
     }
   
@@ -88,6 +92,7 @@ public final class SongUpdate: Identifiable, Codable, Hashable {
         case albumTitle = "album_title"
         case art
         case rating
+        case tags
         
         case erasing
     }
@@ -116,6 +121,7 @@ public final class SongUpdate: Identifiable, Codable, Hashable {
         else if let albumTitle = self.albumTitle, albumTitle != song.albumTitle { return true }
         else if let albums = self.albums, albums != song.albums { return true }
         else if let rating = self.rating, rating != song.rating { return true }
+        else if let tags = self.tags, tags != song.tags { return true }
         else { return erasingWillModify(song) }
     }
     
@@ -149,6 +155,7 @@ extension SongUpdate {
             , albumTitle: update.albumTitle ?? self.albumTitle
             , albums: update.albums ?? self.albums
             , rating: update.rating ?? self.rating
+            , tags: update.tags ?? self.tags
             , erasing: update.erasing ?? self.erasing
         )
     }
@@ -165,6 +172,7 @@ extension SongUpdate {
         , albumTitle: String? = nil
         , albums: [UUID]? = nil
         , rating: Int? = nil
+        , tags: Set<Tag>? = nil
         , erasing: Set<PartialKeyPath<Song>>? = nil
     ) {
         self.init(
@@ -179,6 +187,7 @@ extension SongUpdate {
             , albumTitle: albumTitle
             , albums: albums
             , rating: rating
+            , tags: tags
             , erasing: Self.keyPathEncoding(erasing)
         )
     }
@@ -209,6 +218,7 @@ extension SongUpdate {
             /*case \Song.artists: "artists"*/
             case \Song.albumTitle: "albumTitle"
             /*case \Song.albums: "albums"*/
+            case \Song.tags: "tags"
             case \Song.rating: "rating"
             default: nil
             }
@@ -231,6 +241,7 @@ extension SongUpdate {
             case "albumTitle": return \Song.albumTitle
             case "albums": return \Song.albums
             case "rating": return \Song.rating
+            case "tags": return \Song.tags
             default: return nil
             }
         }

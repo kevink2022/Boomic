@@ -69,7 +69,7 @@ struct GridListSelectorBar: View {
                                 Label("View All Selections", systemImage: SI.viewSelections)
                             }
                         } label: {
-                            Image(systemName: SI.selectionInformation)
+                            Image(systemName: SI.information)
                                 .font(F.playerButton)
                         }
                         

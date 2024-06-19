@@ -77,7 +77,7 @@ struct LibraryScreen: View {
                     guard let rating = $0.rating else { return false }
                     return rating > 0
                 })
-                case .taglists: Text("soon")
+                case .taglists: AllTaglistsScreen()
                 }
             }
             .navigationDestination(for: Album.self) { album in
@@ -85,6 +85,9 @@ struct LibraryScreen: View {
             }
             .navigationDestination(for: Artist.self) { artist in
                 ArtistScreen(artist: artist)
+            }
+            .navigationDestination(for: Taglist.self) { taglist in
+                TaglistScreen(taglist: taglist)
             }
         }
     }

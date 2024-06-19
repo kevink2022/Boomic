@@ -125,6 +125,13 @@ struct SongUpdateDetailsScreen: View {
                 if let albums = model.albums { Text("Linked Album Count updated to: \(albums.count)") }
                 if let art = model.art { Text("Art Location updated to: \(art.label)") }
                 if let rating = model.rating { Text("Rating updated to: \(rating)") }
+                if let tags = model.tags {
+                    Section("Tags") {
+                        ForEach(Array(tags), id: \.self) { tag in
+                            TagPill(tag)
+                        }
+                    }
+                }
             }
         }
     }

@@ -67,33 +67,8 @@ struct AlbumScreen: View {
                         .foregroundStyle(.primary)
                             
                         
-                        HStack {
-                            LargeButton {
-                                if let song = songs.first {
-                                    player.setSong(song, context: songs, queueName: album.title)
-                                    if player.queueOrder == .shuffle { player.toggleShuffle() }
-                                }
-                            } label: {
-                                HStack {
-                                    Image(systemName: SI.play)
-                                    Text("Play")
-                                }
-                            }
-                            
-                            LargeButton {
-                                if let song = songs.randomElement() {
-                                    player.setSong(song, context: songs, queueName: album.title)
-                                    if player.queueOrder == .inOrder { player.toggleShuffle() }
-                                }
-                            } label: {
-                                HStack {
-                                    Image(systemName: SI.shuffle)
-                                    Text("Shuffle")
-                                }
-                            }
-                        }
-                        .frame(height: C.buttonHeight)
-                        .padding(.vertical)
+                        LargePlayShuffleButtons(songs: songs, queueName: album.title)
+                            .padding(.vertical)
                     }
                     .padding(C.gridPadding)
                 }

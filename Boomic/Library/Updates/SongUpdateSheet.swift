@@ -16,6 +16,9 @@ struct SongUpdateSheet: View {
     @Environment(\.repository) private var repository
     
     @State private var model: SongUpdateViewModel
+    @State private var workingTag: String = ""
+    @State private var tagStatusMessage: String = ""
+
     
     init(songs: Set<Song>) {
         self.model = SongUpdateViewModel(songs: songs)
@@ -94,6 +97,44 @@ struct SongUpdateSheet: View {
                 
                 Section("Album Title") {
                     TextField(text: $model.data.working.albumTitle, prompt: Text(model.data.base.albumTitle)) { EmptyView() }
+                }
+
+                Section {
+                    TextField(text: $workingTag, prompt: Text("Press 'Enter' to add a Tag.")) { EmptyView() }
+                        .onSubmit {
+                            if let newTag = Tag.from(workingTag) {
+                                model.data.working.tags.insert(newTag)
+                                workingTag = ""
+                                tagStatusMessage = ""
+                            } else {
+                                tagStatusMessage = "Invalid tag, ensure tag is not empty."
+                            }
+                        }
+                } header: {
+                    Text("Add Tags")
+                } footer: {
+                    if !tagStatusMessage.isEmpty {
+                        Text(tagStatusMessage)
+                            .foregroundStyle(.red)
+                    }
+                }
+                
+                Section {
+                    if model.data.working.tags.isEmpty { Text("") }
+                    
+                    ForEach(Array(model.data.working.tags), id: \.self) { tag in
+                        Button {
+                            model.data.working.tags.remove(tag)
+                            workingTag = tag.description
+                        } label: {
+                            TagPill(tag)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                } header: {
+                    Text(model.multiEdit ? "Tags to be added" : "Current Tags")
+                } footer: {
+                    Text("Tap a tag to remove it")
                 }
             }
         }

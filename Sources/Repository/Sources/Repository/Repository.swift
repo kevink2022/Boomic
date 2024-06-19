@@ -23,6 +23,8 @@ public final class Repository {
     public var status = RepositoryStatus(key: .none, message: "")
     private var statusKeys = Set<RepositoryStatusKey>()
     
+    private var activeSubLibraryTransaction: LibraryTransaction?
+    
     public init(
         fileInterface: FileInterface = FileInterface(at: URL.documentsDirectory)
         , artLoader: MediaArtLoader = MediaArtCache()
@@ -43,10 +45,19 @@ public final class Repository {
         
         self.transactor = transactor
         self.basis = .empty
+        self.activeSubLibraryTransaction = nil
         
         self.transactor.publisher
             .sink { [weak self] basis in
-                self?.basis = basis
+                guard let self = self else { return }
+                
+                if let transaction = self.activeSubLibraryTransaction {
+                    Task { 
+                        self.basis = await BasisResolver(currentBasis: basis).apply(transaction: transaction)
+                    }
+                } else {
+                    self.basis = basis
+                }
             }
             .store(in: &cancellables)
     }
@@ -83,6 +94,23 @@ public enum RepositoryStatusKey: String {
 extension Repository {
     public func statusActive(for key: RepositoryStatusKey) -> Bool {
         return statusKeys.contains(key)
+    }
+}
+
+// MARK: - SubLibraries
+extension Repository {
+    public func setActiveSublibrary(from taglist: Taglist) async {
+        let basis = basis
+        let songsToRemove = basis.allSongs.filter { !taglist.evaluate($0.tags) }
+        let transaction = await BasisResolver(currentBasis: basis).deleteSongs(Set(songsToRemove))
+        activeSubLibraryTransaction = transaction
+        self.basis = await BasisResolver(currentBasis: basis).apply(transaction: transaction)
+        print("set")
+    }
+    
+    public func setGlobalLibrary() {
+        activeSubLibraryTransaction = nil
+        basis = transactor.publisher.value
     }
 }
 
