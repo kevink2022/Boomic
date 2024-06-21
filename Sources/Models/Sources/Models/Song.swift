@@ -8,7 +8,7 @@
 import Foundation
 import Domain
 
-public final class Song: Media, Identifiable, Codable, Equatable, Hashable {
+public final class Song: Media, Model {
     public let id: UUID
     public let source: MediaSource
     public let duration: TimeInterval
@@ -112,9 +112,9 @@ extension Song {
 
 // MARK: - Sorting Functions
 extension Song {
-    public static func alphabeticalSort(_ songA: Song, _ songB: Song) -> Bool {
-        songA.label.compare(songB.label, options: .caseInsensitive) == .orderedAscending
-    }
+//    public static func alphabeticalSort(_ songA: Song, _ songB: Song) -> Bool {
+//        songA.label.compare(songB.label, options: .caseInsensitive) == .orderedAscending
+//    }
     
     public static func discAndTrackNumberSort(_ songA: Song, _ songB: Song) -> Bool {
         switch (songA.discNumber, songB.discNumber) {

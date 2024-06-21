@@ -8,7 +8,7 @@
 import Foundation
 import Domain
 
-public final class Album: Identifiable, Codable, Equatable, Hashable {
+public final class Album: Model {
     public let id: UUID
     public let title: String
     
@@ -64,13 +64,15 @@ public final class Album: Identifiable, Codable, Equatable, Hashable {
     }
     
     public static let none = Album(id: UUID(), title: "None")
+    
+    public var label: String { title }
 }
 
-extension Album {
-    public static func alphabeticalSort(_ albumA: Album, _ albumB: Album) -> Bool {
-        albumA.title.compare(albumB.title, options: .caseInsensitive) == .orderedAscending
-    }
-}
+//extension Album {
+//    public static func alphabeticalSort(_ albumA: Album, _ albumB: Album) -> Bool {
+//        albumA.title.compare(albumB.title, options: .caseInsensitive) == .orderedAscending
+//    }
+//}
 
 
 

@@ -49,6 +49,7 @@ public final class DeleteAssertion: DeleteAssertable {
         case .song: return basis.songMap[id] != nil
         case .album: return basis.albumMap[id] != nil
         case .artist: return basis.artistMap[id] != nil
+        case .taglist: return true
         }
     }
     
@@ -71,19 +72,27 @@ public final class DeleteAssertion: DeleteAssertable {
         )
     }
     
-    public convenience init(_ album: Album) {
-        self.init(
-            id: album.id
-            , model: .album
-            , label: album.title
-        )
-    }
+//    public convenience init(_ album: Album) {
+//        self.init(
+//            id: album.id
+//            , model: .album
+//            , label: album.title
+//        )
+//    }
+//    
+//    public convenience init(_ artist: Artist) {
+//        self.init(
+//            id: artist.id
+//            , model: .artist
+//            , label: artist.name
+//        )
+//    }
     
-    public convenience init(_ artist: Artist) {
+    public convenience init(_ model: any AddAssertable) {
         self.init(
-            id: artist.id
-            , model: .artist
-            , label: artist.name
+            id: model.id
+            , model: model.model
+            , label: model.label
         )
     }
 }

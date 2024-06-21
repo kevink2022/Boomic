@@ -8,6 +8,7 @@
 import Foundation
 import Models
 
+// MARK: - Song
 extension Song: AddAssertable {
     public typealias Update = SongUpdate
     public var model: AssertionModel { .song }
@@ -25,6 +26,7 @@ extension SongUpdate: UpdateAssertable {
     }
 }
 
+// MARK: - Album
 extension Album: AddAssertable {
     public typealias Update = AlbumUpdate
     public var model: AssertionModel { .album }
@@ -42,6 +44,7 @@ extension AlbumUpdate: UpdateAssertable {
     }
 }
 
+// MARK: - Artist
 extension Artist: AddAssertable {
     public typealias Update = ArtistUpdate
     public var model: AssertionModel { .artist }
@@ -58,3 +61,22 @@ extension ArtistUpdate: UpdateAssertable {
         return self.willModify(artist)
     }
 }
+
+// MARK: - Taglist
+extension Taglist: AddAssertable {
+    public typealias Update = TaglistUpdate
+    public var model: AssertionModel { .taglist }
+    public var code: AssertionCode { .addTaglist(self) }
+    public func willModify(_ basis: DataBasis) -> Bool { true }
+}
+
+extension TaglistUpdate: UpdateAssertable {
+    public var model: AssertionModel { .taglist }
+    public var code: AssertionCode { .updateTaglist(self) }
+    
+    public func willModify(_ basis: DataBasis) -> Bool {
+        guard let taglist = basis.taglistMap[self.taglistID] else { return false }
+        return self.willModify(taglist)
+    }
+}
+

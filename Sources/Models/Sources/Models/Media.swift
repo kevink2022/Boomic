@@ -8,6 +8,20 @@
 import Foundation
 import Domain
 
+public protocol Model: Identifiable, Codable, Equatable, Hashable {
+    var label: String { get }
+}
+
+extension Model {
+    public static func alphabeticalSort(_ modelA: any Model, _ modelB: any Model) -> Bool {
+        modelA.label.compare(modelB.label, options: .caseInsensitive) == .orderedAscending
+    }
+}
+
+public protocol Update: Identifiable, Codable, Hashable {
+    var label: String { get }
+}
+
 public protocol Media: Codable, Identifiable {
     var id: UUID { get }
     var source: MediaSource { get }

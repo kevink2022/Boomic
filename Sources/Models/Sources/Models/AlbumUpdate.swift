@@ -24,7 +24,7 @@ extension Album {
     }
 }
 
-public final class AlbumUpdate: Codable, Identifiable, Hashable {
+public final class AlbumUpdate: Update {
     public let albumID: UUID
     public var id: UUID { albumID }
     public let originalTitle: String
@@ -77,6 +77,8 @@ public final class AlbumUpdate: Codable, Identifiable, Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
+    
+    public var label: String { originalTitle }
     
     public func willModify(_ album: Album) -> Bool {
         guard self.id == album.id else { return false }

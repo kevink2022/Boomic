@@ -23,8 +23,8 @@ struct WorkingSheetData {
         }
         if eraseDiscNumber(from: song.discNumber) { erasing.insert(\.discNumber) }
         if eraseArt(from: song.art) { erasing.insert(\.art) }
-        if eraseArtistName(from: song.title) { erasing.insert(\.artistName) }
-        if eraseAlbumTitle(from: song.title) { erasing.insert(\.albumTitle) }
+        if eraseArtistName(from: song.artistName) { erasing.insert(\.artistName) }
+        if eraseAlbumTitle(from: song.albumTitle) { erasing.insert(\.albumTitle) }
         if eraseRating(from: song.rating) { erasing.insert(\.rating) }
         
         let update = SongUpdate(

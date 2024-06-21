@@ -121,20 +121,16 @@ extension Repository {
         return basis.songMap[song.id]
     }
     
-    public func album(_ album: Album) -> Album? {
-        return basis.albumMap[album.id]
-    }
-    
-    public func artist(_ artist: Artist) -> Artist? {
-        return basis.artistMap[artist.id]
-    }
-    
     public func songs(_ ids: [UUID]? = nil) -> [Song] {
         if let ids = ids {
             return ids.compactMap { basis.songMap[$0] }
         } else {
             return basis.allSongs
         }
+    }
+    
+    public func album(_ album: Album) -> Album? {
+        return basis.albumMap[album.id]
     }
     
     public func albums(_ ids: [UUID]? = nil) -> [Album] {
@@ -145,11 +141,27 @@ extension Repository {
         }
     }
     
+    public func artist(_ artist: Artist) -> Artist? {
+        return basis.artistMap[artist.id]
+    }
+    
     public func artists(_ ids: [UUID]? = nil) -> [Artist] {
         if let ids = ids {
             return ids.compactMap { basis.artistMap[$0] }
         } else {
             return basis.allArtists
+        }
+    }
+    
+    public func taglist(_ list: Taglist) -> Taglist? {
+        return basis.taglistMap[list.id]
+    }
+    
+    public func taglists(_ ids: [UUID]? = nil) -> [Taglist] {
+        if let ids = ids {
+            return ids.compactMap { basis.taglistMap[$0] }
+        } else {
+            return basis.allTaglists
         }
     }
 }
@@ -212,6 +224,24 @@ extension Repository {
     public func deleteArtists(_ artist: Set<Artist>) async {
         await transactor.commit { basis in
             return await BasisResolver(currentBasis: basis).deleteArtists(artist)
+        }
+    }
+    
+    public func addTaglists(_ lists: [Taglist]) async {
+        await transactor.commit { basis in
+            return await BasisResolver(currentBasis: basis).addTaglists(lists)
+        }
+    }
+    
+    public func updateTaglists(_ updates: [TaglistUpdate]) async {
+        await transactor.commit { basis in
+            return await BasisResolver(currentBasis: basis).updateTaglists(updates)
+        }
+    }
+    
+    public func deleteTaglists(_ lists: [Taglist]) async {
+        await transactor.commit { basis in
+            return await BasisResolver(currentBasis: basis).deleteTaglists(lists)
         }
     }
 }

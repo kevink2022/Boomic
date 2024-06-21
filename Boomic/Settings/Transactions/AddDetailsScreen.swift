@@ -217,6 +217,7 @@ extension AssertionModel {
         case .song: "Song"
         case .album: "Album"
         case .artist: "Artist"
+        case .taglist: "Taglist"
         }
     }
 }

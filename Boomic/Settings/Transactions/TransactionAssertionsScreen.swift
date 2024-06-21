@@ -76,6 +76,8 @@ struct TransactionAssertionsScreen: View {
                         } label: {
                             Text("Delete \(model.model.label): \(model.label)")
                         }
+                        
+                    default: Text("fixme")
                     }
                 }
             }

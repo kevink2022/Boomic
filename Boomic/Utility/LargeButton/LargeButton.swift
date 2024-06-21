@@ -42,32 +42,6 @@ struct LargeButton<Label>: View where Label: View {
     }
 }
 
-struct LargeMenu<Label>: View where Label: View {
-    let action: () -> Void
-    let label: () -> Label
-    
-    init(action: @escaping () -> Void, @ViewBuilder label: @escaping () -> Label) {
-        self.action = action
-        self.label = label
-    }
-    
-    var body: some View {
-        Button(action: action) {
-            ZStack {
-                RoundedRectangle(cornerSize: CGSize(
-                        width: C.buttonCornerRadius,
-                        height: C.buttonCornerRadius)
-                    )
-                    .fill(.secondary)
-                    .opacity(0.4)
-                
-                label()
-                    .font(F.listTitle)
-            }
-        }
-    }
-}
-
 #Preview {
     LargeButton {
         

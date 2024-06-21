@@ -63,7 +63,7 @@ struct LibraryScreen: View {
                             label: "Taglists"
                             , action: { navigator.library.navigateTo(LibraryNavigation.taglists) }
                             , icon: { LibraryGridEntry(imageName: SI.tag) }
-                        )
+                        )                        
                     }
                 })
             )
@@ -78,6 +78,11 @@ struct LibraryScreen: View {
                     return rating > 0
                 })
                 case .taglists: AllTaglistsScreen()
+                }
+            }
+            .navigationDestination(for: MiscLibraryNavigation.self) { destination in
+                switch destination {
+                case .newTaglist: TaglistScreen(taglist: nil)
                 }
             }
             .navigationDestination(for: Album.self) { album in

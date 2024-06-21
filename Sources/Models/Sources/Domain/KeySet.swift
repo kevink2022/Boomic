@@ -101,6 +101,14 @@ public struct KeySet<Element: Identifiable> {
         try storage.values.forEach(body)
     }
     
+    public func map<T>(_ transform: (Element) throws -> T) rethrows -> [T] {
+        try storage.values.map(transform)
+    }
+    
+    public func compactMap<T>(_ transform: (Element) throws -> T?) rethrows -> [T] {
+        try storage.values.compactMap(transform)
+    }
+    
     public var count: Int { storage.count }
     
     public var values: [Element] {

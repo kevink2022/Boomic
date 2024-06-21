@@ -44,7 +44,8 @@ extension Song {
       ],
       "albums": [
         "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"
-      ]
+      ],
+      "tags": []
     }
     """
     
@@ -79,7 +80,8 @@ extension Song {
         ],
         "albums": [
           "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
@@ -100,7 +102,8 @@ extension Song {
         ],
         "albums": [
           "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
@@ -121,7 +124,8 @@ extension Song {
         ],
         "albums": [
           "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
@@ -142,7 +146,8 @@ extension Song {
         ],
         "albums": [
           "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b",
@@ -163,7 +168,8 @@ extension Song {
         ],
         "albums": [
           "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c",
@@ -184,7 +190,8 @@ extension Song {
         ],
         "albums": [
           "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d",
@@ -205,7 +212,8 @@ extension Song {
         ],
         "albums": [
           "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
@@ -226,7 +234,8 @@ extension Song {
         ],
         "albums": [
           "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f",
@@ -247,7 +256,8 @@ extension Song {
         ],
         "albums": [
           "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a",
@@ -268,7 +278,8 @@ extension Song {
         ],
         "albums": [
           "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "80691b33-c722-44e3-bddc-d8a1234c4a72",
@@ -289,7 +300,8 @@ extension Song {
         ],
         "albums": [
           "0536d5fe-2435-486c-81a3-2642e6273d70"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "81afadc4-1028-492d-b4b6-2b35f6b9af17",
@@ -310,7 +322,8 @@ extension Song {
         ],
         "albums": [
           "0536d5fe-2435-486c-81a3-2642e6273d70"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "9096eb06-550f-4102-80c5-161d25eef98f",
@@ -331,7 +344,8 @@ extension Song {
         ],
         "albums": [
           "0536d5fe-2435-486c-81a3-2642e6273d70"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "42a0c0f1-4b16-47b9-b9fc-dad24e4cdf32",
@@ -352,7 +366,8 @@ extension Song {
         ],
         "albums": [
           "0536d5fe-2435-486c-81a3-2642e6273d70"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "886c1573-630a-476e-9a2f-2bf59c41a5f7",
@@ -373,7 +388,8 @@ extension Song {
         ],
         "albums": [
           "0536d5fe-2435-486c-81a3-2642e6273d70"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "c5eafedc-f835-4f49-806c-7dddc0da9d07",
@@ -394,7 +410,8 @@ extension Song {
         ],
         "albums": [
           "0536d5fe-2435-486c-81a3-2642e6273d70"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "cef946c6-f1f2-4a96-b229-d65b329db84d",
@@ -415,7 +432,8 @@ extension Song {
         ],
         "albums": [
           "0536d5fe-2435-486c-81a3-2642e6273d70"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "4ec2878b-4ef1-4955-96a0-77bab00b0ada",
@@ -436,7 +454,8 @@ extension Song {
         ],
         "albums": [
           "0536d5fe-2435-486c-81a3-2642e6273d70"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "dbf5fe26-049a-4de6-bf9d-a638779e8dad",
@@ -457,7 +476,8 @@ extension Song {
         ],
         "albums": [
           "0536d5fe-2435-486c-81a3-2642e6273d70"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "691a2c31-9845-4b89-80d3-6441ee8919cb",
@@ -478,7 +498,8 @@ extension Song {
         ],
         "albums": [
           "0536d5fe-2435-486c-81a3-2642e6273d70"
-        ]
+        ],
+        "tags": []
       },
       {
         "id": "33731a68-2bcc-4b93-9174-3b3ff4a1a765",
@@ -499,7 +520,8 @@ extension Song {
         ],
         "albums": [
           "0536d5fe-2435-486c-81a3-2642e6273d70"
-        ]
+        ],
+        "tags": []
       }
     ]
     """
@@ -813,3 +835,8 @@ uuids to use
  
 
 */
+
+/*
+ 
+ 
+ */

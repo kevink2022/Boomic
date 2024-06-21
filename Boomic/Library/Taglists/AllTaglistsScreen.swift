@@ -8,11 +8,17 @@
 import SwiftUI
 import Models
 
+private typealias C = ViewConstants
 private typealias F = ViewConstants.Fonts
 private typealias SI = ViewConstants.SystemImages
 
 struct AllTaglistsScreen: View {
     @Environment(\.navigator) private var navigator
+    @Environment(\.repository) private var repository
+    
+    private var taglists: [Taglist] {
+        repository.taglists()        
+    }
     
     var body: some View {
         GridList(
@@ -22,12 +28,22 @@ struct AllTaglistsScreen: View {
             , entries: [
                 GridListEntry(
                     label: "New"
-                    , action: { navigator.library.navigateTo(Taglist.empty) }
+                    , action: { navigator.library.navigateTo(MiscLibraryNavigation.newTaglist) }
                     , icon: {
-                        LibraryGridEntry(imageName: SI.add)
+                        AnyView(LibraryGridEntry(imageName: SI.add))
                     }
                 )
-            ]
+            ] 
+            
+            + taglists.map { list in
+                GridListEntry(
+                    label: list.label
+                    , action: { navigator.library.navigateTo(list) }
+                    , icon: {
+                         AnyView(MediaArtView(nil, cornerRadius: C.albumCornerRadius))
+                    }
+                )
+            }
         )
     }
 }

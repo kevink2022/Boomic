@@ -83,64 +83,11 @@ public struct TagRule: Codable, Equatable, Hashable {
     public static let empty = TagRule(tags: [])
 }
 
-public final class Taglist: Identifiable, Codable, Hashable {
-    public static func == (lhs: Taglist, rhs: Taglist) -> Bool {
-        lhs.id == rhs.id
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    public let title: String
-    public let id: UUID
-    
-    public let positiveRules: [TagRule]
-    public let negativeRules: [TagRule]
-    
-    public init(
-        title: String
-        , id: UUID = UUID()
-        , positiveRules: [TagRule]
-        , negativeRules: [TagRule]
-    ) {
-        self.title = title
-        self.id = id
-        self.positiveRules = positiveRules
-        self.negativeRules = negativeRules
-    }
-    
-    /*
-     * For something to be included in a tag list, it must:
-     * - Pass each Positive Rules
-     * - Not pass each Negative Rule.
-     */
-    public func evaluate(_ tags: Set<Tag>) -> Bool {
-        Self.evaulate(tags, onPositiveRules: positiveRules, onNegativeRules: negativeRules)
-    }
-    
-    public static func evaulate(
-        _ tags: Set<Tag>
-        , onPositiveRules positiveRules: [TagRule]
-        , onNegativeRules negativeRules: [TagRule]
-    ) -> Bool {
-        if positiveRules.isEmpty
-            && negativeRules.isEmpty { return false }
-        
-        if !positiveRules.isEmpty {
-            for rule in positiveRules {
-                if !rule.evaluate(tags: tags) { return false }
-            }
+extension Array where Element == TagRule {
+    public var hasNoRules: Bool {
+        self.reduce(true) { partialResult, rule in
+            print(rule.tags, rule.isEmpty)
+            return partialResult && rule.isEmpty
         }
-        
-        if negativeRules.isEmpty { return true }
-        
-        for rule in negativeRules {
-            if !rule.evaluate(tags: tags) { return true }
-        }
-        
-        return false
     }
-    
-    public static let empty = Taglist(title: "New Taglist", positiveRules: [], negativeRules: [])
 }

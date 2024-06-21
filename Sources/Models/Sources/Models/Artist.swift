@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class Artist: Identifiable, Codable, Equatable, Hashable {
+public final class Artist: Model {
     public let id: UUID
     public let name: String
     
@@ -58,12 +58,14 @@ public final class Artist: Identifiable, Codable, Equatable, Hashable {
     }
     
     public static var none = Artist(id: UUID(), name: "None")
+    
+    public var label: String { name }
 }
 
 
 
-extension Artist {
-    public static func alphabeticalSort(_ artistA: Artist, _ artistB: Artist) -> Bool {
-        artistA.name.compare(artistB.name, options: .caseInsensitive) == .orderedAscending
-    }
-}
+//extension Artist {
+//    public static func alphabeticalSort(_ artistA: Artist, _ artistB: Artist) -> Bool {
+//        artistA.name.compare(artistB.name, options: .caseInsensitive) == .orderedAscending
+//    }
+//}

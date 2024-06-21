@@ -31,7 +31,7 @@ extension Song {
     }
 }
 
-public final class SongUpdate: Identifiable, Codable, Hashable {
+public final class SongUpdate: Update {
     public let songID: UUID
     public var id: UUID { songID }
     public let source: MediaSource

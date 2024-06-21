@@ -23,7 +23,7 @@ extension Artist {
     }
 }
 
-public final class ArtistUpdate: Codable, Identifiable, Hashable {
+public final class ArtistUpdate: Update {
     public let artistID: UUID
     public var id: UUID { artistID }
     public let originalName: String
@@ -73,6 +73,8 @@ public final class ArtistUpdate: Codable, Identifiable, Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
+    
+    public var label: String { originalName }
     
     public func willModify(_ artist: Artist) -> Bool {
         guard self.id == artist.id else { return false }

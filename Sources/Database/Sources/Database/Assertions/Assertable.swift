@@ -26,13 +26,15 @@ public struct Assertion: Identifiable, Codable {
     
     private init(code: AssertionCode) {
         switch code {
-        case .addSong(let model): self.data = model
-        case .addAlbum(let model): self.data = model
-        case .addArtist(let model): self.data = model
-        case .updateSong(let model): self.data = model
-        case .updateAlbum(let model): self.data = model
-        case .updateArtist(let model): self.data = model
-        case .delete(let model): self.data = model
+        case .addSong(let data): self.data = data
+        case .addAlbum(let data): self.data = data
+        case .addArtist(let data): self.data = data
+        case .addTaglist(let data): self.data = data
+        case .updateSong(let data): self.data = data
+        case .updateAlbum(let data): self.data = data
+        case .updateArtist(let data): self.data = data
+        case .updateTaglist(let data): self.data = data
+        case .delete(let data): self.data = data
         }
     }
     
@@ -138,9 +140,11 @@ public enum AssertionCode: Codable, Equatable {
     case addSong(Song)
     case addAlbum(Album)
     case addArtist(Artist)
+    case addTaglist(Taglist)
     case updateSong(SongUpdate)
     case updateAlbum(AlbumUpdate)
     case updateArtist(ArtistUpdate)
+    case updateTaglist(TaglistUpdate)
     case delete(DeleteAssertion)
 }
 
@@ -154,11 +158,12 @@ public enum AssertionModel: String, Codable {
     case song
     case album
     case artist
+    case taglist
 }
  
 
 // MARK: - Add
-public protocol AddAssertable: Assertable {
+public protocol AddAssertable: Model, Assertable {
     associatedtype Update: UpdateAssertable
     func apply(update: Update) -> Self
 }
@@ -174,7 +179,7 @@ extension AddAssertable {
 
 
 // MARK: - Update
-public protocol UpdateAssertable: Assertable {
+public protocol UpdateAssertable: Update, Assertable {
     func apply(update: Self) -> Self
 }
 

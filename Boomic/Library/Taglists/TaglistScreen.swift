@@ -19,30 +19,39 @@ struct TaglistScreen: View {
     @Environment(\.repository) private var repository
     @State private var builder: TaglistBuilder
     
-    private let baseTaglist: Taglist?
-    private var taglist: Taglist { baseTaglist ?? .empty }
+    private let isForSublibrary: Bool
+    private let baseTaglist: Taglist
+    private var taglist: Taglist { repository.taglist(baseTaglist) ?? baseTaglist }
     
-    init(taglist: Taglist? = nil) {
-        self.baseTaglist = taglist
-        self.builder = TaglistBuilder(taglist ?? .empty)
+    init(
+        taglist: Taglist?
+        , forSubLibrary isForSublibrary: Bool = false
+    ) {
+        self.baseTaglist = taglist ?? .empty
+        self.isForSublibrary = isForSublibrary
+        self.builder = TaglistBuilder(
+            taglist ?? .empty
+            , new: taglist == nil
+            , forSubLibrary: isForSublibrary
+        )
     }
     
     private var songs: [Song] {
-        let time = Date.now
-        let songs = repository.songs().filter { song in
+        repository.songs().filter { song in
             Taglist.evaulate(song.tags, onPositiveRules: builder.positiveRules, onNegativeRules: builder.negativeRules)
         }
-        let interval = time.timeIntervalSinceNow
-        print("Tag Filter: \(String(describing: interval))")
-        return songs
     }
 
     var body: some View {
         ScrollView {
             LazyVStack {
-                Text(builder.title)
-                    .font(F.screenTitle)
-            
+                HStack {
+                    TextField(text: $builder.title, prompt: Text("Add Tag")) { EmptyView() }
+                        .multilineTextAlignment(.center)
+                        .font(F.screenTitle)
+                        .disabled(!builder.editing)
+                }
+                
                 ForEach($builder.positiveRules, id: \.self) { $rule in
                     TagRuleField(rule: $rule, positive: true, editing: builder.editing)
                 }
@@ -74,8 +83,7 @@ struct TaglistScreen: View {
                 if builder.editing {
                     HStack {
                         LargeButton(role: .destructive) {
-                            builder = TaglistBuilder(taglist)
-                            //builder.editing = false
+                            withAnimation { builder = TaglistBuilder(taglist, forSubLibrary: isForSublibrary) }
                         } label: {
                             HStack {
                                 Image(systemName: SI.cancelSelection)
@@ -83,15 +91,15 @@ struct TaglistScreen: View {
                             }
                         }
                         
-                        LargeButton {
-                            //TaglistSaveMenu(taglist: taglist, editing: $builder.editing)
-                            builder.editing = false
+                        LargeMenu {
+                            TaglistSaveMenu(taglist: taglist, builder: $builder)
                         } label: {
                             HStack {
                                 Image(systemName: SI.save)
-                                Text("Save")
+                                Text("Save as")
                             }
                         }
+                        .disabled(builder.disableSave)
                     }
                     .frame(height: C.buttonHeight)
                     .padding(.vertical)
@@ -136,7 +144,7 @@ struct TaglistScreen: View {
             }
             
             Menu {
-                TaglistMenu(taglist: taglist, editing: $builder.editing)
+                TaglistMenu(taglist: taglist, builder: $builder)
             } label: {
                 Image(systemName: SI.information)
                     .font(F.toolbarButton)
@@ -147,63 +155,10 @@ struct TaglistScreen: View {
 
 #Preview {
     NavigationStack {
-        TaglistScreen()
+        TaglistScreen(taglist: nil)
             .environment(\.repository, PreviewMocks.shared.livePreviewRepository())
     }
 }
-
-@Observable
-fileprivate final class TaglistBuilder {
-    var title: String
-    var useBuilder: Bool = false
-    var editing: Bool = false {
-        didSet {
-            if editing == false {
-                positiveRules = positiveRules.filter { !$0.isEmpty }
-                negativeRules = negativeRules.filter { !$0.isEmpty }
-            }
-        }
-    }
-    
-    init(_ taglist: Taglist) {
-        self.title = taglist.title
-        self.positiveRules = taglist.positiveRules
-        self.negativeRules = taglist.negativeRules
-    }
-    
-    public var positiveRules: [TagRule]
-    public var negativeRules: [TagRule]
-    
-    public func overwriteList() {
-        
-    }
-    
-    public func saveNewList(title: String) {
-        
-    }
-    
-    public func saveTemporarily(title: String) {
-        
-    }
-    
-    public func asNewTaglist() -> Taglist {
-        return Taglist(
-            title: title
-            , positiveRules: positiveRules
-            , negativeRules: negativeRules
-        )
-    }
-    
-//    public func asTaglistUpdate() -> Taglist {
-//        return Taglist(
-//            title: <#T##String#>
-//            , id: <#T##UUID#>
-//            , positiveRules: <#T##[TagRule]#>
-//            , negativeRules: <#T##[TagRule]#>
-//        )
-//    }
-}
-
 
 struct TagRuleField: View {
     let positive: Bool
@@ -236,7 +191,9 @@ struct TagRuleField: View {
                 TagEntryField(tags: $tags, editing: editing)
                     .padding(10)
                     .onChange(of: tags) {
+                        print(tags)
                         rule = TagRule(tags: tags)
+                        print(rule)
                     }
             }
         }
@@ -245,64 +202,5 @@ struct TagRuleField: View {
     }
 }
 
-struct TagEntryField: View {
-    @State private var text: String = ""
-    @Binding private var tags: Set<Tag>
-    @FocusState private var focused: Bool
-    let editing: Bool
-    
-    init(
-        tags: Binding<Set<Tag>>
-        , editing: Bool = false
-    ) {
-        self._tags = tags
-        self.text = ""
-        self.editing = editing
-    }
-    
-    var body: some View {
-        ZStack {
-            Button {
-                focused = true
-            } label: {
-                Color(UIColor.systemBackground)
-            }
-            .disabled(!editing)
-            
-            VStack(alignment: .leading) {
-                WrappingHStack(horizontalSpacing: 5) {
-                    ForEach(Array(tags), id: \.self) { tag in
-                        AnimatedButton {
-                            tags.remove(tag)
-                            text = tag.description
-                        } label: {
-                            TagPill(tag)
-                        }
-                    }
-                }
-                
-                if editing {
-                    Button {
-                        focused = true
-                    } label: {
-                        VStack(alignment: .leading) {
-                            TextField(text: $text, prompt: Text("Add Tag")) { EmptyView() }
-                                .focused($focused)
-                                .onSubmit {
-                                    if let tag = Tag.from(text) {
-                                        withAnimation(A.standard) {
-                                            tags.insert(tag)
-                                            text = ""
-                                            focused = true
-                                        }
-                                    }
-                                }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
 
     

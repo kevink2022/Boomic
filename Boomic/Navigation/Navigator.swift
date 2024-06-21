@@ -91,6 +91,15 @@ public enum LibraryNavigation : String, CaseIterable, Identifiable, Hashable, Co
     public var id : String { self.rawValue }
 }
 
+// Not on the home screen
+public enum MiscLibraryNavigation : String, CaseIterable, Identifiable, Hashable, Codable {
+    
+    case newTaglist
+    
+    public var id : String { self.rawValue }
+}
+
+
 public enum TabNavigation : String, CaseIterable, Identifiable, Hashable, Codable {
    
     case home, settings, mixer, search

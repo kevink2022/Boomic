@@ -11,27 +11,38 @@ import Models
 private typealias SI = ViewConstants.SystemImages
 
 struct TaglistMenu: View {
-    @Binding private var editing: Bool
+    @Environment(\.repository) private var repository
+    
+    @Binding private var builder: TaglistBuilder
     private var taglist: Taglist
+    private var listType: String { builder.subLibraryMode ? "SubLibrary" : "Taglist" }
     
     init(
         taglist: Taglist
-        , editing: Binding<Bool>
+        , builder: Binding<TaglistBuilder>
     ) {
         self.taglist = taglist
-        self._editing = editing
+        self._builder = builder
     }
     
     var body: some View {
-        if !editing {
+        if !builder.editing {
             AnimatedButton {
-                editing = true
+                builder.editing = true
             } label: {
-                Label("Edit Taglist", systemImage: SI.edit)
+                Label("Edit \(listType)", systemImage: SI.edit)
             }
+            
+            Button(role: .destructive) {
+                Task { await repository.deleteTaglists([taglist]) }
+            } label: {
+                Label("Delete \(listType)", systemImage: SI.delete)
+            }
+            
         } else {
             Menu {
-                TaglistSaveMenu(taglist: taglist, editing: $editing)
+                TaglistSaveMenu(taglist: taglist, builder: $builder)
+                    .disabled(builder.disableSave)
             } label: {
                 Label("Save as", systemImage: SI.save)
             }
@@ -40,39 +51,56 @@ struct TaglistMenu: View {
 }
 
 struct TaglistSaveMenu: View {
-    @Binding private var editing: Bool
+    @Environment(\.navigator) private var navigator
+    @Environment(\.repository) private var repository
+    
+    @Binding private var builder: TaglistBuilder
     private let baseTaglist: Taglist
     private var taglist: Taglist { baseTaglist }
+    private var listType: String { builder.subLibraryMode ? "SubLibrary" : "Taglist" }
     
     init(
         taglist: Taglist
-        , editing: Binding<Bool>
+        , builder: Binding<TaglistBuilder>
     ) {
         self.baseTaglist = taglist
-        self._editing = editing
+        self._builder = builder
     }
     
     var body: some View {
         Button {
-            editing = false
+            builder.editing = false
+            Task {
+                let new = builder.asNewTaglist()
+                await repository.addTaglists([new])
+                //navigator.library.navigateTo(new)
+            }
         } label: {
-            Label("New Taglist", systemImage: SI.new)
+            Label("New \(listType)", systemImage: SI.new)
         }
         
         AnimatedButton {
-            editing = false
+            builder.editing = false
+            // use builder for songs
         } label: {
-            Label("Temporary Taglist", systemImage: SI.temporary)
+            Label("Temporary \(listType)", systemImage: SI.temporary)
         }
         
-        AnimatedButton {
-            editing = false
-        } label: {
-            Label("Overwrite '\(taglist.title)'", systemImage: SI.edit)
+        if !builder.new {
+            AnimatedButton {
+                builder.editing = false
+                Task {
+                    let update = builder.asTaglistUpdate()
+                    await repository.updateTaglists([update])
+                    //navigator.library.navigateTo(new)
+                }
+            } label: {
+                Label("Overwrite '\(taglist.label)'", systemImage: SI.edit)
+            }
         }
     }
 }
 
 #Preview {
-    TaglistMenu(taglist: .empty, editing: .constant(false))
+    TaglistMenu(taglist: .empty, builder: .constant(TaglistBuilder(.empty)))
 }
