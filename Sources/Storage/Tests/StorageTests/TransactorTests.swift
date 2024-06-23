@@ -1,6 +1,6 @@
 import XCTest
 import Combine
-@testable import Database
+@testable import Storage
 
 final class UpdateTests: XCTestCase {
     

@@ -16,7 +16,9 @@ let package = Package(
             targets: ["Repository"]),
     ],
     dependencies: [
+        .package(url: "./Domain", from: "1.0.0"),
         .package(url: "./Models", from: "1.0.0"),
+        .package(url: "./Storage", from: "1.0.0"),
         .package(url: "./Database", from: "1.0.0"),
         .package(url: "./MediaFileKit", from: "1.0.0"),
     ],
@@ -26,7 +28,9 @@ let package = Package(
         .target(
             name: "Repository",
             dependencies: [
+                "Domain",
                 "Models",
+                "Storage",
                 "Database",
                 "MediaFileKit"]),
         .testTarget(

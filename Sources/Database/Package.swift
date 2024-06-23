@@ -15,15 +15,12 @@ let package = Package(
             name: "Database",
             targets: ["Database"]),
         .library(
-            name: "Storage",
-            targets: ["Storage"]),
-        .library(
             name: "DatabaseMocks",
             targets: ["DatabaseMocks"]),
     ],
     dependencies: [
+        .package(url: "./Domain", from: "1.0.0"),
         .package(url: "./Models", from: "1.0.0"),
-        .package(url: "https://github.com/apple/swift-async-algorithms", from: "1.0.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -31,13 +28,7 @@ let package = Package(
         .target(
             name: "Database",
             dependencies: [
-                "Models",
-                "Storage",
-                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
-            ]),
-        .target(
-            name: "Storage",
-            dependencies: [
+                "Domain",
                 "Models",
             ]),
         .target(
@@ -52,8 +43,5 @@ let package = Package(
                 "Database",
                 .product(name: "ModelsMocks", package: "Models")
             ]),
-        .testTarget(
-            name: "StorageTests",
-            dependencies: ["Storage"]),
     ]
 )

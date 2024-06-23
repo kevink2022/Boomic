@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "MediaFileKit",
+    name: "Domain",
     platforms: [
         .macOS(.v14),
         .iOS(.v17)
@@ -12,24 +12,16 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "MediaFileKit",
-            targets: ["MediaFileKit"]),
-    ],
-    dependencies: [
-        .package(url: "./Domain", from: "1.0.0"),
-        .package(url: "./Models", from: "1.0.0"),
+            name: "Domain",
+            targets: ["Domain"]),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "MediaFileKit",
-            dependencies: [
-                "Domain",
-                "Models",
-            ]),
+            name: "Domain"),
         .testTarget(
-            name: "MediaFileKitTests",
-            dependencies: ["MediaFileKit"]),
+            name: "DomainTests",
+            dependencies: ["Domain"]),
     ]
 )

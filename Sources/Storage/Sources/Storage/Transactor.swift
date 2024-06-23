@@ -9,8 +9,6 @@ import Foundation
 import Combine
 import AsyncAlgorithms
 
-import Storage
-
 public final class DataTransaction<Data: Codable>: Loggable {
     public let id: UUID
     public let timestamp: Date

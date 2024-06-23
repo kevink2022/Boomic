@@ -49,16 +49,16 @@
     },
     {
       "target" : {
-        "containerPath" : "container:Sources\/Database",
-        "identifier" : "StorageTests",
-        "name" : "StorageTests"
+        "containerPath" : "container:Sources\/Domain",
+        "identifier" : "DomainTests",
+        "name" : "DomainTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:Sources\/Models",
-        "identifier" : "DomainTests",
-        "name" : "DomainTests"
+        "containerPath" : "container:Sources\/Storage",
+        "identifier" : "StorageTests",
+        "name" : "StorageTests"
       }
     }
   ],
