@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 import Models
 
 private typealias C = ViewConstants
@@ -14,51 +13,58 @@ private typealias F = ViewConstants.Fonts
 private typealias A = ViewConstants.Animations
 private typealias SI = ViewConstants.SystemImages
 
-
 struct TaglistScreen: View {
+    @Environment(\.navigator) private var navigator
     @Environment(\.repository) private var repository
+    
     @State private var builder: TaglistBuilder
     
-    private let isForSublibrary: Bool
     private let baseTaglist: Taglist
     private var taglist: Taglist { repository.taglist(baseTaglist) ?? baseTaglist }
     
     init(
         taglist: Taglist?
-        , forSubLibrary isForSublibrary: Bool = false
+        , forTagView: Bool = false
     ) {
-        self.baseTaglist = taglist ?? .empty
-        self.isForSublibrary = isForSublibrary
+        self.baseTaglist = taglist ?? (forTagView ? .newTagView : .new)
         self.builder = TaglistBuilder(
-            taglist ?? .empty
+            taglist ?? (forTagView ? .newTagView : .new)
             , new: taglist == nil
-            , forSubLibrary: isForSublibrary
+            , forTagView: forTagView
         )
+        self.songs = []
     }
     
-    private var songs: [Song] {
-        repository.songs().filter { song in
-            Taglist.evaulate(song.tags, onPositiveRules: builder.positiveRules, onNegativeRules: builder.negativeRules)
-        }
-    }
+    @State private var songs: [Song] = []
+    private var showArt: Bool { !builder.forTagView }
 
     var body: some View {
         ScrollView {
             LazyVStack {
+                if showArt {
+                    HStack {
+                        Spacer(minLength: C.albumScreenSpacers)
+                        MediaArtEditor($builder.art, editing: builder.editing, cornerRadius: C.albumCornerRadius)
+                        Spacer(minLength: C.albumScreenSpacers)
+                    }
+                }
+                
                 HStack {
-                    TextField(text: $builder.title, prompt: Text("Add Tag")) { EmptyView() }
+                    TextField(text: $builder.title, prompt: Text(taglist.title)) { EmptyView() }
                         .multilineTextAlignment(.center)
                         .font(F.screenTitle)
                         .disabled(!builder.editing)
                 }
                 
-                ForEach($builder.positiveRules, id: \.self) { $rule in
-                    TagRuleField(rule: $rule, positive: true, editing: builder.editing)
+                ForEach(builder.positiveRules.indices, id: \.self) { index in
+                    if index < builder.positiveRules.count {
+                        TagRuleField(rule: $builder.positiveRules[index], positive: true, editing: builder.editing)
+                    }
                 }
                 
                 if builder.editing && nil == builder.positiveRules.first(where: { $0 == .empty }) {
                     AnimatedButton {
-                        builder.positiveRules.append(.empty)
+                        builder.positiveRules.append(TagRule(tags: []))
                     } label: {
                         TagRuleField(rule: .constant(.empty), positive: true, editing: false)
                             .opacity(0.3)
@@ -66,13 +72,15 @@ struct TaglistScreen: View {
                     .foregroundColor(.primary)
                 }
                 
-                ForEach($builder.negativeRules, id: \.self) { $rule in
-                    TagRuleField(rule: $rule, positive: false, editing: builder.editing)
+                ForEach(builder.negativeRules.indices, id: \.self) { index in
+                    if index < builder.negativeRules.count {
+                        TagRuleField(rule: $builder.negativeRules[index], positive: false, editing: builder.editing)
+                    }
                 }
                 
                 if builder.editing && nil == builder.negativeRules.first(where: { $0 == .empty }) {
                     AnimatedButton {
-                        builder.negativeRules.append(.empty)
+                        builder.negativeRules.append(TagRule(tags: []))
                     } label: {
                         TagRuleField(rule: .constant(.empty), positive: false, editing: false)
                             .opacity(0.3)
@@ -83,7 +91,17 @@ struct TaglistScreen: View {
                 if builder.editing {
                     HStack {
                         LargeButton(role: .destructive) {
-                            withAnimation { builder = TaglistBuilder(taglist, forSubLibrary: isForSublibrary) }
+                            if builder.new { 
+                                if builder.forTagView {
+                                    navigator.settings.navigateBack()
+                                } else {
+                                    navigator.library.navigateBack()
+                                }
+                            } else {
+                                withAnimation {
+                                    builder = TaglistBuilder(taglist, new: builder.new, forTagView: builder.forTagView)
+                                }
+                            }
                         } label: {
                             HStack {
                                 Image(systemName: SI.cancelSelection)
@@ -127,14 +145,14 @@ struct TaglistScreen: View {
             Menu {
                 Button {
                     Task {
-                        await repository.setActiveSublibrary(from: builder.asNewTaglist())
+                        await repository.setActiveTagView(to: builder.asNewTaglist())
                     }
                 } label: {
-                    Label("Set as Sublibrary", systemImage: SI.tag)
+                    Label("Set as active TagView", systemImage: SI.tag)
                 }
                 
                 Button {
-                    repository.setGlobalLibrary()
+                    repository.resetToGlobalTagView()
                 } label: {
                     Label("Reset to global library", systemImage: SI.home)
                 }
@@ -148,6 +166,18 @@ struct TaglistScreen: View {
             } label: {
                 Image(systemName: SI.information)
                     .font(F.toolbarButton)
+            }
+        }
+        
+        .task { updateSongs() }
+        .onChange(of: builder.editing) { updateSongs() }
+    }
+    
+    private func updateSongs() {
+        Task.detached(priority: .low) {
+            let songs = await builder.builderSongs(from: repository.songs())
+            await MainActor.run {
+                self.songs = songs
             }
         }
     }
@@ -191,9 +221,7 @@ struct TagRuleField: View {
                 TagEntryField(tags: $tags, editing: editing)
                     .padding(10)
                     .onChange(of: tags) {
-                        print(tags)
                         rule = TagRule(tags: tags)
-                        print(rule)
                     }
             }
         }

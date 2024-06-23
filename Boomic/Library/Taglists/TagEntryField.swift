@@ -36,10 +36,12 @@ struct TagEntryField: View {
             
             VStack(alignment: .leading) {
                 WrappingHStack(horizontalSpacing: 5) {
-                    ForEach(Array(tags), id: \.self) { tag in
+                    ForEach(tags.byLength, id: \.self) { tag in
                         AnimatedButton {
-                            tags.remove(tag)
-                            text = tag.description
+                            if editing {
+                                tags.remove(tag)
+                                text = tag.description
+                            }
                         } label: {
                             TagPill(tag)
                         }
@@ -54,20 +56,22 @@ struct TagEntryField: View {
                             TextField(text: $text, prompt: Text("Add Tag")) { EmptyView() }
                                 .focused($focused)
                                 .multilineTextAlignment(.leading)
-                                .onSubmit {
-                                    if let tag = Tag.from(text) {
-                                        withAnimation(A.standard) {
-                                            tags.insert(tag)
-                                            text = ""
-                                            focused = true
-                                        }
-                                    }
-                                }
+                                .onSubmit { onSubmit() }
                         }
                     }
                 }
             }
         }
+    }
+    
+    private func onSubmit() {
+            if let tag = Tag.from(text) {
+                focused = true
+                withAnimation(A.standard) {
+                    tags.insert(tag)
+                    text = ""
+                }
+            }
     }
 }
 

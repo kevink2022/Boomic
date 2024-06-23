@@ -9,8 +9,9 @@ import SwiftUI
 import Models // DEBUG
 
 struct SettingsScreen: View {
-    @Environment(\.repository) private var repository
+    @Environment(\.navigator) private var navigator
     @Environment(\.preferences) private var preferences
+    @Environment(\.repository) private var repository
     
     @State private var importStatus: String = ""
     private var importInProgress: Bool {
@@ -19,8 +20,10 @@ struct SettingsScreen: View {
     
     var body: some View {
         @Bindable var preferences = preferences
+        @Bindable var navigator = navigator
+
         
-        NavigationStack {
+        NavigationStack(path: $navigator.settings) {
             List {
                 Section {
                     Button {
@@ -39,18 +42,18 @@ struct SettingsScreen: View {
                 }
                 
                 Section {
-                    NavigationLink {
-                        LibraryData()
-                    } label: {
+                    NavigationLink(value: SettingsNavigation.tagViews ) {
+                        Text("TagViews")
+                    }
+                    
+                    NavigationLink(value: SettingsNavigation.libraryData) {
                         Text("Manage Library Data")
                     }
                     
-                    NavigationLink {
-                        TransactionsList()
-                    } label: {
+                    NavigationLink(value: SettingsNavigation.transactionList) {
                         Text("Library Change History")
                     }
-                }  header: {
+                } header: {
                     Text("Libary Data")
                 }
                 
@@ -63,25 +66,17 @@ struct SettingsScreen: View {
                 } footer: {
                     Text("Limit searches to only the title/name of the object. Does not apply to global search.")
                 }
-
-                
                 
                 Section {
-                    NavigationLink {
-                        AccentColorPicker()
-                    } label: {
+                    NavigationLink(value: SettingsNavigation.accentColorPicker) {
                         Text("Accent Color")
                     }
                     
-                    NavigationLink {
-                        TabOrder()
-                    } label: {
+                    NavigationLink(value: SettingsNavigation.tabOrder) {
                         Text("Tab Order")
                     }
                     
-                    NavigationLink {
-                        LibraryPanelOrder()
-                    } label: {
+                    NavigationLink(value: SettingsNavigation.libararyPanelOrder) {
                         Text("Library Panel Order")
                     }
                 } header: {
@@ -93,8 +88,7 @@ struct SettingsScreen: View {
                         Task {
                             let marioUpdates = repository.songs()
                                 .search("Mario")
-                                .map { SongUpdate(song: $0, tags: [Tag.from("#mario")!]) }
-                            print(marioUpdates.count)
+                                .map { SongUpdate(song: $0, tags: [Tag.from("#MARIO")!]) }
                             await repository.updateSongs(Set(marioUpdates))
                         }
                     } label: {
@@ -102,8 +96,23 @@ struct SettingsScreen: View {
                     }
                 }
             }
+            .navigationDestination(for: SettingsNavigation.self) { destination in
+                switch destination {
+                case .accentColorPicker: AccentColorPicker()
+                case .libararyPanelOrder: LibraryPanelOrder()
+                case .libraryData: LibraryData()
+                case .newTagView: TaglistScreen(taglist: nil, forTagView: true)
+                case .tabOrder: TabOrder()
+                case .tagViews : TagViewsScreen()
+                case .transactionList: TransactionsList()
+                }
+            }
+            .navigationDestination(for: Taglist.self) { taglist in
+                TaglistScreen(taglist: taglist, forTagView: true)
+            }
         }
         
+
         .onChange(of: repository.status) {
             if repository.status.key == .importSongs {
                 importStatus = repository.status.message

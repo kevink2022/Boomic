@@ -40,13 +40,7 @@ struct AlbumScreen: View {
             LazyVStack {
                 if !nav.isSearchFocused {
                     VStack {
-                        HStack {
-                            Spacer(minLength: C.albumScreenSpacers)
-                            
-                            MediaArtView(album.art, cornerRadius: C.albumCornerRadius)
-                            
-                            Spacer(minLength: C.albumScreenSpacers)
-                        }
+                        AlbumArtHeader(art: album.art)
                         
                         Menu {
                             AlbumMenu(album: album, navigateOnSelect: true)

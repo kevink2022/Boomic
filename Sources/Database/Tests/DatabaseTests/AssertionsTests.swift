@@ -119,7 +119,7 @@ final class AssertionsTests: XCTestCase {
         let (songs, albums, artists) = Mocks.sampleModels()
         
         let assertionSet1 = KeySet<Assertion>()
-            .inserting([
+            .inserting(contentsOf: [
                 Assertion(songs[0])
                 , Assertion(songs[1])
                 , Assertion(songs[2])
@@ -128,7 +128,7 @@ final class AssertionsTests: XCTestCase {
             ])
         
         let assertionSet2 = KeySet<Assertion>()
-            .inserting([
+            .inserting(contentsOf: [
                 /* merge with first 5 */
                 Assertion(SongUpdate(song: songs[0], title: "an uncaged persona"))
                 , Assertion(DeleteAssertion(songs[1]))
@@ -139,7 +139,7 @@ final class AssertionsTests: XCTestCase {
             ])
         
         let assertionSet3 = KeySet<Assertion>()
-            .inserting([
+            .inserting(contentsOf: [
                 /* merge with new 3 */
                 Assertion(DeleteAssertion(songs[20]))
                 , Assertion(SongUpdate(song:  songs[19], title: "para la princesa azusa"))

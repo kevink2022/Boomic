@@ -14,6 +14,8 @@ final class TaglistBuilder {
     var title: String
     var positiveRules: [TagRule]
     var negativeRules: [TagRule]
+    var art: MediaArt?
+    private var useBuilder: Bool
     
     var editing: Bool = false {
         didSet {
@@ -25,20 +27,34 @@ final class TaglistBuilder {
     }
     
     let new: Bool
-    let subLibraryMode: Bool
+    let forTagView: Bool
+    
+    func builderSongs(from songs: [Song]) async -> [Song] {
+        if useBuilder {
+            songs.filter { song in
+                Taglist.evaluate(song.tags, onPositiveRules: self.positiveRules, onNegativeRules: self.negativeRules)
+            }
+        } else {
+            songs.filter { song in
+                baseTaglist.evaluate(song.tags)
+            }
+        }
+    }
     
     init(
         _ taglist: Taglist
         , new: Bool = false
-        , forSubLibrary subLibraryMode: Bool = false
+        , forTagView: Bool = false
     ) {
         self.title = taglist.title
         self.baseTaglist = taglist
         self.positiveRules = taglist.positiveRules
         self.negativeRules = taglist.negativeRules
+        self.art = taglist.art
         self.new = new
-        self.subLibraryMode = subLibraryMode
+        self.forTagView = forTagView
         self.editing = new ? true : false
+        self.useBuilder = false
     }
     
     public func asNewTaglist() -> Taglist {

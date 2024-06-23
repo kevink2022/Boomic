@@ -17,6 +17,7 @@ public final class Navigator {
             if tab == newValue {
                 switch tab {
                 case .home: library.toRoot()
+                case .settings: settings.toRoot()
                 default: break
                 }
             }
@@ -34,6 +35,8 @@ public final class Navigator {
             isSearchFocused = false
         }
     }
+    
+    public var settings = NavigationPath()
     
     public var showSheet: Bool = false
     public var sheetContent: AnyView? = nil
@@ -84,7 +87,7 @@ extension NavigationPath {
     }
 }
 
-public enum LibraryNavigation : String, CaseIterable, Identifiable, Hashable, Codable {
+public enum LibraryNavigation: String, CaseIterable, Identifiable, Hashable, Codable {
    
     case songs, albums, artists, topRated, taglists
     
@@ -92,15 +95,22 @@ public enum LibraryNavigation : String, CaseIterable, Identifiable, Hashable, Co
 }
 
 // Not on the home screen
-public enum MiscLibraryNavigation : String, CaseIterable, Identifiable, Hashable, Codable {
+public enum MiscLibraryNavigation: String, CaseIterable, Identifiable, Hashable, Codable {
     
     case newTaglist
     
     public var id : String { self.rawValue }
 }
 
+public enum SettingsNavigation: String, CaseIterable, Identifiable, Hashable, Codable {
+    
+    case tagViews , libraryData, transactionList, accentColorPicker, tabOrder, libararyPanelOrder, newTagView
+    
+    public var id : String { self.rawValue }
+}
 
-public enum TabNavigation : String, CaseIterable, Identifiable, Hashable, Codable {
+
+public enum TabNavigation: String, CaseIterable, Identifiable, Hashable, Codable {
    
     case home, settings, mixer, search
     

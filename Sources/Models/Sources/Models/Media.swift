@@ -10,6 +10,7 @@ import Domain
 
 public protocol Model: Identifiable, Codable, Equatable, Hashable {
     var label: String { get }
+    var art: MediaArt? { get }
 }
 
 extension Model {

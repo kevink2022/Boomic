@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Domain
 
 public final class Taglist: Model {
     
@@ -16,6 +17,7 @@ public final class Taglist: Model {
     public let negativeRules: [TagRule]
     
     public let songs: [UUID]
+    public let art: MediaArt?
     
     public init(
         id: UUID = UUID()
@@ -23,39 +25,39 @@ public final class Taglist: Model {
         , positiveRules: [TagRule]
         , negativeRules: [TagRule]
         , songs: [UUID]
+        , art: MediaArt? = nil
     ) {
         self.title = title
         self.id = id
         self.positiveRules = positiveRules
         self.negativeRules = negativeRules
         self.songs = songs
+        self.art = art
     }
     
-    /*
-     * For something to be included in a tag list, it must:
-     * - Pass each Positive Rules
-     * - Not pass each Negative Rule.
-     */
     public func evaluate(_ tags: Set<Tag>) -> Bool {
-        Self.evaulate(tags, onPositiveRules: positiveRules, onNegativeRules: negativeRules)
+        Self.evaluate(tags, onPositiveRules: positiveRules, onNegativeRules: negativeRules)
     }
     
-    public static func evaulate(
+    /* For something to be included in a tag list, it must:
+     * - Pass each Positive Rules
+     * - Not pass each Negative Rule. */
+    public static func evaluate(
         _ tags: Set<Tag>
         , onPositiveRules positiveRules: [TagRule]
         , onNegativeRules negativeRules: [TagRule]
     ) -> Bool {
         
-        if positiveRules.isEmpty
-            && negativeRules.isEmpty { return false }
+        if positiveRules.hasNoRules
+            && negativeRules.hasNoRules { return false }
         
-        if !positiveRules.isEmpty {
+        if !positiveRules.hasNoRules {
             for rule in positiveRules {
                 if !rule.evaluate(tags: tags) { return false }
             }
         }
         
-        if negativeRules.isEmpty { return true }
+        if negativeRules.hasNoRules { return true }
         
         for rule in negativeRules {
             if !rule.evaluate(tags: tags) { return true }
@@ -76,9 +78,19 @@ public final class Taglist: Model {
     
     
     public static let new = Taglist(id: UUID(), title: "New Taglist", positiveRules: [], negativeRules: [], songs: [])
-    public static let newSublibrary = Taglist(id: UUID(), title: "New Taglist", positiveRules: [], negativeRules: [], songs: [])
+    public static let newTagView = Taglist(id: UUID(), title: "New TagView", positiveRules: [], negativeRules: [], songs: [])
     
     public var label: String { title }
+}
+
+extension Taglist: SetSortable {
+    public static func compare(_ a: Taglist, _ b: Taglist) -> Bool {
+        Taglist.alphabeticalSort(a, b)
+    }
+    
+    public static func isEqual(_ a: Taglist, _ b: Taglist) -> Bool {
+        a == b
+    }
 }
 
 extension Taglist {
@@ -91,6 +103,7 @@ extension Taglist {
             , positiveRules: update.positiveRules ?? self.positiveRules
             , negativeRules: update.positiveRules ?? self.positiveRules
             , songs: update.songs ?? self.songs
+            , art: self.art
         )
     }
 }
@@ -104,6 +117,7 @@ public final class TaglistUpdate: Update {
     public let positiveRules: [TagRule]?
     public let negativeRules: [TagRule]?
     public let songs: [UUID]?
+    public let art: MediaArt?
     
     private init(
         taglistID: UUID
@@ -112,6 +126,7 @@ public final class TaglistUpdate: Update {
         , positiveRules: [TagRule]?
         , negativeRules: [TagRule]?
         , songs: [UUID]?
+        , art: MediaArt?
     ) {
         self.taglistID = taglistID
         self.title = title
@@ -119,6 +134,7 @@ public final class TaglistUpdate: Update {
         self.positiveRules = positiveRules
         self.negativeRules = negativeRules
         self.songs = songs
+        self.art = art
     }
     
     public static func == (lhs: TaglistUpdate, rhs: TaglistUpdate) -> Bool {
@@ -139,6 +155,7 @@ extension TaglistUpdate {
         , positiveRules: [TagRule]? = nil
         , negativeRules: [TagRule]? = nil
         , songs: [UUID]? = nil
+        , art: MediaArt? = nil
     ) {
         self.init(
             taglistID: taglist.id
@@ -147,6 +164,7 @@ extension TaglistUpdate {
             , positiveRules: positiveRules
             , negativeRules: negativeRules
             , songs: songs
+            , art: art
         )
     }
     
@@ -160,6 +178,7 @@ extension TaglistUpdate {
             , positiveRules: update.positiveRules ?? self.positiveRules
             , negativeRules: update.positiveRules ?? self.positiveRules
             , songs: update.songs ?? self.songs
+            , art: update.art ?? self.art
         )
     }
     
@@ -167,6 +186,7 @@ extension TaglistUpdate {
         if taglist.title != self.title { return true }
         else if taglist.positiveRules != self.positiveRules { return true }
         else if taglist.negativeRules != self.negativeRules { return true }
+        else if taglist.art != self.art { return true }
         else if taglist.songs != self.songs { return true }
         
         return false

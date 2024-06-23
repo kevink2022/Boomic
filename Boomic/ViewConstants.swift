@@ -161,6 +161,11 @@ struct ViewConstants {
         static let save = "square.and.arrow.down"
         static let new = "plus"
         static let temporary = "paperclip"
+        
+        static let photos = "photo"
+        static let documents = "folder"
+        static let link = "globe"
+        static let undo = "arrow.uturn.backward"
     }
     
     static let gridPadding: CGFloat = 8

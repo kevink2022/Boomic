@@ -7,6 +7,10 @@
 
 import Foundation
 
+public enum TagType: String, CaseIterable {
+    case wordMatch = "#"
+}
+
 public struct Tag: Equatable, Codable, Hashable, CustomStringConvertible {
     let body: String
     
@@ -58,6 +62,16 @@ extension CharacterSet {
     }
 }
 
+extension Set where Element == Tag {
+    public var alphabetical: [Tag] {
+        Array(self).sorted(by: {$0.body.compare($1.body, options: .caseInsensitive) == .orderedAscending} )
+    }
+    
+    public var byLength: [Tag] {
+        Array(self).sorted(by: {$0.body.count < $1.body.count} )
+    }
+}
+
 public struct TagRule: Codable, Equatable, Hashable {
     public let tags: Set<Tag>
     
@@ -85,9 +99,14 @@ public struct TagRule: Codable, Equatable, Hashable {
 
 extension Array where Element == TagRule {
     public var hasNoRules: Bool {
-        self.reduce(true) { partialResult, rule in
-            print(rule.tags, rule.isEmpty)
+        guard !self.isEmpty else { return true }
+        return self.reduce(true) { partialResult, rule in
             return partialResult && rule.isEmpty
         }
+    }
+    
+    public func safeIndex(_ index: Int) -> TagRule? {
+        guard index >= 0 && index < self.count else { return nil }
+        return self[index]
     }
 }

@@ -4,6 +4,7 @@
 import Foundation
 import Combine
 
+import Domain
 import Models
 import Database
 import MediaFileKit
@@ -23,7 +24,9 @@ public final class Repository {
     public var status = RepositoryStatus(key: .none, message: "")
     private var statusKeys = Set<RepositoryStatusKey>()
     
-    private var activeSubLibraryTransaction: LibraryTransaction?
+    public private(set) var tagViews: SortedSet<Taglist>
+    public private(set) var activeTagView: Taglist?
+    private var activeTagViewTransaction: LibraryTransaction?
     
     public init(
         fileInterface: FileInterface = FileInterface(at: URL.documentsDirectory)
@@ -45,13 +48,16 @@ public final class Repository {
         
         self.transactor = transactor
         self.basis = .empty
-        self.activeSubLibraryTransaction = nil
+        
+        self.tagViews = SortedSet()
+        self.activeTagView = nil
+        self.activeTagViewTransaction = nil
         
         self.transactor.publisher
             .sink { [weak self] basis in
                 guard let self = self else { return }
                 
-                if let transaction = self.activeSubLibraryTransaction {
+                if let transaction = self.activeTagViewTransaction {
                     Task { 
                         self.basis = await BasisResolver(currentBasis: basis).apply(transaction: transaction)
                     }
@@ -97,20 +103,25 @@ extension Repository {
     }
 }
 
-// MARK: - SubLibraries
+// MARK: - TagViews
 extension Repository {
-    public func setActiveSublibrary(from taglist: Taglist) async {
+    public func setActiveTagView(to taglist: Taglist) async {
         let basis = basis
         let songsToRemove = basis.allSongs.filter { !taglist.evaluate($0.tags) }
         let transaction = await BasisResolver(currentBasis: basis).deleteSongs(Set(songsToRemove))
-        activeSubLibraryTransaction = transaction
+        activeTagView = taglist
+        activeTagViewTransaction = transaction
         self.basis = await BasisResolver(currentBasis: basis).apply(transaction: transaction)
-        print("set")
     }
     
-    public func setGlobalLibrary() {
-        activeSubLibraryTransaction = nil
+    public func resetToGlobalTagView() {
+        activeTagView = nil
+        activeTagViewTransaction = nil
         basis = transactor.publisher.value
+    }
+    
+    public func saveTagView(_ taglist: Taglist) {
+        tagViews.insert(taglist)
     }
 }
 

@@ -16,7 +16,11 @@ struct MediaArtView: View {
     let cornerRadius: CGFloat
     @State var image: Image?
     
-    init(_ art: MediaArt? = nil, aspectRatio: ContentMode = .fit, cornerRadius: CGFloat = 0) {
+    init(
+        _ art: MediaArt? = nil
+        , aspectRatio: ContentMode = .fit
+        , cornerRadius: CGFloat = 0
+    ) {
         self.art = art
         self.aspectRatio = aspectRatio
         self.cornerRadius = cornerRadius
@@ -27,6 +31,7 @@ struct MediaArtView: View {
         Rectangle()
             .opacity(0)
             .aspectRatio(1, contentMode: aspectRatio)
+            .cornerRadius(cornerRadius)
             .overlay {
                 showImage()
                     .resizable()
@@ -44,6 +49,6 @@ struct MediaArtView: View {
 }
 
 #Preview {
-    MediaArtView(.test)
+    MediaArtView(.test, cornerRadius: 10)
         .environment(\.repository, PreviewMocks.shared.previewRepository())
 }
