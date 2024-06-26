@@ -62,6 +62,11 @@ struct ArtistUpdateSheet: View {
                         TextField(text: $model.data.working.title, prompt: Text(model.data.base.title)) { EmptyView() }
                     }
                 }
+                
+                Section("Cover") {
+                    MediaArtEditor($model.data.working.art, editing: true, aspectRatio: .fit, cornerRadius: 500)
+                        .padding(.horizontal, 30)
+                }
             }
         }
     }

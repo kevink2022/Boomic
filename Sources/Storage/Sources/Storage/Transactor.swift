@@ -9,6 +9,28 @@ import Foundation
 import Combine
 import AsyncAlgorithms
 
+extension Transactor: TransactorPublicInterface { }
+private protocol TransactorPublicInterface {
+    associatedtype TransactionData: Codable
+    associatedtype Post
+    
+    var publisher: CurrentValueSubject<Post, Never> { get }
+    
+    func commit(transaction data: TransactionData) async
+    func commit(generateTransaction: @escaping (Post) async -> (TransactionData)) async
+
+    func viewTransactions(last count: Int?) async -> [DataTransaction<TransactionData>]
+    func viewTransactions(since timestamp: Date) async -> [DataTransaction<TransactionData>]
+    
+    func rollbackTo(after transaction: DataTransaction<TransactionData>) async
+    func rollbackTo(before transaction: DataTransaction<TransactionData>) async
+    
+    func sizeAndAllocatedSize() async throws -> (Bytes, Bytes)
+    
+    func exportData(to root: URL) async throws
+    func importData(from root: URL) async throws
+}
+
 public final class DataTransaction<Data: Codable>: Loggable {
     public let id: UUID
     public let timestamp: Date
@@ -37,6 +59,7 @@ public final class Transactor<TransactionData: Codable, Post> {
     public init (
         basePost: Post
         , key: String = "transactions-generic"
+        , namespace: String? = nil
         , inMemory: Bool = false
         , coreCommit: @escaping (TransactionData, Post) async -> (Post)
         , flatten: (([TransactionData]) -> TransactionData)? = nil
@@ -49,8 +72,8 @@ public final class Transactor<TransactionData: Codable, Post> {
         self.flatten = flatten
         
         Task {
-            if let tranactions = try? await storage.load().reversed() {
-                await build(from: basePost, with: tranactions.map{ $0.data })
+            if let transactions = try? await storage.load().reversed() {
+                await build(from: basePost, with: transactions.map{ $0.data })
             }
             await monitorQueue()
         }
@@ -138,6 +161,17 @@ extension Transactor {
     
     public func sizeAndAllocatedSize() async throws -> (Bytes, Bytes) {
         try await storage.sizeAndAllocatedSize()
+    }
+    
+    public func exportData(to root: URL) async throws {
+        try await storage.exportData(to: root)
+    }
+    
+    public func importData(from root: URL) async throws {
+        try await storage.importData(from: root)
+        if let transactions = try? await storage.load().reversed() {
+            await build(from: base, with: transactions.map{$0.data})
+        }
     }
 }
 

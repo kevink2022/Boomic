@@ -11,6 +11,8 @@ import Models
 private typealias F = ViewConstants.Fonts
 
 struct TagPill: View {
+    @Environment(\.preferences) var preferences
+    
     let tag: Tag
     
     init(_ tag: Tag) {
@@ -24,7 +26,7 @@ struct TagPill: View {
             .padding(.vertical, 5)
             .background(
                 RoundedRectangle(cornerRadius: 25)
-                    .fill(Color.accentColor)
+                    .fill(preferences.accentColor)
             )
             .foregroundStyle(.white)
     }

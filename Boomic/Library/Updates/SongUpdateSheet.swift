@@ -8,6 +8,7 @@
 import SwiftUI
 import Models
 
+private typealias C = ViewConstants
 private typealias F = ViewConstants.Fonts
 private typealias SI = ViewConstants.SystemImages
 
@@ -31,29 +32,6 @@ struct SongUpdateSheet: View {
         VStack(spacing: 0) {
             HStack {
                 VStack(alignment: .leading, spacing: 10) {
-                    if model.multiEdit {
-                        Text("Editing \(model.songs.count) songs")
-                            .font(F.listTitle)
-                    } else {
-                        Text(singleSong.label)
-                            .font(F.listTitle)
-                        Text("\(singleSong.source.label)")
-                    }
-                    
-                    HStack {
-                        ForEach(1...5, id: \.self) { star in
-                            Button {
-                                if rated(star) {
-                                    model.data.working.rating = model.data.working.rating ?? 1 - 1
-                                } else {
-                                    model.data.working.rating = star
-                                }
-                            } label: {
-                                Image(systemName: rated(star) ? SI.rated : SI.unrated)
-                            }
-                        }
-                    }
-                    
                     LargeButton {
                         Task {
                             navigator.dismissSheet()
@@ -65,7 +43,32 @@ struct SongUpdateSheet: View {
                     }
                     .disabled(!model.willModify)
                     .frame(height: 50)
-
+                    
+                    if model.multiEdit {
+                        Text("Editing \(model.songs.count) songs")
+                            .font(F.listTitle)
+                    } else {
+                        Text(singleSong.label)
+                            .font(F.sectionTitle)
+                    }
+                    
+                    HStack {
+                        ForEach(1...5, id: \.self) { star in
+                            Button {
+                                if rated(star) {
+                                    model.data.working.rating = star - 1
+                                } else {
+                                    model.data.working.rating = star
+                                }
+                            } label: {
+                                Image(systemName: rated(star) ? SI.rated : SI.unrated)
+                                    .font(F.playerButton)
+                            }
+                        }
+                    }
+                    
+                    TagField(tags: $model.data.working.tags, editing: true)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(20)
                 
@@ -76,6 +79,22 @@ struct SongUpdateSheet: View {
             
             Form {
                 if !model.multiEdit {
+                    Section("Source") {
+                        Menu {
+                            Section("Change Source") {
+                                Button {
+                                    
+                                } label: {
+                                    Text("Change to Local File")
+                                }
+                            }
+                        } label: {
+                            Text("\(singleSong.source.label)")
+                                .multilineTextAlignment(.leading)
+                        }
+                        .foregroundStyle(.primary)
+                    }
+                    
                     Section("Title") {
                         TextField(text: $model.data.working.title, prompt: Text(model.data.base.title)) { EmptyView() }
                     }
@@ -98,43 +117,10 @@ struct SongUpdateSheet: View {
                 Section("Album Title") {
                     TextField(text: $model.data.working.albumTitle, prompt: Text(model.data.base.albumTitle)) { EmptyView() }
                 }
-
-                Section {
-                    TextField(text: $workingTag, prompt: Text("Press 'Enter' to add a Tag.")) { EmptyView() }
-                        .onSubmit {
-                            if let newTag = Tag.from(workingTag) {
-                                model.data.working.tags.insert(newTag)
-                                workingTag = ""
-                                tagStatusMessage = ""
-                            } else {
-                                tagStatusMessage = "Invalid tag, ensure tag is not empty."
-                            }
-                        }
-                } header: {
-                    Text("Add Tags")
-                } footer: {
-                    if !tagStatusMessage.isEmpty {
-                        Text(tagStatusMessage)
-                            .foregroundStyle(.red)
-                    }
-                }
                 
-                Section {
-                    if model.data.working.tags.isEmpty { Text("") }
-                    
-                    ForEach(Array(model.data.working.tags), id: \.self) { tag in
-                        Button {
-                            model.data.working.tags.remove(tag)
-                            workingTag = tag.description
-                        } label: {
-                            TagPill(tag)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    }
-                } header: {
-                    Text(model.multiEdit ? "Tags to be added" : "Current Tags")
-                } footer: {
-                    Text("Tap a tag to remove it")
+                Section("Cover") {
+                    MediaArtEditor($model.data.working.art, editing: true, aspectRatio: .fit, cornerRadius: C.albumCornerRadius)
+                        .padding(.horizontal, 30)
                 }
             }
         }

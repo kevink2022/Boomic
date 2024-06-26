@@ -10,6 +10,7 @@ import Database
 import Storage
 
 struct LibraryData: View {
+    @Environment(\.navigator) private var navigator
     @Environment(\.repository) private var repository
     
     @State var libraryDataSize: String = ""
@@ -28,6 +29,31 @@ struct LibraryData: View {
             Section("Library Data") {
                 Text("Total Size: \(libraryDataSize)")
                 Text("Allocated Space: \(libraryDataAllocatedSize)")
+            }
+            
+            Section {
+                Button {
+                    Task { await repository.exportTransactionHistory() }
+                } label: {
+                    Text("Export Library History")
+                }
+                
+                Button {
+                    navigator.showFilePicker(for: [.json]) { result in
+                        switch result {
+                        case .failure(let error):
+                            print("error: \(error.localizedDescription)")
+                        case .success(let urls):
+                            guard let url = urls.first else { return }
+                            Task {
+                                await repository.importTransactionHistory(from: url)
+                            }
+                        }
+                        
+                    }
+                } label: {
+                    Text("Import Library History")
+                }
             }
             
             Section {

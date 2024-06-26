@@ -101,9 +101,9 @@ extension Taglist {
             id: self.id
             , title: update.newTitle ?? update.title
             , positiveRules: update.positiveRules ?? self.positiveRules
-            , negativeRules: update.positiveRules ?? self.positiveRules
+            , negativeRules: update.negativeRules ?? self.negativeRules
             , songs: update.songs ?? self.songs
-            , art: self.art
+            , art: update.art ?? self.art
         )
     }
 }
@@ -176,7 +176,7 @@ extension TaglistUpdate {
             , title: self.title
             , newTitle: update.newTitle ?? update.title
             , positiveRules: update.positiveRules ?? self.positiveRules
-            , negativeRules: update.positiveRules ?? self.positiveRules
+            , negativeRules: update.negativeRules ?? self.negativeRules
             , songs: update.songs ?? self.songs
             , art: update.art ?? self.art
         )

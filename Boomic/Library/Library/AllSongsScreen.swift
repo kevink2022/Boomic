@@ -36,16 +36,18 @@ struct AllSongsScreen: View {
     var body: some View {
         @Bindable var nav = navigator
         
-        SongGrid(
-            songs: songs.search(predicate, primaryOnly: primaryOnly)
-            , key: Preferences.GridKeys.allSongs
-            , header: .buttonsInToolbar
-            , selectable: true
-            , title: "Songs"
-            , titleFont: F.screenTitle
-            , queueName: "All Songs"
-            , showTrackNumber: false
-        )
+        ScrollView {
+            SongGrid(
+                songs: songs.search(predicate, primaryOnly: primaryOnly)
+                , key: Preferences.GridKeys.allSongs
+                , header: .buttonsInToolbar
+                , selectable: true
+                , title: "Songs"
+                , titleFont: F.screenTitle
+                , queueName: "All Songs"
+                , showTrackNumber: false
+            )
+        }
         
         .searchable(text: $predicate, isPresented: $nav.isSearchFocused)
     }

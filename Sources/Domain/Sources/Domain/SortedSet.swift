@@ -200,7 +200,7 @@ extension SortedSet: Codable where Element: Codable {
     }
 }
 
-extension SortedSet: SortedSetPublicInterface {}
+extension SortedSet: SortedSetPublicInterface { }
 private protocol SortedSetPublicInterface {
     associatedtype Element: SetSortable
     

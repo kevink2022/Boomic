@@ -7,6 +7,28 @@
 
 import Foundation
 
+extension LogStore: LogStorePublicInterface { }
+private protocol LogStorePublicInterface {
+    associatedtype Log: Loggable
+    
+    func save(_ log: Log) async throws
+    
+    func load(last count: Int?) async throws -> [Log]
+    func load(from id: UUID) async throws -> [Log]
+    func load(since timestamp: Date) async throws -> [Log]
+    
+    func delete(last count: Int?) async throws
+    func delete(including id: UUID) async throws
+    func delete(after id: UUID) async throws
+    func delete(since timestamp: Date) async throws
+    
+    func sizeAndAllocatedSize() async throws -> (Bytes, Bytes)
+    
+    func exportData(to root: URL) async throws
+    func importData(from root: URL) async throws
+}
+
+
 public protocol Loggable: Codable, Identifiable {
     var id: UUID { get }
     var timestamp: Date { get }
@@ -113,5 +135,14 @@ public final class LogStore<Log: Loggable> {
     
     public func sizeAndAllocatedSize() async throws -> (Bytes, Bytes) {
         return try await storage.sizeAndAllocatedSize()
+    }
+    
+    
+    func exportData(to root: URL) async throws {
+        try await storage.exportData(to: root)
+    }
+    
+    func importData(from root: URL) async throws {
+        try await storage.importData(from: root)
     }
 }

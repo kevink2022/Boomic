@@ -131,7 +131,7 @@ struct CountedSet<Element: Hashable> {
     }
 }
 
-extension CountedSet: CountedSetPublicInterface {}
+extension CountedSet: CountedSetPublicInterface { }
 private protocol CountedSetPublicInterface {
     associatedtype Element: Hashable
     

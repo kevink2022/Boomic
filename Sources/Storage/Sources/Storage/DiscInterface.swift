@@ -33,10 +33,18 @@ public class DiscInterface<Model: Codable> {
 
 public enum DiscInterfaceError: LocalizedError {
     case mustOverride
+    case noDataToExport
+    case noDataToImport
+    case attemptToExportToFile
+    case attemptToImportFromDir
     
     public var errorDescription: String? {
         switch self {
         case .mustOverride: "This function must be overridden to be used."
+        case .noDataToExport: "There is no data to export."
+        case .noDataToImport: "There is no data to import."
+        case .attemptToExportToFile: "Attempted to export to a file instead of a directory."
+        case .attemptToImportFromDir: "Attempted to import from a directory instead of a file."
         }
     }
 }

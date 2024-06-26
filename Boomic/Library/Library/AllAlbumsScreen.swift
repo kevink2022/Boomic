@@ -25,14 +25,16 @@ struct AllAlbumsScreen: View {
     var body: some View {
         @Bindable var nav = navigator
         
-        AlbumGrid(
-            albums: albums.search(predicate, primaryOnly: primaryOnly)
-            , key: Preferences.GridKeys.allAlbums
-            , header: .buttonsInToolbar
-            , selectable: true
-            , title: "Albums"
-            , titleFont: F.screenTitle
-        )
+        ScrollView {
+            AlbumGrid(
+                albums: albums.search(predicate, primaryOnly: primaryOnly)
+                , key: Preferences.GridKeys.allAlbums
+                , header: .buttonsInToolbar
+                , selectable: true
+                , title: "Albums"
+                , titleFont: F.screenTitle
+            )
+        }
         
         .searchable(text: $predicate, isPresented: $nav.isSearchFocused)
     }

@@ -21,52 +21,53 @@ struct LibraryScreen: View {
         @Bindable var navigator = navigator
         
         NavigationStack(path: $navigator.library) {
-            
-            GridList(
-                key: Preferences.GridKeys.library
-                , title: "Library"
-                , titleFont: F.screenTitle
-                , hasSubLabels: false
-                , entries: preferences.libraryOrder.map({ libraryButton in
-                    switch libraryButton {
-                    
-                    case .songs:
-                        GridListEntry(
-                            label: "Songs"
-                            , action: { navigator.library.navigateTo(LibraryNavigation.songs) }
-                            , icon: { LibraryGridEntry(imageName: SI.songs) }
-                        )
-                    
-                    case .albums:
-                        GridListEntry(
-                            label: "Albums"
-                            , action: { navigator.library.navigateTo(LibraryNavigation.albums) }
-                            , icon: { LibraryGridEntry(imageName: SI.album) }
-                        )
-                    
-                    case .artists:
-                        GridListEntry(
-                            label: "Artists"
-                            , action: { navigator.library.navigateTo(LibraryNavigation.artists) }
-                            , icon: { LibraryGridEntry(imageName: SI.artist) }
-                        )
-                        
-                    case .topRated:
-                        GridListEntry(
-                            label: "Top Rated"
-                            , action: { navigator.library.navigateTo(LibraryNavigation.topRated) }
-                            , icon: { LibraryGridEntry(imageName: SI.unrated) }
-                        )
-                        
-                    case .taglists:
-                        GridListEntry(
-                            label: "Taglists"
-                            , action: { navigator.library.navigateTo(LibraryNavigation.taglists) }
-                            , icon: { LibraryGridEntry(imageName: SI.tag) }
-                        )                        
-                    }
-                })
-            )
+            ScrollView {
+                GridList(
+                    key: Preferences.GridKeys.library
+                    , title: "Library"
+                    , titleFont: F.screenTitle
+                    , hasSubLabels: false
+                    , entries: preferences.libraryOrder.map({ libraryButton in
+                        switch libraryButton {
+                            
+                        case .songs:
+                            GridListEntry(
+                                label: "Songs"
+                                , action: { navigator.library.navigateTo(LibraryNavigation.songs) }
+                                , icon: { LibraryGridEntry(imageName: SI.songs) }
+                            )
+                            
+                        case .albums:
+                            GridListEntry(
+                                label: "Albums"
+                                , action: { navigator.library.navigateTo(LibraryNavigation.albums) }
+                                , icon: { LibraryGridEntry(imageName: SI.album) }
+                            )
+                            
+                        case .artists:
+                            GridListEntry(
+                                label: "Artists"
+                                , action: { navigator.library.navigateTo(LibraryNavigation.artists) }
+                                , icon: { LibraryGridEntry(imageName: SI.artist) }
+                            )
+                            
+                        case .topRated:
+                            GridListEntry(
+                                label: "Top Rated"
+                                , action: { navigator.library.navigateTo(LibraryNavigation.topRated) }
+                                , icon: { LibraryGridEntry(imageName: SI.unrated) }
+                            )
+                            
+                        case .taglists:
+                            GridListEntry(
+                                label: "Taglists"
+                                , action: { navigator.library.navigateTo(LibraryNavigation.taglists) }
+                                , icon: { LibraryGridEntry(imageName: SI.tag) }
+                            )                        
+                        }
+                    })
+                )
+            }
             
             .navigationDestination(for: LibraryNavigation.self) { menu in
                 switch menu {

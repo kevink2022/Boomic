@@ -65,74 +65,72 @@ struct GridList<Icon: View, Menu: View>: View {
     private var showDividers: Bool { config.listMode && hasListDividers }
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                if showHeader {
-                    HStack {
-                        Text(title)
-                            .font(titleFont)
-                        
-                        Spacer()
-                        
-                        if buttonsInHeader {
-                            GridListButtons(config: $config)
-                                .font(F.listTitle)
-                        }
-                    }
-                    .padding(C.gridPadding)
-                }
-                
-                LazyVGrid(
-                    columns: config.gridMode ? config.columns : Config.oneColumn
-                    , alignment: .leading
-                    , spacing: 0
-                    , pinnedViews: [.sectionHeaders]
-                ) {
-                    Section(header: GridListSelectorBar(
-                        selectable: selectable
-                        , localIDs: gridEntries.compactMap({ $0.selectionID })
-                        , externalHorizontalPadding: config.externalPadding
-                    )) {
-                        if showDividers {
-                            Divider()
-                        }
-                        
-                        ForEach(gridEntries) { entry in
-                            GridListBody(
-                                entry: entry
-                                , config: config
-                                , selectable: selectable
-                                , disabled: disabled
-                                , textAlignment: textAlignment
-                                , showListHeader: showListHeader
-                                , hasSubLabels: hasSubLabels
-                            )
-                            
-                            if showDividers { Divider() }
-                        }
+        LazyVStack(spacing: 0) {
+            if showHeader {
+                HStack {
+                    Text(title)
+                        .font(titleFont)
+                    
+                    Spacer()
+                    
+                    if buttonsInHeader {
+                        GridListButtons(config: $config)
+                            .font(F.listTitle)
                     }
                 }
-                .padding(.horizontal, config.externalPadding)
-                
+                .padding(C.gridPadding)
             }
             
+            LazyVGrid(
+                columns: config.gridMode ? config.columns : Config.oneColumn
+                , alignment: .leading
+                , spacing: 0
+                , pinnedViews: [.sectionHeaders]
+            ) {
+                Section(header: GridListSelectorBar(
+                    selectable: selectable
+                    , localIDs: gridEntries.compactMap({ $0.selectionID })
+                    , externalHorizontalPadding: config.externalPadding
+                )) {
+                    if showDividers {
+                        Divider()
+                    }
+                    
+                    ForEach(gridEntries) { entry in
+                        GridListBody(
+                            entry: entry
+                            , config: config
+                            , selectable: selectable
+                            , disabled: disabled
+                            , textAlignment: textAlignment
+                            , showListHeader: showListHeader
+                            , hasSubLabels: hasSubLabels
+                        )
                         
-            .toolbar {
-                if buttonsInToolbar {
-                    GridListButtons(config: $config, font: F.toolbarButton)
+                        if showDividers { Divider() }
+                    }
                 }
             }
+            .padding(.horizontal, config.externalPadding)
             
-            .task {
-                if let key = key {
-                    self.config = preferences.loadGrid(key: key, default: config)
-                }
+        }
+        
+                    
+        .toolbar {
+            if buttonsInToolbar {
+                GridListButtons(config: $config, font: F.toolbarButton)
             }
-            
-            .onChange(of: config) {
-                if key != nil {
-                    preferences.saveGrid(config)
-                }
+        }
+        
+        .task {
+            if let key = key {
+                self.config = preferences.loadGrid(key: key, default: config)
+            }
+        }
+        
+        .onChange(of: config) {
+            if key != nil {
+                preferences.saveGrid(config)
             }
         }
     }

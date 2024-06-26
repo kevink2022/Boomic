@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct ContentView: View {
     @Environment(\.navigator) private var navigator
@@ -15,12 +16,23 @@ struct ContentView: View {
         @Bindable var navigator = navigator
         
         PlayerWrapper { TabsScreen() }
-            .tint(preferences.accentColor)
+       
+            .fileImporter(
+                isPresented: $navigator.showFiles
+                , allowedContentTypes: navigator.fileTypes
+                , allowsMultipleSelection: navigator.allowMultiSelection
+                , onCompletion: navigator.filePickerCompletion
+            )
+            
             .sheet(isPresented: $navigator.showSheet) {
                 if let content = navigator.sheetContent {
                     content
                 }
             }
+        
+            .tint(preferences.accentColor)
+        
+            
     }
 }
 

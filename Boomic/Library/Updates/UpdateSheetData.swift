@@ -186,7 +186,7 @@ struct SheetData: Equatable {
     var artistName: String = ""
     var albumTitle: String = ""
     
-    var tags: Set<Tag> = []
+    var tags: Set<Tag>
     
     var rating: Int? { didSet { if rating == 0 {rating = nil} } }
     var art: MediaArt?
@@ -218,6 +218,7 @@ struct SheetData: Equatable {
         self.title = Self.toSheet(album.title)
         self.art = album.art
         self.artistName = Self.toSheet(album.artistName)
+        self.tags = []
     }
     
     mutating func add(album: Album) {
@@ -229,6 +230,7 @@ struct SheetData: Equatable {
     init(artist: Artist) {
         self.title = Self.toSheet(artist.name)
         self.art = artist.art
+        self.tags = []
     }
     
     mutating func add(artist: Artist) {

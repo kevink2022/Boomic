@@ -8,6 +8,7 @@
 import SwiftUI
 import Models
 
+private typealias C = ViewConstants
 private typealias F = ViewConstants.Fonts
 private typealias SI = ViewConstants.SystemImages
 
@@ -65,6 +66,16 @@ struct AlbumUpdateSheet: View {
                 
                 Section("Artist Name") {
                     TextField(text: $model.data.working.artistName, prompt: Text(model.data.base.artistName)) { EmptyView() }
+                }
+                
+                Section("Cover") {
+                    MediaArtEditor($model.data.working.art, editing: true, aspectRatio: .fit, cornerRadius: C.albumCornerRadius)
+                        .padding(.horizontal, 30)
+                    
+                    Toggle(isOn: .constant(false)) {
+                        Text("Apply to Album Songs?")
+                    }
+                    .disabled(model.data.working.art == model.data.base.art)
                 }
             }
         }

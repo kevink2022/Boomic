@@ -37,6 +37,12 @@ struct AlbumMenu: View {
             } label: {
                 Label("Select Album", systemImage: SI.select)
             }
+        } else if selector.group == .songs {
+            Button {
+                selector.select(album.songs)
+            } label: {
+                Label("Select All Songs", systemImage: SI.select)
+            }
         }
         
         Menu {

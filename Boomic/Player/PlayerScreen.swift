@@ -14,7 +14,8 @@ private typealias A = ViewConstants.Animations
 
 struct PlayerScreen: View {
     @Environment(\.player) private var player
-    @Namespace private var namespace
+    
+    @State var editMode: Bool = false
     
     var body: some View {
         ZStack {
@@ -31,6 +32,11 @@ struct PlayerScreen: View {
                 HStack {
                     PlayerArtView()
                         .frame(height: player.queueView ? 80 : nil)
+//                        .overlay {
+//                            if editMode {
+//                                
+//                            }
+//                        }
                     
                     if player.queueView {
                         Text(player.song?.label ?? "No Song")

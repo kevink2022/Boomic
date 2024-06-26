@@ -21,30 +21,32 @@ struct AllTaglistsScreen: View {
     }
     
     var body: some View {
-        GridList(
-            header: .buttonsInToolbar
-            , title: "Taglists"
-            , titleFont: F.screenTitle
-            , entries: [
-                GridListEntry(
-                    label: "New"
-                    , action: { navigator.library.navigateTo(MiscLibraryNavigation.newTaglist) }
-                    , icon: {
-                        AnyView(LibraryGridEntry(imageName: SI.add))
-                    }
-                )
-            ] 
-            
-            + taglists.map { list in
-                GridListEntry(
-                    label: list.label
-                    , action: { navigator.library.navigateTo(list) }
-                    , icon: {
-                         AnyView(MediaArtView(nil, cornerRadius: C.albumCornerRadius))
-                    }
-                )
-            }
-        )
+        ScrollView {
+            GridList(
+                header: .buttonsInToolbar
+                , title: "Taglists"
+                , titleFont: F.screenTitle
+                , entries: [
+                    GridListEntry(
+                        label: "New"
+                        , action: { navigator.library.navigateTo(MiscLibraryNavigation.newTaglist) }
+                        , icon: {
+                            AnyView(LibraryGridEntry(imageName: SI.add))
+                        }
+                    )
+                ] 
+                
+                + taglists.map { list in
+                    GridListEntry(
+                        label: list.label
+                        , action: { navigator.library.navigateTo(list) }
+                        , icon: {
+                            AnyView(MediaArtView(list.art, cornerRadius: C.albumCornerRadius))
+                        }
+                    )
+                }
+            )
+        }
     }
 }
 

@@ -7,6 +7,10 @@ final class SimpleStoreTests: XCTestCase {
         return SimpleStore<String>(key: key, cached: cached, namespace: namespace, inMemory: true)
     }
     
+    let decoder = JSONDecoder()
+    let encoder = JSONEncoder()
+    let fileManager = FileManager()
+    
     let namespace = "test_namespace"
     let namespaceA = "test_namespaceA"
     let namespaceB = "test_namespaceB"
@@ -168,6 +172,108 @@ final class SimpleStoreTests: XCTestCase {
             XCTAssertEqual(nil, deleteLoaded)
         } catch {
             XCTFail("Error: \(error.localizedDescription)")
+        }
+    }
+    
+    func test_exportData() async throws {
+        let value = "value_6"
+        let key = "key_6"
+        
+        let export_dir = "SimpleStore_Test_Export/"
+        
+        let export_root = URL
+            .applicationSupportDirectory
+            .appending(path: export_dir)
+        
+        let expected_export_url = URL
+            .applicationSupportDirectory
+            .appending(path: export_dir)
+            .appending(path: namespace)
+            .appending(path: "\(key)_\(String(describing: String.self)).json")
+        
+        do {
+            let sut = initSut(key: key, cached: false, namespace: namespace)
+
+            try await sut.exportData(to: export_root)
+            XCTFail("Expected Error")
+        } catch {
+            guard let error = error as? DiscInterfaceError else { XCTFail("Expected DiscInterface Error"); return }
+            XCTAssertEqual(error, DiscInterfaceError.noDataToExport)
+        }
+
+        do {
+            let sut = initSut(key: key, cached: false, namespace: namespace)
+            try await sut.save(value)
+
+            try await sut.exportData(to: export_root)
+            
+            let exported_data = try Data(contentsOf: expected_export_url)
+            let exported_value = try decoder.decode(String.self, from: exported_data)
+            
+            XCTAssertEqual(exported_value, value)
+        } catch {
+            XCTFail("Error: \(error.localizedDescription)")
+        }
+        
+        do {
+            let sut = initSut(key: key, cached: false, namespace: namespace)
+            try await sut.save(value)
+
+            try await sut.exportData(to: expected_export_url) // File URL
+            XCTFail("Expected Error")
+        } catch {
+            guard let error = error as? DiscInterfaceError else { XCTFail("Expected DiscInterface Error"); return }
+            XCTAssertEqual(error, DiscInterfaceError.attemptToExportToFile)
+        }
+        
+        do {
+            try fileManager.removeItem(at: expected_export_url)
+        } catch {
+            XCTFail("Teardown Error: \(error.localizedDescription)")
+        }
+    }
+    
+    func test_importData() async throws {
+        let value = "value_7"
+        let key = "key_7"
+        
+        let import_dir = "SimpleStore_Test_Import/"
+        
+        let expected_import_url = URL
+            .applicationSupportDirectory
+            .appending(path: import_dir)
+            .appending(path: namespace)
+            .appending(path: "\(key)_\(String(describing: String.self)).json")
+        
+        do {
+            let data_to_import = try encoder.encode(value)
+            try data_to_import.write(to: expected_import_url)
+            guard fileManager.fileExists(atPath: expected_import_url.path) else { XCTFail("Setup Error"); return }
+            
+            let sut = initSut(key: key, cached: false, namespace: namespace)
+            try await sut.importData(from: expected_import_url)
+            
+            let imported_value = try await sut.load()
+            
+            XCTAssertEqual(imported_value, value)
+        } catch {
+            XCTFail("Error: \(error.localizedDescription)")
+        }
+        
+        do {
+            let sut = initSut(key: key, cached: false, namespace: namespace)
+
+            try await sut.importData(from: URL.applicationSupportDirectory) // Dir URL
+            XCTFail("Expected Error")
+        } catch {
+            guard let error = error as? DiscInterfaceError else { XCTFail("Expected DiscInterface Error"); return }
+            XCTAssertEqual(error, DiscInterfaceError.attemptToImportFromDir)
+        }
+        
+        do {
+            try fileManager.removeItem(at: expected_import_url)
+        } catch {
+            XCTFail("Teardown Error: \(error.localizedDescription)")
         }
     }
 }

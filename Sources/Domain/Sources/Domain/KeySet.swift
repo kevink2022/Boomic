@@ -132,7 +132,7 @@ extension KeySet: Codable where Element: Codable, Element.ID: Codable {
     }
 }
 
-extension KeySet: KeySetPublicInterface {}
+extension KeySet: KeySetPublicInterface { }
 private protocol KeySetPublicInterface {
     associatedtype Element: Identifiable
     

@@ -29,6 +29,10 @@ struct SelectorEnvironmentKey: EnvironmentKey {
     static let defaultValue: ModelSelector = ModelSelector()
 }
 
+struct IsSearchTabKey: EnvironmentKey {
+    static let defaultValue: Bool = false
+}
+
 
 extension EnvironmentValues {
     var repository: Repository {
@@ -54,6 +58,11 @@ extension EnvironmentValues {
     var selector: ModelSelector {
         get { self[SelectorEnvironmentKey.self] }
         set { self[SelectorEnvironmentKey.self] = newValue }
+    }
+    
+    var isSearchTab: Bool {
+        get { self[IsSearchTabKey.self] }
+        set { self[IsSearchTabKey.self] = newValue }
     }
 }
 

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 private typealias A = ViewConstants.Animations
 
@@ -18,6 +19,9 @@ public final class Navigator {
                 switch tab {
                 case .home: library.toRoot()
                 case .settings: settings.toRoot()
+                case .search:
+                    search.toRoot()
+                    isSearchFocused = true
                 default: break
                 }
             }
@@ -37,6 +41,11 @@ public final class Navigator {
     }
     
     public var settings = NavigationPath()
+    public var search = NavigationPath() {
+        didSet {
+            isSearchFocused = false
+        }
+    }
     
     public var showSheet: Bool = false
     public var sheetContent: AnyView? = nil
@@ -48,6 +57,31 @@ public final class Navigator {
     
     func dismissSheet() {
         self.showSheet = false
+    }
+    
+    
+    public var showFiles: Bool = false {
+        didSet {
+            if showFiles == false {
+                fileTypes = []
+                allowMultiSelection = false
+                filePickerCompletion = { _ in }
+            }
+        }
+    }
+    public var fileTypes: [UTType] = []
+    public var allowMultiSelection: Bool = false
+    public var filePickerCompletion: (Result<[URL], any Error>) -> Void = { _ in }
+    
+    public func showFilePicker(
+        for types: [UTType]
+        , allowMultiSelection: Bool = false
+        , onCompletion: @escaping (Result<[URL], any Error>) -> Void
+    ) {
+        self.fileTypes = types
+        self.allowMultiSelection = allowMultiSelection
+        self.filePickerCompletion = onCompletion
+        self.showFiles = true
     }
     
     public var isSearchFocused: Bool = false

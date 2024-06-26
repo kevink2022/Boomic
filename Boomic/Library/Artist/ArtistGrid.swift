@@ -12,6 +12,7 @@ private typealias F = ViewConstants.Fonts
 
 struct ArtistGrid: View {
     @Environment(\.navigator) private var navigator
+    @Environment(\.isSearchTab) private var isSearchTab
     
     let artists: [Artist]
     
@@ -58,7 +59,13 @@ struct ArtistGrid: View {
                     label: artist.name
                     , selectionGroup: .artists
                     , selectionID: artist.id
-                    , action: { navigator.library.navigateTo(artist) }
+                    , action: { 
+                        if isSearchTab {
+                            navigator.search.navigateTo(artist)
+                        } else {
+                            navigator.library.navigateTo(artist)
+                        }
+                    }
                     , icon: {
                         MediaArtView(artist.art)
                             .clipShape(Circle())

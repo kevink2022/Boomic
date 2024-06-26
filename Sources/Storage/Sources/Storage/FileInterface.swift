@@ -38,6 +38,12 @@ public class FileInterface {
         self.fileManager = fileManager
     }
     
+    public func allFiles(of extensions: Set<String>? = nil) throws -> [URL] {
+        let allURLs = try allFiles()
+        let allExtensionURLs = filterExtensions(include: extensions, in: allURLs)
+        return allExtensionURLs
+    }
+    
     public func allFiles(of extensions: Set<String>? = nil, excluding: Set<URL>? = nil) throws -> [URL] {
         let allURLs = try allFiles()
         let allExtensionURLs = filterExtensions(include: extensions, in: allURLs)

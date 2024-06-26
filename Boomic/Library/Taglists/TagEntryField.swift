@@ -56,7 +56,10 @@ struct TagEntryField: View {
                             TextField(text: $text, prompt: Text("Add Tag")) { EmptyView() }
                                 .focused($focused)
                                 .multilineTextAlignment(.leading)
-                                .onSubmit { onSubmit() }
+                                .onSubmit {
+                                    //focused = true
+                                    onSubmit()
+                                }
                         }
                     }
                 }
@@ -66,7 +69,6 @@ struct TagEntryField: View {
     
     private func onSubmit() {
             if let tag = Tag.from(text) {
-                focused = true
                 withAnimation(A.standard) {
                     tags.insert(tag)
                     text = ""

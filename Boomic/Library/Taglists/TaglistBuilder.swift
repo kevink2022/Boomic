@@ -63,6 +63,7 @@ final class TaglistBuilder {
             , positiveRules: positiveRules
             , negativeRules: negativeRules
             , songs: []
+            , art: art
         )
     }
     
@@ -71,16 +72,18 @@ final class TaglistBuilder {
         let newTitle = base.title != self.title ? self.title : nil
         let newPositiveRules = base.positiveRules != self.positiveRules ? self.positiveRules : nil
         let newNegativeRules = base.negativeRules != self.negativeRules ? self.negativeRules : nil
+        let newArt = base.art != self.art ? self.art : nil
                 
         return TaglistUpdate(
             taglist: baseTaglist
             , newTitle: newTitle
             , positiveRules: newPositiveRules
             , negativeRules: newNegativeRules
+            , art: newArt
         )
     }
     
     public var disableSave: Bool {
-        title == "" || (positiveRules.hasNoRules && negativeRules.hasNoRules)
+        title == "" || (positiveRules.hasNoRules && negativeRules.hasNoRules) || !self.asTaglistUpdate().willModify(baseTaglist)
     }
 }

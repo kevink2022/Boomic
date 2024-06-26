@@ -13,6 +13,7 @@ private typealias F = ViewConstants.Fonts
 private typealias SI = ViewConstants.SystemImages
 
 struct PlayerHeader: View {
+    @Environment(\.navigator) private var navigator
     @Environment(\.player) private var player
     @Environment(\.repository) private var repository
 
@@ -24,6 +25,14 @@ struct PlayerHeader: View {
                     .lineLimit(1)
                 
                 Spacer()
+                
+                Button {
+                    guard let song = player.song else { return }
+                    navigator.presentSheet(SongUpdateSheet(songs: [song]))
+                } label: {
+                    Image(systemName: SI.tag)
+                        .font(F.title)
+                }
             }
             .padding(.top, C.playerTitlePaddingTop)
             .padding(.bottom, C.playerTitlePaddingBottom)
@@ -57,15 +66,8 @@ struct PlayerHeader: View {
                     }
                 } label: {
                     Image(systemName: player.song?.rating == nil ? SI.unrated : SI.rated)
+                        .font(F.title)
                 }
-                .font(F.title)
-                
-//                Button {
-//                    player.togglePlayPause()
-//                } label: {
-//                    Image(systemName: SI.infoCircle)
-//                }
-//                .font(F.title)
             }
         }
         .padding(.horizontal, C.gridPadding)

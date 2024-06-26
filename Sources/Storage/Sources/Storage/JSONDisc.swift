@@ -13,15 +13,17 @@ public final class JSONDiscInterface<Model: Codable>: DiscInterface<Model> {
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
     private let fileManager: FileManager
-    private let rootDirectory = URL.applicationSupportDirectory.appending(path: "JSON_storage")
+    private let rootDirectory: URL
     
     public init(
         namespace: String? = nil
+        , root: URL = URL.applicationSupportDirectory.appending(path: "JSON_storage")
         , encoder: JSONEncoder = JSONEncoder()
         , decoder: JSONDecoder = JSONDecoder()
         , fileManager: FileManager = FileManager()
     ) {
         self.namespace = namespace == nil ? nil : Static.sanitize(namespace ?? "")
+        self.rootDirectory = root
         self.encoder = encoder
         self.decoder = decoder
         self.fileManager = fileManager

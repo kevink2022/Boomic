@@ -37,6 +37,10 @@ final class ModelSelector {
         selected.insert(id)
     }
     
+    func select(_ ids: [UUID]) {
+        selected.formUnion(ids)
+    }
+    
     func deselect(_ id: UUID) {
         selected.remove(id)
     }

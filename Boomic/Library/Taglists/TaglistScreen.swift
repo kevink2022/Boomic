@@ -32,11 +32,14 @@ struct TaglistScreen: View {
             , new: taglist == nil
             , forTagView: forTagView
         )
-        self.songs = []
     }
     
-    @State private var songs: [Song] = []
     private var showArt: Bool { !builder.forTagView }
+    private var songs: [Song] {
+        repository.songs().filter { song in
+            Taglist.evaluate(song.tags, onPositiveRules: builder.positiveRules, onNegativeRules: builder.negativeRules)
+        }
+    }
 
     var body: some View {
         ScrollView {
@@ -120,47 +123,27 @@ struct TaglistScreen: View {
                         .disabled(builder.disableSave)
                     }
                     .frame(height: C.buttonHeight)
-                    .padding(.vertical)
+                    .padding(C.gridPadding)
                 } else {
                     LargePlayShuffleButtons(songs: songs, queueName: taglist.title)
                         .padding(.vertical)
+                        .padding(C.gridPadding)
                 }
+                
+                SongGrid(
+                    songs: songs
+                    , key: nil
+                    , config: .smallIconList
+                    , header: .standard
+                    , selectable: true
+                    , title: "Songs"
+                    , queueName: builder.title
+                    , showTrackNumber: false
+                )
             }
-            .padding(C.gridPadding)
-            
-            SongGrid(
-                songs: songs
-                , key: nil
-                , config: .smallIconList
-                , header: .standard
-                , selectable: true
-                , title: "Songs"
-                , queueName: builder.title
-                , showTrackNumber: false
-            )
         }
         
         .toolbar {
-            //temp
-            Menu {
-                Button {
-                    Task {
-                        await repository.setActiveTagView(to: builder.asNewTaglist())
-                    }
-                } label: {
-                    Label("Set as active TagView", systemImage: SI.tag)
-                }
-                
-                Button {
-                    repository.resetToGlobalTagView()
-                } label: {
-                    Label("Reset to global library", systemImage: SI.home)
-                }
-            } label: {
-                Image(systemName: SI.temporary)
-                    .font(F.toolbarButton)
-            }
-            
             Menu {
                 TaglistMenu(taglist: taglist, builder: $builder)
             } label: {
@@ -169,17 +152,6 @@ struct TaglistScreen: View {
             }
         }
         
-        .task { updateSongs() }
-        .onChange(of: builder.editing) { updateSongs() }
-    }
-    
-    private func updateSongs() {
-        Task.detached(priority: .low) {
-            let songs = await builder.builderSongs(from: repository.songs())
-            await MainActor.run {
-                self.songs = songs
-            }
-        }
     }
 }
 
@@ -229,6 +201,34 @@ struct TagRuleField: View {
         .padding(.vertical, 2)
     }
 }
+
+struct TagField: View {
+    let editing: Bool
+    @Binding private var tags: Set<Tag>
+    @State private var text: String = ""
+    
+    init(
+        tags: Binding<Set<Tag>>
+        , editing: Bool = false
+    ) {
+        self.editing = editing
+        self.text = ""
+        self._tags = tags
+    }
+    
+    var body: some View {
+        HStack {
+            ZStack {
+                RoundedRectangle(cornerRadius: 25)
+                    .stroke(style: StrokeStyle(lineWidth: 3))
+                
+                TagEntryField(tags: $tags, editing: editing)
+                    .padding(10)
+            }
+        }
+    }
+}
+
 
 
     

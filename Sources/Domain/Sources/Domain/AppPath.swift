@@ -10,7 +10,7 @@ import Foundation
 public struct AppPath: Codable, Equatable, Hashable {
     public let relative: String
     
-    static let root: URL = URL.homeDirectory
+    private static let root: URL = URL.homeDirectory
     
     public init(relativePath: String) {
         self.relative = relativePath

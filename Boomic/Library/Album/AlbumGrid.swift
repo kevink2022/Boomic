@@ -13,6 +13,7 @@ private typealias F = ViewConstants.Fonts
 
 struct AlbumGrid: View {
     @Environment(\.navigator) private var navigator
+    @Environment(\.isSearchTab) private var isSearchTab
     
     let albums: [Album]
     
@@ -60,7 +61,13 @@ struct AlbumGrid: View {
                     , subLabel: album.artistName ?? "Unknown Artist"
                     , selectionGroup: .albums
                     , selectionID: album.id
-                    , action: { navigator.library.navigateTo(album) }
+                    , action: {
+                        if isSearchTab {
+                            navigator.search.navigateTo(album)
+                        } else {
+                            navigator.library.navigateTo(album)
+                        }
+                    }
                     , icon: {
                         MediaArtView(album.art, cornerRadius: C.albumCornerRadius)
                     }
