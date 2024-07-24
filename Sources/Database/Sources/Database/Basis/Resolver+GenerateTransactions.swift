@@ -57,7 +57,10 @@ extension BasisResolver {
         guard albums.count > 0 else { return .empty }
         
         let label = {
-            if albums.count == 1, let album = albums.first, currentBasis.albumMap[album.id] != nil {
+            if albums.count == 1
+                , let album = albums.first
+                , currentBasis.albumMap[album.id] != nil
+            {
                 return "Delete Album: \(album.title)"
             } else {
                 return "Delete \(albums.count) Albums"

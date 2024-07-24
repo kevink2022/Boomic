@@ -24,8 +24,12 @@ public final class Repository {
     public var status = RepositoryStatus(key: .none, message: "")
     internal var statusKeys = Set<RepositoryStatusKey>()
     
-    public internal(set) var tagViews: SortedSet<Taglist>
-    public internal(set) var activeTagView: Taglist?
+    public internal(set) var tagViews: SortedSet<Taglist> { didSet { Task { try await tagViewStore.save(tagViews) } } }
+    private let tagViewStore: SimpleStore<SortedSet<Taglist>>
+    
+    public internal(set) var activeTagView: Taglist? { didSet { Task { try await activeTagViewStore.save(activeTagView) } } }
+    private let activeTagViewStore: SimpleStore<Taglist?>
+    
     internal var activeTagViewTransaction: LibraryTransaction?
     
     public init(
@@ -42,6 +46,7 @@ public final class Repository {
                 LibraryTransaction.flatten(transaction)
             }
         )
+        , inMemory: Bool = false
     ) {
         self.fileInterface = fileInterface
         self.artLoader = artLoader
@@ -53,19 +58,44 @@ public final class Repository {
         self.activeTagView = nil
         self.activeTagViewTransaction = nil
         
+        self.tagViewStore = SimpleStore<SortedSet<Taglist>>(
+            key: Repository.tagViewsKey
+            , cached: false
+            , inMemory: inMemory
+        )
+        
+        self.activeTagViewStore = SimpleStore<Taglist?>(
+            key: Repository.activeTagViewKey
+            , cached: false
+            , inMemory: inMemory
+        )
+        
         self.transactor.publisher
             .sink { [weak self] basis in
                 guard let self = self else { return }
                 
                 if let transaction = self.activeTagViewTransaction {
-                    Task { 
+                    print("basis load: \(basis.allSongs.count)")
+                    print("active: \(self.activeTagViewTransaction?.assertions.count)")
+                    Task {
                         self.basis = await BasisResolver(currentBasis: basis).apply(transaction: transaction)
+                        if transaction.assertions.count == 0 { await self.refreshActiveView() }
                     }
                 } else {
+                    print("basis no view: \(basis.allSongs.count)")
                     self.basis = basis
                 }
             }
             .store(in: &cancellables)
+        
+        Task {
+            let tagViews = await (try? tagViewStore.load())
+            self.tagViews = tagViews ?? SortedSet()
+            
+            if let activeViewLoad = await (try? activeTagViewStore.load()), let activeView = activeViewLoad {
+                await self.setActiveTagView(to: activeView)
+            }
+        }
     }
     
     public convenience init(inMemory: Bool = false) {
@@ -81,6 +111,7 @@ public final class Repository {
                     LibraryTransaction.flatten(transaction)
                 }
             )
+            , inMemory: inMemory
         )
     }
 }
@@ -112,6 +143,16 @@ extension Repository {
         activeTagView = taglist
         activeTagViewTransaction = transaction
         self.basis = await BasisResolver(currentBasis: basis).apply(transaction: transaction)
+        print("view set: \(transaction.assertions.count)")
+    }
+    
+    public func refreshActiveView() async {
+        guard let tagView = activeTagView else { return }
+        let songsToRemove = basis.allSongs.filter { !tagView.evaluate($0.tags) }
+        let transaction = await BasisResolver(currentBasis: basis).deleteSongs(Set(songsToRemove))
+        activeTagViewTransaction = transaction
+        self.basis = await BasisResolver(currentBasis: basis).apply(transaction: transaction)
+        print("view refreshed: \(transaction.assertions.count)")
     }
     
     public func resetToGlobalTagView() {
@@ -123,4 +164,9 @@ extension Repository {
     public func saveTagView(_ taglist: Taglist) {
         tagViews.insert(taglist)
     }
+    
+    public func deleteTagView(_ taglist: Taglist) {
+        tagViews.remove(taglist)
+    }
 }
+

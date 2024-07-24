@@ -26,11 +26,20 @@ struct TagViewsScreen: View {
 
             Section {
                 Button {
-                    repository.resetToGlobalTagView()
+                    
                 } label: {
                     HStack {
                         Image(systemName: SI.link)
                         Text("Reset to Global")
+                    }
+                }
+                .contextMenu {
+                    Button(role: .destructive) {
+                        repository.resetToGlobalTagView()
+                    } label: {
+                        HStack {
+                            Label("Danger", systemImage: SI.delete)
+                        }
                     }
                 }
                 .disabled(repository.activeTagView == nil)
@@ -49,6 +58,14 @@ struct TagViewsScreen: View {
                         } label: {
                             HStack {
                                 Label("Edit", systemImage: SI.edit)
+                            }
+                        }
+                        
+                        Button(role: .destructive) {
+                            repository.deleteTagView(list)
+                        } label: {
+                            HStack {
+                                Label("Delete", systemImage: SI.delete)
                             }
                         }
                     }

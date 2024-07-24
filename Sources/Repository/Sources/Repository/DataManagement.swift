@@ -63,9 +63,15 @@ extension Repository {
         , version: 0
     )
     
-    public static let tagViewsKey = StorageKey(
+    internal static let tagViewsKey = StorageKey(
         namespace: Repository.namespace
         , key: "tagViews"
+        , version: 0
+    )
+    
+    internal static let activeTagViewKey = StorageKey(
+        namespace: Repository.namespace
+        , key: "activeTagView"
         , version: 0
     )
     
