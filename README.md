@@ -1,5 +1,5 @@
 # Boomic Music
-Boomic Music is an iOS music player and library organizers for enthusiasts who find playlists to be insufficient, like myself. It is currently a work in progress, but it is in a functional state that I use it nearly every day. It is not yet robust to bad inputs (such as corrupt files), but its core functionality is well tested, and has revealed very few bugs in my use (This is not due to me being a particularly amazing engineer, but the fact that I test my code). 
+Boomic Music is an iOS music player and library organizer for enthusiasts who find playlists to be insufficient, like myself. It is currently a work in progress, but it is in a functional state that I use it nearly every day. It is not yet robust to bad inputs (such as corrupt files), but its core functionality is well tested, and has revealed very few bugs in my use (This is not due to me being a particularly amazing engineer, but the fact that I test my code). 
 
 ## What I've learned
 - Taming software complexity
